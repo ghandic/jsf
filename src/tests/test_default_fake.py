@@ -12,8 +12,8 @@ def test_fake_boolean(TestData):
         schema = json.load(file)
     p = JSF(schema)
 
-    assert isinstance(p.fake(), bool)
-    fake_data = [p.fake() for _ in range(100)]
+    assert isinstance(p.generate(), bool)
+    fake_data = [p.generate() for _ in range(100)]
     assert False in fake_data
     assert True in fake_data
 
@@ -23,8 +23,8 @@ def test_fake_string(TestData):
         schema = json.load(file)
     p = JSF(schema)
 
-    assert isinstance(p.fake(), str)
-    fake_data = [p.fake() for _ in range(100)]
+    assert isinstance(p.generate(), str)
+    fake_data = [p.generate() for _ in range(100)]
     assert len(fake_data) - len(set(fake_data)) < 50
 
 
@@ -33,8 +33,8 @@ def test_fake_null(TestData):
         schema = json.load(file)
     p = JSF(schema)
 
-    assert isinstance(p.fake(), type(None))
-    fake_data = [p.fake() for _ in range(100)]
+    assert isinstance(p.generate(), type(None))
+    fake_data = [p.generate() for _ in range(100)]
     assert len(set(fake_data)) == 1
 
 
@@ -43,8 +43,8 @@ def test_fake_enum(TestData):
         schema = json.load(file)
     p = JSF(schema)
 
-    assert isinstance(p.fake(), (str, type(None), int))
-    assert all(p.fake() in ["red", "amber", "green", None, 42] for _ in range(100))
+    assert isinstance(p.generate(), (str, type(None), int))
+    assert all(p.generate() in ["red", "amber", "green", None, 42] for _ in range(100))
 
 
 def test_fake_string_enum(TestData):
@@ -52,8 +52,8 @@ def test_fake_string_enum(TestData):
         schema = json.load(file)
     p = JSF(schema)
 
-    assert isinstance(p.fake(), str)
-    assert all(p.fake() in ["Street", "Avenue", "Boulevard"] for _ in range(100))
+    assert isinstance(p.generate(), str)
+    assert all(p.generate() in ["Street", "Avenue", "Boulevard"] for _ in range(100))
 
 
 def test_fake_int(TestData):
@@ -61,8 +61,8 @@ def test_fake_int(TestData):
         schema = json.load(file)
     p = JSF(schema)
 
-    assert isinstance(p.fake(), int)
-    fake_data = [p.fake() for _ in range(1000)]
+    assert isinstance(p.generate(), int)
+    fake_data = [p.generate() for _ in range(1000)]
     assert all(d <= 700 for d in fake_data)
     assert all(d > 600 for d in fake_data), fake_data
     assert all(d != 600 for d in fake_data)
@@ -74,8 +74,8 @@ def test_fake_number(TestData):
         schema = json.load(file)
     p = JSF(schema)
 
-    assert isinstance(p.fake(), float)
-    fake_data = [p.fake() for _ in range(1000)]
+    assert isinstance(p.generate(), float)
+    fake_data = [p.generate() for _ in range(1000)]
     assert all(d <= 700 for d in fake_data)
     assert all(d > 600 for d in fake_data), fake_data
     assert all(d != 600 for d in fake_data)
@@ -86,8 +86,8 @@ def test_fake_array(TestData):
         schema = json.load(file)
     p = JSF(schema)
 
-    assert isinstance(p.fake(), list)
-    fake_data = [p.fake() for _ in range(1000)]
+    assert isinstance(p.generate(), list)
+    fake_data = [p.generate() for _ in range(1000)]
     assert all(set(d) - {"red", "amber", "green", None, 42} == set() for d in fake_data), fake_data
     assert all(len(set(d)) == len(d) for d in fake_data), fake_data
     assert all(len(d) <= 5 for d in fake_data), fake_data
@@ -99,8 +99,8 @@ def test_fake_tuple(TestData):
         schema = json.load(file)
     p = JSF(schema)
 
-    assert all([isinstance(f, tuple) for f in p.fake()])
-    fake_data = [p.fake() for _ in range(1000)]
+    assert all([isinstance(f, tuple) for f in p.generate()])
+    fake_data = [p.generate() for _ in range(1000)]
     for fd in fake_data:
         assert all(isinstance(d[0], float) for d in fd), fd
         assert all(isinstance(d[1], str) for d in fd), fd
@@ -113,8 +113,8 @@ def test_fake_object(TestData):
         schema = json.load(file)
     p = JSF(schema)
 
-    assert isinstance(p.fake(), dict)
-    fake_data = [p.fake() for _ in range(1000)]
+    assert isinstance(p.generate(), dict)
+    fake_data = [p.generate() for _ in range(1000)]
     assert all(isinstance(d["name"], str) for d in fake_data), fake_data
     assert all(isinstance(d["credit_card"], float) for d in fake_data), fake_data
     assert all(isinstance(d["test"], int) for d in fake_data), fake_data
@@ -125,8 +125,8 @@ def test_fake_string_format(TestData):
         schema = json.load(file)
     p = JSF(schema)
 
-    assert isinstance(p.fake(), dict)
-    fake_data = [p.fake() for _ in range(10)]
+    assert isinstance(p.generate(), dict)
+    fake_data = [p.generate() for _ in range(10)]
     assert all(bool(re.match(r".*@.*", d["email"])) for d in fake_data), fake_data
     assert all(bool(re.match(r".*@.*", d["idn-email"])) for d in fake_data), fake_data
     assert all(

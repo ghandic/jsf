@@ -2,8 +2,8 @@ version: "2"
 services:
     mkdocs-jsf:
         build: ./docs
-        image: challisa/jsf
-        container_name: jsf
+        image: challisa/mkdocs-jsf
+        container_name: mkdocs-jsf
         ports:
             - "8000:8000"
         volumes:

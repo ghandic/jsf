@@ -71,6 +71,6 @@ def test_nested_object_ref(TestData):
     assert hasattr(p.root, "properties")
     expected_types = {"user": Object}
     assert {prop.name: type(prop) for prop in p.root.properties} == expected_types
-    expected_types = {"birthday": String, "email": String, "name": String, "positiveInt": Integer}
+    expected_types = {"birthday": String, "email": String, "name": String, "id": Integer}
     assert {prop.name: type(prop) for prop in p.root.properties[0].properties} == expected_types
 
