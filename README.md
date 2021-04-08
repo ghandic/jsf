@@ -2,6 +2,7 @@
 
 <img src="docs/assets/imgs/index.png" width="100" >
 
+[![coverage](https://img.shields.io/codecov/c/github/ghandic/jsf?color=%2334D058)](https://codecov.io/gh/ghandic/jsf)
 [![documentation](https://img.shields.io/badge/docs-mkdocs%20material-blue.svg?style=flat)](https://ghandic.github.io/jsf/index.html)
 [![PyPI Latest Release](https://img.shields.io/pypi/v/jsf.svg)](https://pypi.org/project/jsf/)
 [![License](https://img.shields.io/github/license/ghandic/jsf.svg)](https://github.com/ghandic/jsf/blob/main/LICENSE)
