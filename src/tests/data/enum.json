@@ -1,0 +1,3 @@
+{
+    "enum": ["red", "amber", "green", null, 42]
+}

@@ -1,0 +1,11 @@
+version: "2"
+services:
+    mkdocs-jsf:
+        build: ./docs
+        image: challisa/jsf
+        container_name: jsf
+        ports:
+            - "8000:8000"
+        volumes:
+            - .:/docs
+        entrypoint: mkdocs serve --dev-addr 0.0.0.0:8000

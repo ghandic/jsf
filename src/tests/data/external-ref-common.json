@@ -1,0 +1,21 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "type": "object",
+    "additionalProperties": false,
+    "definitions": {
+        "ExternalType": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "src": {
+                    "type": "array",
+                    "items": {
+                        "type": "string",
+                        "minLength": 1
+                    }
+                }
+            },
+            "required": ["src"]
+        }
+    }
+}

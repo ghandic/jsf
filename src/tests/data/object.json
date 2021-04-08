@@ -1,0 +1,23 @@
+{
+    "type": "object",
+    "required": ["name", "credit_card", "test"],
+    "properties": {
+        "name": { "type": "string" },
+        "credit_card": { "type": "number" },
+        "test": {
+            "type": "integer",
+            "maximum": 700,
+            "multipleOf": 7,
+            "exclusiveMinimum": 600
+        }
+    },
+
+    "dependencies": {
+        "credit_card": {
+            "properties": {
+                "billing_address": { "type": "string" }
+            },
+            "required": ["billing_address"]
+        }
+    }
+}

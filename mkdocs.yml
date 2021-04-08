@@ -1,0 +1,66 @@
+site_name: "jsf"
+site_description: "Creates fake JSON files from a JSON schema"
+site_url: "https://ghandic.github.io/jsf"
+repo_url: "https://github.com/ghandic/jsf"
+repo_name: "ghandic/jsf"
+
+nav:
+  - Getting Started: index.md
+  - Contributing: contributing.md
+  - Code of Conduct: code_of_conduct.md
+  - Changelog: changelog.md
+  - License: license.md
+
+theme:
+  name: material
+  custom_dir: docs/overrides
+  logo: assets/imgs/index.png
+  favicon: assets/imgs/index.png
+  palette:
+    scheme: youtube
+
+extra_css:
+  - assets/css/styles.css
+
+extra_javascript:
+  - assets/js/theme.js
+
+markdown_extensions:
+  - admonition
+  - codehilite:
+      guess_lang: false
+  - pymdownx.superfences
+  - pymdownx.emoji:
+      emoji_index: !!python/name:materialx.emoji.twemoji
+      emoji_generator: !!python/name:materialx.emoji.to_svg
+  - pymdownx.tabbed
+  - toc:
+      permalink: "¤"
+  - pymdownx.tasklist:
+      custom_checkbox: true
+
+plugins:
+  - search
+  - mkdocstrings:
+      default_handler: python
+      handlers:
+        python:
+          setup_commands:
+            - import sys
+            - sys.path.append("src")
+          rendering:
+            show_root_heading: no
+            show_if_no_docstring: no
+      watch:
+        - src/jsf
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/ghandic
+    - icon: fontawesome/brands/linkedin
+      link: https://www.linkedin.com/in/achallis
+    - icon: fontawesome/solid/globe
+      link: https://www.andrewchallis.co.uk
+    - icon: fontawesome/brands/docker
+      link: https://hub.docker.com/orgs/challisa

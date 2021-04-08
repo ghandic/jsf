@@ -1,0 +1,98 @@
+{
+    "type": "object",
+    "required": [
+        "date-time",
+        "time",
+        "date",
+        "email",
+        "idn-email",
+        "hostname",
+        "idn-hostname",
+        "ipv4",
+        "ipv6",
+        "uri",
+        "uri-reference",
+        "iri",
+        "iri-reference",
+        "uri-template",
+        "json-pointer",
+        "relative-json-pointer",
+        "uuid",
+        "regex"
+    ],
+    "properties": {
+        "date-time": {
+            "type": "string",
+            "format": "date-time"
+        },
+        "time": {
+            "type": "string",
+            "format": "time"
+        },
+        "date": {
+            "type": "string",
+            "format": "date"
+        },
+        "email": {
+            "type": "string",
+            "format": "email"
+        },
+        "idn-email": {
+            "type": "string",
+            "format": "idn-email"
+        },
+        "hostname": {
+            "type": "string",
+            "format": "hostname"
+        },
+        "idn-hostname": {
+            "type": "string",
+            "format": "idn-hostname"
+        },
+        "ipv4": {
+            "type": "string",
+            "format": "ipv4"
+        },
+        "ipv6": {
+            "type": "string",
+            "format": "ipv6"
+        },
+        "uri": {
+            "type": "string",
+            "format": "uri"
+        },
+        "uri-reference": {
+            "type": "string",
+            "format": "uri-reference"
+        },
+        "iri": {
+            "type": "string",
+            "format": "iri"
+        },
+        "iri-reference": {
+            "type": "string",
+            "format": "iri-reference"
+        },
+        "uri-template": {
+            "type": "string",
+            "format": "uri-template"
+        },
+        "json-pointer": {
+            "type": "string",
+            "format": "json-pointer"
+        },
+        "relative-json-pointer": {
+            "type": "string",
+            "format": "relative-json-pointer"
+        },
+        "uuid": {
+            "type": "string",
+            "format": "uuid"
+        },
+        "regex": {
+            "type": "string",
+            "format": "regex",
+            "pattern": "^(\\([0-9]{3}\\))?[0-9]{3}-[0-9]{4}$"
+        }
+    }
+}

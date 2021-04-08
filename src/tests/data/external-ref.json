@@ -1,0 +1,26 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "type": "object",
+    "additionalProperties": false,
+    "required": ["ReferenceToLocalSchema", "ReferenceToExternalSchema"],
+    "properties": {
+        "ReferenceToLocalSchema": {
+            "$ref": "#/definitions/LocalType"
+        },
+        "ReferenceToExternalSchema": {
+            "$ref": "file:///Users/andrewchallis/Desktop/jsf/src/tests/data/external-ref-common.json#/definitions/ExternalType"
+        }
+    },
+    "definitions": {
+        "LocalType": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "no-write": {
+                    "type": "boolean",
+                    "default": false
+                }
+            }
+        }
+    }
+}

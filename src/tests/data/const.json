@@ -1,0 +1,8 @@
+{
+    "type": "object",
+    "properties": {
+        "country": {
+            "const": "United States of America"
+        }
+    }
+}

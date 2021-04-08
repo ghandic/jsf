@@ -1,0 +1,154 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$state": {
+        "surname": "faker.last_name",
+        "dateOfBirth": "lambda: faker.date_of_birth(maximum_age=1).strftime('%d/%m/%Y')"
+    },
+    "definitions": {
+        "address": {
+            "type": "object",
+            "properties": {
+                "suburb": {
+                    "type": "string",
+                    "description": "The address suburb (Australia Only), eg: Watson",
+                    "$provider": "faker.city"
+                },
+                "postcode": {
+                    "type": "string",
+                    "description": "The address postcode (Australia Only), eg: 2602",
+                    "$provider": "faker.postcode"
+                },
+                "street1": {
+                    "type": "string",
+                    "description": "The address street name line 1 (Australia Only), eg: 49 Aspinall St",
+                    "$provider": "faker.street_address"
+                },
+                "street2": {
+                    "type": "string",
+                    "description": "The address street name line 2 (Australia Only), eg: Suite 1",
+                    "$provider": "lambda: ''"
+                }
+            },
+            "required": ["suburb", "postcode", "street1", "street2"]
+        }
+    },
+    "type": "object",
+    "properties": {
+        "parent": {
+            "type": "object",
+            "properties": {
+                "surname": {
+                    "type": ["string", "null"],
+                    "description": "The mother's surname, eg: Mcdermott",
+                    "$provider": "lambda: state['#']['surname']"
+                },
+                "givenNames": {
+                    "type": "string",
+                    "description": "The mother's given names, eg: Sarah Lousie",
+                    "$provider": "faker.first_name_female"
+                },
+                "mailAddress": {
+                    "$ref": "#/definitions/address"
+                },
+                "residentialAddress": {
+                    "$ref": "#/definitions/address"
+                },
+                "mobile": {
+                    "type": "string",
+                    "description": "The mother's mobile phone number, eg: 0400182545",
+                    "$provider": "faker.phone_number"
+                },
+                "homePhone": {
+                    "type": "string",
+                    "description": "The mother's home phone number, eg: 0245458450",
+                    "$provider": "faker.phone_number"
+                },
+                "email": {
+                    "type": "string",
+                    "description": "The mother's email address, eg: jesse6565656565@gmail.com",
+                    "$provider": "faker.ascii_email"
+                },
+                "hospital": {
+                    "type": "string",
+                    "description": "The hospital where the birth took place, eg: ACTCC",
+                    "$provider": "lambda: random.choice(['ACTCC'])"
+                },
+                "dateReceived": {
+                    "type": "string",
+                    "description": "The date the birth event was received, eg: 17/03/2021",
+                    "$provider": "lambda: datetime.now().strftime('%d/%m/%Y')"
+                },
+                "personId": {
+                    "type": "string",
+                    "description": "The mother's personId, eg: 123456789",
+                    "$provider": "lambda: random.choice(['', faker.ssn()])"
+                }
+            },
+            "required": [
+                "surname",
+                "givenNames",
+                "mailAddress",
+                "residentialAddress",
+                "mobile",
+                "homePhone",
+                "email",
+                "hospital",
+                "dateReceived",
+                "personId"
+            ]
+        },
+        "newborn": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "surname": {
+                        "type": "string",
+                        "description": "The newborn's surname, eg: Reid",
+                        "$provider": "lambda: state['#']['surname']"
+                    },
+                    "givenNames": {
+                        "type": "string",
+                        "description": "The newborn's given names, eg: Mathew David",
+                        "$provider": "faker.first_name"
+                    },
+                    "sex": {
+                        "type": "string",
+                        "description": "The newborn's sex, eg: M, F or U",
+                        "$provider": "lambda: random.choice(['M', 'F', 'U'])"
+                    },
+                    "dateOfBirth": {
+                        "type": "string",
+                        "description": "The newborn's date of birth, eg: 17/03/2021",
+                        "$provider": "lambda: state['#']['dateOfBirth']"
+                    },
+                    "birthOrder": {
+                        "type": "string",
+                        "description": "The newborn's birth order, eg: 1",
+                        "$provider": "lambda: next(state['__counter__'])"
+                    },
+                    "indigenousStatus": {
+                        "type": "string",
+                        "description": "The newborn's indigenous status, eg: 14",
+                        "$provider": "lambda: str(random.randint(1, 15))"
+                    },
+                    "uniqueId": {
+                        "type": "string",
+                        "description": "The newborn's unique birth event id, eg: 20474417",
+                        "$provider": "lambda: str(random.randint(100000, 999999))"
+                    }
+                },
+                "required": [
+                    "surname",
+                    "givenNames",
+                    "sex",
+                    "dateOfBirth",
+                    "birthOrder",
+                    "indigenousStatus",
+                    "uniqueId"
+                ]
+            }
+        }
+    },
+    "required": ["parent", "newborn"]
+}
