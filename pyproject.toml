@@ -1,0 +1,15 @@
+[tool.interrogate]
+ignore-init-method = true
+ignore-init-module = true
+ignore-magic = true
+ignore-semiprivate = true
+ignore-private = true
+ignore-property-decorators = true
+ignore-module = true
+fail-under = 100
+exclude = ["src/tests"]
+ignore-regex = ["^test"]
+verbose = 2
+quiet = false
+whitelist-regex = []
+color = true
