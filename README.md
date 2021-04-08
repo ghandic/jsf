@@ -4,7 +4,6 @@
 
 [![documentation](https://img.shields.io/badge/docs-mkdocs%20material-blue.svg?style=flat)](https://ghandic.github.io/jsf/index.html)
 [![PyPI Latest Release](https://img.shields.io/pypi/v/jsf.svg)](https://pypi.org/project/jsf/)
-[![License](https://img.shields.io/pypi/l/jsf.svg)](https://github.com/ghandic/jsf/blob/main/LICENSE)
 [![License](https://img.shields.io/github/license/ghandic/jsf.svg)](https://github.com/ghandic/jsf/blob/main/LICENSE)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
