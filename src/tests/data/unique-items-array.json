@@ -1,0 +1,7 @@
+{
+    "type": "array",
+    "items": { "type": "boolean" },
+    "uniqueItems": true,
+    "minItems": 2,
+    "maxItems": 2
+}

@@ -58,7 +58,7 @@ def test_nested_object(TestData):
 
     assert isinstance(p.root, Object)
     assert hasattr(p.root, "properties")
-    expected_types = {"name": String, "credit_card": Number, "test": Integer}
+    expected_types = {"name": String, "credit_card": Number, "test": Integer, "non_required": Integer}
     assert {prop.name: type(prop) for prop in p.root.properties} == expected_types
 
 
@@ -73,3 +73,4 @@ def test_nested_object_ref(TestData):
     assert {prop.name: type(prop) for prop in p.root.properties} == expected_types
     expected_types = {"birthday": String, "email": String, "name": String, "id": Integer}
     assert {prop.name: type(prop) for prop in p.root.properties[0].properties} == expected_types
+

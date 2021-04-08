@@ -52,7 +52,7 @@ class JSF:
             if "null" in item_type and len(set(item_type)) == 2:
                 deepcopy(item_type).remove("null")
                 return item_type[0], True
-            raise TypeError
+            raise TypeError  # pragma: no cover - not currently supporting other types TODO
         return item_type, False
 
     def __parse_definition(self, name: str, path: str, schema: Dict[str, Any]) -> AllTypes:
@@ -90,7 +90,7 @@ class JSF:
             cls.path = path
             return cls
         else:
-            raise ValueError(f"Cannot parse schema {repr(schema)}")
+            raise ValueError(f"Cannot parse schema {repr(schema)}")  # pragma: no cover
 
     def _parse(self, schema: Dict[str, Any]) -> AllTypes:
         for name, definition in schema.get("definitions", {}).items():

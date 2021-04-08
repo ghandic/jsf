@@ -9,7 +9,8 @@
             "maximum": 700,
             "multipleOf": 7,
             "exclusiveMinimum": 600
-        }
+        },
+        "non_required": { "type": "integer" }
     },
 
     "dependencies": {

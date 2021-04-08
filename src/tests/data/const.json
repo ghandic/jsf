@@ -1,5 +1,6 @@
 {
     "type": "object",
+    "required": ["country"],
     "properties": {
         "country": {
             "const": "United States of America"

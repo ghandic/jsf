@@ -24,14 +24,14 @@ class Number(BaseSchema):
 
             if isinstance(self.exclusiveMinimum, bool):
                 _min = self.minimum + step
-            elif isinstance(self.exclusiveMinimum, float):
+            elif isinstance(self.exclusiveMinimum, int):
                 _min = self.exclusiveMinimum + step
             else:
                 _min = self.minimum
 
             if isinstance(self.exclusiveMaximum, bool):
                 _max = self.maximum - step
-            elif isinstance(self.exclusiveMaximum, float):
+            elif isinstance(self.exclusiveMaximum, int):
                 _max = self.exclusiveMaximum - step
             else:
                 _max = self.maximum

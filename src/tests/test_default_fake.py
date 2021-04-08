@@ -78,6 +78,31 @@ def test_fake_number(TestData):
     assert all(d != 600 for d in fake_data)
 
 
+def test_fake_number_exclusive(TestData):
+    with open(TestData / f"number-exclusive.json", "r") as file:
+        schema = json.load(file)
+    p = JSF(schema)
+
+    assert isinstance(p.generate(), float)
+    fake_data = [p.generate() for _ in range(1000)]
+    assert all(d < 700 for d in fake_data)
+    assert all(d >= 600 for d in fake_data), fake_data
+    assert all(d != 700 for d in fake_data)
+
+
+def test_fake_number_exclusive_float(TestData):
+    with open(TestData / f"number-exclusive-float.json", "r") as file:
+        schema = json.load(file)
+    p = JSF(schema)
+
+    assert isinstance(p.generate(), float)
+    fake_data = [p.generate() for _ in range(1000)]
+    assert all(d < 700 for d in fake_data), fake_data
+    assert all(d > 600 for d in fake_data), fake_data
+    assert all(d != 700 for d in fake_data)
+    assert all(d != 600 for d in fake_data)
+
+
 def test_fake_array(TestData):
     with open(TestData / f"array.json", "r") as file:
         schema = json.load(file)
@@ -148,3 +173,60 @@ def test_fake_string_format(TestData):
     # "relative-json-pointer"
     # "uuid"
     # "regex"
+
+
+def test_unique_items_tuple(TestData):
+    with open(TestData / f"unique-items-tuple.json", "r") as file:
+        schema = json.load(file)
+    p = JSF(schema)
+    fake_data = p.generate(50)
+    for f in fake_data:
+        assert isinstance(f, list)
+        assert all([isinstance(t, tuple) for t in f])
+        assert all(len(set(t)) == len(t) for t in f), f
+
+
+def test_unique_items_array(TestData):
+    with open(TestData / f"unique-items-array.json", "r") as file:
+        schema = json.load(file)
+    p = JSF(schema)
+    fake_data = p.generate(50)
+    for f in fake_data:
+        assert isinstance(f, list)
+        assert all([isinstance(t, bool) for t in f])
+        assert len(set(f)) == len(f), f
+
+
+def test_const(TestData):
+    with open(TestData / f"const.json", "r") as file:
+        schema = json.load(file)
+    p = JSF(schema)
+    fake_data = p.generate(50)
+    for f in fake_data:
+        assert isinstance(f, dict)
+        assert isinstance(f["country"], str)
+        assert f["country"] == "United States of America"
+
+
+def test_external_ref(TestData):
+    with open(TestData / f"external-ref.json", "r") as file:
+        schema = json.load(file)
+    p = JSF(schema)
+    fake_data = p.generate(50)
+    for f in fake_data:
+        print(f)
+        assert isinstance(f, dict)
+        assert isinstance(f["ReferenceToLocalSchema"], dict)
+        assert isinstance(f["ReferenceToLocalSchema"]["no-write"], bool)
+
+        assert isinstance(f["ReferenceToExternalSchema"], dict)
+        assert isinstance(f["ReferenceToExternalSchema"]["src"], list)
+        assert all(isinstance(t, str) for t in f["ReferenceToExternalSchema"]["src"])
+
+
+def test_gen_and_validate(TestData):
+    with open(TestData / f"custom.json", "r") as file:
+        schema = json.load(file)
+    p = JSF(schema)
+    [p.generate_and_validate() for _ in range(50)]
+
