@@ -1,12 +1,11 @@
-import re
 import random
-from datetime import timezone
+import re
 from dataclasses import dataclass
-from typing import Callable, Optional, List, Union, Dict, Callable, Any
+from datetime import timezone
+from typing import Any, Callable, Dict, Optional
 
 import rstr
 from faker import Faker
-
 
 from .base import BaseSchema, ProviderNotSetException
 
@@ -16,9 +15,9 @@ FRAGMENT = "[a-zA-Z][a-zA-Z0-9+-.]*"
 URI_PATTERN = f"https?://{{hostname}}(?:{FRAGMENT})+"
 PARAM_PATTERN = "(?:\\?([a-z]{1,7}(=\\w{1,5})?&){0,3})?"
 
-LOREM = """Lorem ipsum dolor sit amet consectetur adipisicing elit. 
-Hic molestias, esse veniam placeat officiis nobis architecto modi 
-possimus reiciendis accusantium exercitationem quas illum libero odit magnam, 
+LOREM = """Lorem ipsum dolor sit amet consectetur adipisicing elit.
+Hic molestias, esse veniam placeat officiis nobis architecto modi
+possimus reiciendis accusantium exercitationem quas illum libero odit magnam,
 reprehenderit ipsum, repellendus culpa!""".split()
 
 format_map: Dict[str, Callable] = {
@@ -76,4 +75,3 @@ class String(BaseSchema):
             if format_map.get(self.format) is not None:
                 return format_map[self.format]()
             return random_fixed_length_sentence(self.minLength, self.maxLength)
-

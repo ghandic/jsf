@@ -1,13 +1,13 @@
 from typing import Union
 
-from .array import Array
-from .number import Number, Integer
-from .object import Object
-from .string import String
 from ._tuple import Tuple
+from .array import Array
+from .boolean import Boolean
 from .enum import Enum
 from .null import Null
-from .boolean import Boolean
+from .number import Integer, Number
+from .object import Object
+from .string import String
 
 Primitives = {
     "number": Number,

@@ -1,6 +1,6 @@
 import random
 from dataclasses import dataclass
-from typing import List, Union, Optional, Any, Dict
+from typing import Any, Dict, List, Optional, Union
 
 from .base import BaseSchema, ProviderNotSetException
 
@@ -14,4 +14,3 @@ class Enum(BaseSchema):
             return super().generate(state)
         except ProviderNotSetException:
             return random.choice(self.enum)
-

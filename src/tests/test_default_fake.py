@@ -1,9 +1,6 @@
-import re
 import json
+import re
 
-import pytest
-
-from ..jsf.schema_types import *
 from ..jsf.parser import JSF
 
 

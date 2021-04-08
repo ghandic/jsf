@@ -1,12 +1,13 @@
-from copy import deepcopy
-from typing import Dict, Optional, Any, Tuple as TupleType
-from itertools import count
 import json
+from copy import deepcopy
+from itertools import count
+from typing import Any, Dict, Optional
+from typing import Tuple as TupleType
 
-from smart_open import open as s_open
 from jsonschema import validate
+from smart_open import open as s_open
 
-from .schema_types import Object, Array, Primitives, Tuple, Enum, PrimativeTypes, AllTypes
+from .schema_types import AllTypes, Array, Enum, Object, PrimativeTypes, Primitives, Tuple
 
 
 class JSF:
@@ -115,4 +116,3 @@ class JSF:
     def from_json(path: str) -> "JSF":
         with open(path, "r") as f:
             return JSF(json.load(f))
-

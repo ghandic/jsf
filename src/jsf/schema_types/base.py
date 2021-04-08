@@ -1,7 +1,7 @@
 import random
-from datetime import datetime
-from typing import Optional, Any, List, Dict, Any
 from dataclasses import dataclass, field
+from datetime import datetime
+from typing import Any, Dict, List, Optional
 
 from dataclasses_json import config, dataclass_json
 from faker import Faker
@@ -47,4 +47,3 @@ class BaseSchema:
         if self.provider is not None:
             return eval(self.provider, eval_globals)()
         raise ProviderNotSetException()
-

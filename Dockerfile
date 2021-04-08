@@ -1,5 +1,5 @@
 FROM python:3.8
 
-WORKDIR /tmp
+WORKDIR /opt/working
 COPY . .
 RUN pip install .

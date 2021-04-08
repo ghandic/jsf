@@ -1,6 +1,6 @@
-from dataclasses import dataclass
 import random
-from typing import Optional, List, Dict, Any
+from dataclasses import dataclass
+from typing import Any, Dict, List, Optional
 
 from .base import BaseSchema, ProviderNotSetException
 
@@ -25,4 +25,3 @@ class Array(BaseSchema):
                     output.add(self.items.generate(state))
                 output = list(output)
             return output
-
