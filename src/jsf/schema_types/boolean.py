@@ -7,8 +7,8 @@ from .base import BaseSchema, ProviderNotSetException
 
 @dataclass
 class Boolean(BaseSchema):
-    def generate(self, state: Dict[str, Any]) -> Optional[bool]:
+    def generate(self, context: Dict[str, Any]) -> Optional[bool]:
         try:
-            return super().generate(state)
+            return super().generate(context)
         except ProviderNotSetException:
             return random.choice([True, False])

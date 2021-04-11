@@ -3,18 +3,30 @@ from copy import deepcopy
 from itertools import count
 from typing import Any, Dict, Optional
 from typing import Tuple as TupleType
+from datetime import datetime
+import random
 
 from jsonschema import validate
 from smart_open import open as s_open
+from faker import Faker
 
 from .schema_types import AllTypes, Array, Enum, Object, PrimativeTypes, Primitives, Tuple
 
+faker = Faker()
+
 
 class JSF:
-    def __init__(self, schema: Dict[str, Any]):
+    def __init__(
+        self,
+        schema: Dict[str, Any],
+        context: Dict[str, Any] = {"faker": faker, "random": random, "datetime": datetime},
+        initial_state: Dict[str, Any] = {},
+    ):
         self.root_schema = schema
         self.definitions = {}
-        self.base_state = {"__counter__": count(start=1), "__all_json_paths__": []}
+        self.base_state = {"__counter__": count(start=1), "__all_json_paths__": [], **initial_state}
+        self.base_context = context
+
         self.root = None
         self._parse(schema)
 
@@ -99,13 +111,17 @@ class JSF:
 
         self.root = self.__parse_definition(name="root", path="#", schema=schema)
 
+    @property
+    def context(self):
+        return {**self.base_context, "state": deepcopy(self.base_state)}
+
     def generate(self, n: Optional[int] = None) -> Any:
         if n is None or n == 1:
-            return self.root.generate(state=self.base_state)
-        return [self.root.generate(state=deepcopy(self.base_state)) for _ in range(n)]
+            return self.root.generate(context=self.context)
+        return [self.root.generate(context=self.context) for _ in range(n)]
 
     def generate_and_validate(self) -> None:
-        fake = self.root.generate(state=self.base_state)
+        fake = self.root.generate(context=self.context)
         validate(instance=fake, schema=self.root_schema)
 
     def to_json(self, path: str) -> None:

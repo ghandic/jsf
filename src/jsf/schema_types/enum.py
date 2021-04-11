@@ -9,8 +9,8 @@ from .base import BaseSchema, ProviderNotSetException
 class Enum(BaseSchema):
     enum: List[Union[str, int, float]] = None
 
-    def generate(self, state: Dict[str, Any]) -> Optional[Union[str, int, float]]:
+    def generate(self, context: Dict[str, Any]) -> Optional[Union[str, int, float]]:
         try:
-            return super().generate(state)
+            return super().generate(context)
         except ProviderNotSetException:
             return random.choice(self.enum)

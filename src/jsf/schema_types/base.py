@@ -1,12 +1,8 @@
 import random
 from dataclasses import dataclass, field
-from datetime import datetime
 from typing import Any, Dict, List, Optional
 
 from dataclasses_json import config, dataclass_json
-from faker import Faker
-
-faker = Faker()
 
 
 class ProviderNotSetException(Exception):
@@ -37,13 +33,12 @@ class BaseSchema:
     set_state: Optional[str] = field(default=None, metadata=config(field_name="$state"))
     is_nullable: bool = False
 
-    def generate(self, state: Dict[str, Any]) -> Any:
-        eval_globals = {"state": state, "faker": faker, "random": random, "datetime": datetime}
+    def generate(self, context: Dict[str, Any]) -> Any:
         if self.set_state is not None:
-            state[self.path] = {k: eval(v, eval_globals)() for k, v in self.set_state.items()}
+            context["state"][self.path] = {k: eval(v, context)() for k, v in self.set_state.items()}
 
         if self.is_nullable and random.uniform(0, 1) < 0.9:
             return None
         if self.provider is not None:
-            return eval(self.provider, eval_globals)()
+            return eval(self.provider, context)()
         raise ProviderNotSetException()

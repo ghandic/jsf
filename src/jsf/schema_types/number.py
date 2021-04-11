@@ -15,9 +15,9 @@ class Number(BaseSchema):
     exclusiveMaximum: Optional[float] = None
     # enum: List[Union[str, int, float]] = None  # NOTE: Not used - enums go to enum class
 
-    def generate(self, state: Dict[str, Any]) -> Optional[float]:
+    def generate(self, context: Dict[str, Any]) -> Optional[float]:
         try:
-            return super().generate(state)
+            return super().generate(context)
         except ProviderNotSetException:
 
             step = self.multipleOf if self.multipleOf is not None else 1
@@ -40,5 +40,5 @@ class Number(BaseSchema):
 
 
 class Integer(Number):
-    def generate(self, state: Dict[str, Any]) -> Optional[int]:
-        return int(super().generate(state))
+    def generate(self, context: Dict[str, Any]) -> Optional[int]:
+        return int(super().generate(context))

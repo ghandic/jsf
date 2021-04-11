@@ -13,10 +13,10 @@ class Tuple(BaseSchema):
     maxItems: Optional[int] = 5
     uniqueItems: Optional[bool] = False
 
-    def generate(self, state: Dict[str, Any]) -> Optional[List[Tuple]]:
+    def generate(self, context: Dict[str, Any]) -> Optional[List[Tuple]]:
         # TODO:  Random drop out "It’s ok to not provide all of the items"
         try:
-            return super().generate(state)
+            return super().generate(context)
         except ProviderNotSetException:
             if self.uniqueItems:
                 output = []
@@ -26,7 +26,7 @@ class Tuple(BaseSchema):
                     item = 0
                     while len(tmp) < len(self.items):
                         last_len = len(tmp)
-                        tmp.add(self.items[item].generate(state))
+                        tmp.add(self.items[item].generate(context))
                         if len(tmp) > last_len:
                             item += 1
                         tries += 1
@@ -35,7 +35,7 @@ class Tuple(BaseSchema):
                     output.append(tuple(tmp))
                 return output
             return [
-                tuple([item.generate(state) for item in self.items])
+                tuple([item.generate(context) for item in self.items])
                 for _ in range(random.randint(self.minItems, self.maxItems))
             ]
 

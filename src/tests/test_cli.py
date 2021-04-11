@@ -10,10 +10,10 @@ runner = CliRunner()
 
 
 def test_app(TestData):
+    file = Path("tmp.json")
     try:
         result = runner.invoke(app, ["--schema", TestData / "custom.json", "--instance", "tmp.json"])
         assert result.exit_code == 0
-        file = Path("tmp.json")
         assert file.exists()
         with open(file, "r") as f:
             instance = json.load(f)

@@ -66,12 +66,12 @@ class String(BaseSchema):
     format: Optional[str] = None
     # enum: Optional[List[Union[str, int, float]]] = None  # NOTE: Not used - enums go to enum class
 
-    def generate(self, state: Dict[str, Any]) -> Optional[str]:
+    def generate(self, context: Dict[str, Any]) -> Optional[str]:
         try:
-            return str(super().generate(state))
+            return str(super().generate(context))
         except ProviderNotSetException:
             format_map["regex"] = lambda: rstr.xeger(self.pattern)
-            format_map["relative-json-pointer"] = lambda: random.choice(state["__all_json_paths__"])
+            format_map["relative-json-pointer"] = lambda: random.choice(context["state"]["__all_json_paths__"])
             if format_map.get(self.format) is not None:
                 return format_map[self.format]()
             return random_fixed_length_sentence(self.minLength, self.maxLength)

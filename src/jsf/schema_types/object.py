@@ -30,8 +30,8 @@ class Object(BaseSchema):
             return True
         return random.uniform(0, 1) < 0.5
 
-    def generate(self, state: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+    def generate(self, context: Dict[str, Any]) -> Optional[Dict[str, Any]]:
         try:
-            return super().generate(state)
+            return super().generate(context)
         except ProviderNotSetException:
-            return {o.name: o.generate(state) for o in self.properties if self.should_keep(o.name)}
+            return {o.name: o.generate(context) for o in self.properties if self.should_keep(o.name)}
