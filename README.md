@@ -73,6 +73,14 @@ docker build . -t challisa/jsf
 docker run -v $PWD:/data challisa/jsf jsf --schema /data/src/tests/data/custom.json --instance /data/wow.json
 ```
 
+## Mkdocs
+
+The documentation for this project is written in Markdown and built using mkdocs, the easiest way to get the docs up for development is to run it in Docker
+
+```bash
+docker-compose up mkdocs-jsf
+```
+
 ## Contributing to jsf
 
 To contribute to jsf, follow these steps:

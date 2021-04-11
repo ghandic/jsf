@@ -6,11 +6,17 @@ repo_name: "ghandic/jsf"
 
 nav:
   - Getting Started: index.md
-  - Contributing: contributing.md
-  - Code of Conduct: code_of_conduct.md
-  - Changelog: changelog.md
-  - License: license.md
-
+  - Features: features.md
+  - JSON Schema Intro: intro-to-json-schema.md
+  - Tutorial - User Guide:
+    - Tutorial - User Guide - Intro: user-guide/intro.md
+    - First Steps: user-guide/first-steps.md
+  - Alternatives, Inspiration and Comparisons: alternatives.md
+  - Help jsf - Get Help: help-us.md
+  - Development - Contributing: contributing.md
+  - Code of Conduct: code-of-conduct.md
+  - Release Notes: release-notes.md
+  
 theme:
   name: material
   custom_dir: docs/overrides
