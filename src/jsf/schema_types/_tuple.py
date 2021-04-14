@@ -1,10 +1,13 @@
 import random
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional, Tuple, Union
+
+from dataclasses_json import config, dataclass_json
 
 from .base import BaseSchema, ProviderNotSetException
 
 
+@dataclass_json
 @dataclass
 class Tuple(BaseSchema):
     items: Optional[List[BaseSchema]] = None
@@ -12,12 +15,19 @@ class Tuple(BaseSchema):
     minItems: Optional[int] = 0
     maxItems: Optional[int] = 5
     uniqueItems: Optional[bool] = False
+    fixed: Optional[Union[str, int]] = field(default=None, metadata=config(field_name="$fixed"))
 
     def generate(self, context: Dict[str, Any]) -> Optional[List[Tuple]]:
         # TODO:  Random drop out "It’s ok to not provide all of the items"
         try:
             return super().generate(context)
         except ProviderNotSetException:
+
+            if isinstance(self.fixed, str):
+                self.minItems = self.maxItems = eval(self.fixed, context)()
+            elif isinstance(self.fixed, int):
+                self.minItems = self.maxItems = self.fixed
+
             if self.uniqueItems:
                 output = []
                 for _ in range(random.randint(self.minItems, self.maxItems)):
