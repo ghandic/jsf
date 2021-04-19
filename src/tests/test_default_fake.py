@@ -230,3 +230,46 @@ def test_gen_and_validate(TestData):
     p = JSF(schema)
     [p.generate_and_validate() for _ in range(50)]
 
+
+def test_fixed_items_tuple_const(TestData):
+    with open(TestData / f"fixed-items-const-tuple.json", "r") as file:
+        schema = json.load(file)
+    p = JSF(schema)
+    fake_data = p.generate(50)
+    for f in fake_data:
+        assert isinstance(f, list)
+        assert all([isinstance(t, tuple) for t in f])
+        assert len(f) == 5
+
+
+def test_fixed_items_tuple_state(TestData):
+    with open(TestData / f"fixed-items-state-tuple.json", "r") as file:
+        schema = json.load(file)
+    p = JSF(schema)
+    fake_data = p.generate(50)
+    for f in fake_data:
+        assert isinstance(f, list)
+        assert all([isinstance(t, tuple) for t in f])
+        assert len(f) == 5
+
+
+def test_fixed_items_array_const(TestData):
+    with open(TestData / f"fixed-items-const-array.json", "r") as file:
+        schema = json.load(file)
+    p = JSF(schema)
+    fake_data = p.generate(50)
+    for f in fake_data:
+        assert isinstance(f, list)
+        assert all([isinstance(t, bool) for t in f])
+        assert len(f) == 5
+
+
+def test_fixed_items_array_state(TestData):
+    with open(TestData / f"fixed-items-state-array.json", "r") as file:
+        schema = json.load(file)
+    p = JSF(schema)
+    fake_data = p.generate(50)
+    for f in fake_data:
+        assert isinstance(f, list)
+        assert all([isinstance(t, bool) for t in f])
+        assert len(f) == 5

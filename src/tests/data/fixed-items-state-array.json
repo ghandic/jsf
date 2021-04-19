@@ -1,0 +1,8 @@
+{
+    "$state": {
+        "number": "lambda: 5"
+    },
+    "type": "array",
+    "items": { "type": "boolean" },
+    "$fixed": "lambda: state['#']['number']"
+}

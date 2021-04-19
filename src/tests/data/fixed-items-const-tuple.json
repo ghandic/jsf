@@ -1,0 +1,5 @@
+{
+    "type": "array",
+    "items": [{ "type": "boolean" }, { "type": "boolean" }],
+    "$fixed": 5
+}
