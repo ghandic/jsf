@@ -2,7 +2,7 @@ import logging
 import random
 from typing import Any, Dict, List, Optional, Union
 
-from pydantic import BaseModel, create_model
+from pydantic import create_model, BaseModel
 
 from .base import BaseSchema, ProviderNotSetException
 
@@ -44,7 +44,8 @@ class Object(BaseSchema):
 
     def model(self, context: Dict[str, Any]):
         self.generate(context)
-        _type = create_model("Object", **{o.name: o.model(context) for o in self.properties})
+        name = self._get_unique_name(context)
+        _type = create_model(name, **{o.name: o.model(context) for o in self.properties})
         context["__internal__"][_type.__name__] = _type
         return self.to_pydantic(context, _type)
 
