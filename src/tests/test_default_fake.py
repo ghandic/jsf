@@ -116,7 +116,7 @@ def test_fake_array(TestData):
 
 
 def test_fake_array_fixed_int(TestData):
-    with open(TestData / f"array_fixed_int.json", "r") as file:
+    with open(TestData / f"array-fixed-int.json", "r") as file:
         schema = json.load(file)
     print(schema)
     p = JSF(schema)
@@ -128,7 +128,7 @@ def test_fake_array_fixed_int(TestData):
 
 
 def test_fake_array_fixed_str(TestData):
-    with open(TestData / f"array_fixed_str.json", "r") as file:
+    with open(TestData / f"array-fixed-str.json", "r") as file:
         schema = json.load(file)
     print(schema)
     p = JSF(schema)
