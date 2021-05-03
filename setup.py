@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="jsf",
-    version="0.2.0",
+    version="0.3.0",
     author="ghandic",
     description="Creates fake JSON files from a JSON schema",
     long_description=long_description,
