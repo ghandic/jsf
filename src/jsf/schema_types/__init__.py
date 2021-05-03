@@ -1,9 +1,9 @@
 from typing import Union
 
-from ._tuple import Tuple
+from ._tuple import JSFTuple
 from .array import Array
 from .boolean import Boolean
-from .enum import Enum
+from .enum import JSFEnum
 from .null import Null
 from .number import Integer, Number
 from .object import Object
@@ -18,5 +18,5 @@ Primitives = {
     "null": Null,
 }
 
-AllTypes = Union[Enum, Object, Array, Tuple, String, Boolean, Null, Number, Integer]
+AllTypes = Union[JSFEnum, Object, Array, JSFTuple, String, Boolean, Null, Number, Integer]
 PrimativeTypes = Union[String, Boolean, Null, Number, Integer]

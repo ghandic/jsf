@@ -1,0 +1,11 @@
+version: "2"
+services:
+    fastapi-jsf:
+        build: .
+        image: challisa/fastapi-jsf
+        container_name: fastapi-jsf
+        ports:
+            - "8080:8080"
+        volumes:
+            - .:/opt/working
+        entrypoint: uvicorn api:app --reload --host 0.0.0.0 --port 8080

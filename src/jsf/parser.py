@@ -1,17 +1,19 @@
 import json
-from copy import deepcopy
-from itertools import count
-from typing import Any, Dict, Optional
-from typing import Tuple as TupleType
-from datetime import datetime
+import logging
 import random
+from copy import deepcopy
+from datetime import datetime
+from itertools import count
+from typing import Any, Dict, List, Optional, Tuple, Union
 
-from jsonschema import validate
-from smart_open import open as s_open
 from faker import Faker
+from jsonschema import validate
+from pydantic import conlist
+from smart_open import open as s_open
 
-from .schema_types import AllTypes, Array, Enum, Object, PrimativeTypes, Primitives, Tuple
+from .schema_types import AllTypes, Array, JSFEnum, JSFTuple, Object, PrimativeTypes, Primitives
 
+logger = logging.getLogger()
 faker = Faker()
 
 
@@ -19,12 +21,21 @@ class JSF:
     def __init__(
         self,
         schema: Dict[str, Any],
-        context: Dict[str, Any] = {"faker": faker, "random": random, "datetime": datetime},
+        context: Dict[str, Any] = {
+            "faker": faker,
+            "random": random,
+            "datetime": datetime,
+            "__internal__": {"List": List, "Union": Union, "conlist": conlist},
+        },
         initial_state: Dict[str, Any] = {},
     ):
         self.root_schema = schema
         self.definitions = {}
-        self.base_state = {"__counter__": count(start=1), "__all_json_paths__": [], **initial_state}
+        self.base_state = {
+            "__counter__": count(start=1),
+            "__all_json_paths__": [],
+            **initial_state,
+        }
         self.base_context = context
 
         self.root = None
@@ -50,15 +61,15 @@ class JSF:
         arr.items = self.__parse_definition(name, name, schema["items"])
         return arr
 
-    def __parse_tuple(self, name: str, path: str, schema: Dict[str, Any]) -> Tuple:
+    def __parse_tuple(self, name: str, path: str, schema: Dict[str, Any]) -> JSFTuple:
         _, is_nullable = self.__is_field_nullable(schema)
-        arr = Tuple.from_dict({"name": name, "path": path, "is_nullable": is_nullable, **schema})
+        arr = JSFTuple.from_dict({"name": name, "path": path, "is_nullable": is_nullable, **schema})
         arr.items = []
         for i, item in enumerate(schema["items"]):
             arr.items.append(self.__parse_definition(name, path=f"{name}[{i}]", schema=item))
         return arr
 
-    def __is_field_nullable(self, schema: Dict[str, Any]) -> TupleType[str, bool]:
+    def __is_field_nullable(self, schema: Dict[str, Any]) -> Tuple[str, bool]:
         item_type = schema.get("type")
         if isinstance(item_type, list):
             if "null" in item_type and len(set(item_type)) == 2:
@@ -79,7 +90,7 @@ class JSF:
             assert all(
                 isinstance(item, (int, float, str, type(None))) for item in enum_list
             ), "Enum Type is not null, int, float or string"
-            return Enum.from_dict({"name": name, "path": path, "is_nullable": is_nullable, **schema})
+            return JSFEnum.from_dict({"name": name, "path": path, "is_nullable": is_nullable, **schema})
         elif "type" in schema:
             if item_type == "object" and "properties" in schema:
                 return self.__parse_object(name, path, schema)
@@ -119,6 +130,9 @@ class JSF:
         if n is None or n == 1:
             return self.root.generate(context=self.context)
         return [self.root.generate(context=self.context) for _ in range(n)]
+
+    def pydantic(self):
+        return self.root.model(context=self.context)[0]
 
     def generate_and_validate(self) -> None:
         fake = self.root.generate(context=self.context)

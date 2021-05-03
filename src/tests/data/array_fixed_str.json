@@ -1,0 +1,10 @@
+{
+    "$state": {
+        "quantity": "lambda: 50"
+    },
+    "type": "array",
+    "$fixed": "lambda: state['#']['quantity']",
+    "items": {
+        "enum": ["red", "amber", "green"]
+    }
+}

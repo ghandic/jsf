@@ -11,15 +11,15 @@ from ..jsf.schema_types import *
     [
         ("array", Array),
         ("boolean", Boolean),
-        ("enum", Enum),
+        ("enum", JSFEnum),
         ("inner-ref", Object),
         ("integer", Integer),
         ("null", Null),
         ("number", Number),
         ("object", Object),
-        ("string-enum", Enum),
+        ("string-enum", JSFEnum),
         ("string", String),
-        ("tuple", Tuple),
+        ("tuple", JSFTuple),
     ],
 )
 def test_types(TestData, filestem, expected_type):
@@ -37,7 +37,7 @@ def test_nested_array(TestData):
 
     assert isinstance(p.root, Array)
     assert hasattr(p.root, "items")
-    assert isinstance(p.root.items, Enum)
+    assert isinstance(p.root.items, JSFEnum)
 
 
 def test_nested_tuple(TestData):
@@ -45,7 +45,7 @@ def test_nested_tuple(TestData):
         schema = json.load(file)
     p = JSF(schema)
 
-    assert isinstance(p.root, Tuple)
+    assert isinstance(p.root, JSFTuple)
     assert hasattr(p.root, "items")
     expected_types = [Number, String, String, String]
     assert [isinstance(item, expected_types[i]) for i, item in enumerate(p.root.items)]
@@ -73,4 +73,3 @@ def test_nested_object_ref(TestData):
     assert {prop.name: type(prop) for prop in p.root.properties} == expected_types
     expected_types = {"birthday": String, "email": String, "name": String, "id": Integer}
     assert {prop.name: type(prop) for prop in p.root.properties[0].properties} == expected_types
-

@@ -1,16 +1,28 @@
+import logging
 import random
-from dataclasses import dataclass
+from enum import Enum
 from typing import Any, Dict, List, Optional, Union
 
 from .base import BaseSchema, ProviderNotSetException
 
+logger = logging.getLogger()
+_types = {"string": str, "integer": int, "number": float}
 
-@dataclass
-class Enum(BaseSchema):
-    enum: List[Union[str, int, float]] = None
+
+class JSFEnum(BaseSchema):
+    enum: Optional[List[Union[str, int, float]]] = []
 
     def generate(self, context: Dict[str, Any]) -> Optional[Union[str, int, float]]:
         try:
             return super().generate(context)
         except ProviderNotSetException:
             return random.choice(self.enum)
+
+    def from_dict(d):
+        return JSFEnum(**d)
+
+    def model(self, context: Dict[str, Any]):
+        base = _types.get(self.type, str)
+        _type = Enum(value=self._get_unique_name(context), type=base, names={str(v): v for v in self.enum})
+        context["__internal__"][_type.__name__] = _type
+        return self.to_pydantic(context, _type)

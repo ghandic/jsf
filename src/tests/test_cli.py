@@ -1,8 +1,8 @@
 import json
 from pathlib import Path
 
-from typer.testing import CliRunner
 from jsonschema import validate
+from typer.testing import CliRunner
 
 from ..jsf.cli import app
 

@@ -19,7 +19,6 @@ def test_fake_string(TestData):
     with open(TestData / f"string.json", "r") as file:
         schema = json.load(file)
     p = JSF(schema)
-
     assert isinstance(p.generate(), str)
     fake_data = [p.generate() for _ in range(100)]
     assert len(fake_data) - len(set(fake_data)) < 50
@@ -110,10 +109,34 @@ def test_fake_array(TestData):
 
     assert isinstance(p.generate(), list)
     fake_data = [p.generate() for _ in range(1000)]
-    assert all(set(d) - {"red", "amber", "green", None, 42} == set() for d in fake_data), fake_data
+    assert all(set(d) - {"red", "amber", "green"} == set() for d in fake_data), fake_data
     assert all(len(set(d)) == len(d) for d in fake_data), fake_data
     assert all(len(d) <= 5 for d in fake_data), fake_data
     assert all(len(d) >= 1 for d in fake_data), fake_data
+
+
+def test_fake_array_fixed_int(TestData):
+    with open(TestData / f"array_fixed_int.json", "r") as file:
+        schema = json.load(file)
+    print(schema)
+    p = JSF(schema)
+
+    assert isinstance(p.generate(), list)
+    fake_data = [p.generate() for _ in range(1000)]
+    assert all(set(d) - {"red", "amber", "green"} == set() for d in fake_data), fake_data
+    assert all(len(d) == 5 for d in fake_data), fake_data
+
+
+def test_fake_array_fixed_str(TestData):
+    with open(TestData / f"array_fixed_str.json", "r") as file:
+        schema = json.load(file)
+    print(schema)
+    p = JSF(schema)
+
+    assert isinstance(p.generate(), list)
+    fake_data = [p.generate() for _ in range(1000)]
+    assert all(set(d) - {"red", "amber", "green"} == set() for d in fake_data), fake_data
+    assert all(len(d) == 50 for d in fake_data), fake_data
 
 
 def test_fake_tuple(TestData):
@@ -121,13 +144,13 @@ def test_fake_tuple(TestData):
         schema = json.load(file)
     p = JSF(schema)
 
-    assert all([isinstance(f, tuple) for f in p.generate()])
+    assert isinstance(p.generate(), tuple)
     fake_data = [p.generate() for _ in range(1000)]
-    for fd in fake_data:
-        assert all(isinstance(d[0], float) for d in fd), fd
-        assert all(isinstance(d[1], str) for d in fd), fd
-        assert all(isinstance(d[2], str) and d[2] in ["Street", "Avenue", "Boulevard"] for d in fd), fd
-        assert all(isinstance(d[3], str) and d[3] in ["NW", "NE", "SW", "SE"] for d in fd), fd
+    for d in fake_data:
+        assert isinstance(d[0], float)
+        assert isinstance(d[1], str)
+        assert isinstance(d[2], str) and d[2] in ["Street", "Avenue", "Boulevard"]
+        assert isinstance(d[3], str) and d[3] in ["NW", "NE", "SW", "SE"]
 
 
 def test_fake_object(TestData):
@@ -175,15 +198,16 @@ def test_fake_string_format(TestData):
     # "regex"
 
 
-def test_unique_items_tuple(TestData):
-    with open(TestData / f"unique-items-tuple.json", "r") as file:
-        schema = json.load(file)
-    p = JSF(schema)
-    fake_data = p.generate(50)
-    for f in fake_data:
-        assert isinstance(f, list)
-        assert all([isinstance(t, tuple) for t in f])
-        assert all(len(set(t)) == len(t) for t in f), f
+## NO LONGER REQUIRED - dont think you can have unique items in a tuple?
+# def test_unique_items_tuple(TestData):
+#     with open(TestData / f"unique-items-tuple.json", "r") as file:
+#         schema = json.load(file)
+#     p = JSF(schema)
+#     fake_data = p.generate(50)
+#     for f in fake_data:
+#         assert isinstance(f, list)
+#         assert all([isinstance(t, tuple) for t in f])
+#         assert all(len(set(t)) == len(t) for t in f), f
 
 
 def test_unique_items_array(TestData):
@@ -229,4 +253,3 @@ def test_gen_and_validate(TestData):
         schema = json.load(file)
     p = JSF(schema)
     [p.generate_and_validate() for _ in range(50)]
-

@@ -1,8 +1,6 @@
 {
     "type": "array",
-    "minItems": 1,
-    "maxItems": 5,
-    "uniqueItems": true,
+    "$fixed": 5,
     "items": {
         "enum": ["red", "amber", "green"]
     }

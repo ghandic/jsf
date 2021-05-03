@@ -1,20 +1,22 @@
+import logging
 import random
-from dataclasses import dataclass
 from typing import Any, Dict, List, Optional, Union
+
+from pydantic import BaseModel, create_model
 
 from .base import BaseSchema, ProviderNotSetException
 
+logger = logging.getLogger()
 
-@dataclass
-class PropertyNames:
-    pattern: Optional[str]
+
+class PropertyNames(BaseModel):
+    pattern: Optional[str] = None
 
 
 PropertyDependency = Dict[str, List[str]]
 SchemaDependency = Dict[str, "Object"]
 
 
-@dataclass
 class Object(BaseSchema):
     properties: Dict[str, BaseSchema] = None
     additionalProperties: Optional[Union[bool, BaseSchema]] = None
@@ -24,6 +26,10 @@ class Object(BaseSchema):
     maxProperties: Optional[int] = None
     dependencies: Optional[Union[PropertyDependency, SchemaDependency]] = None
     patternProperties: Optional[Dict[str, BaseSchema]] = None
+
+    def from_dict(d):
+        print(d)
+        return Object(**d)
 
     def should_keep(self, property_name: str) -> bool:
         if isinstance(self.required, list) and property_name in self.required:
@@ -35,3 +41,12 @@ class Object(BaseSchema):
             return super().generate(context)
         except ProviderNotSetException:
             return {o.name: o.generate(context) for o in self.properties if self.should_keep(o.name)}
+
+    def model(self, context: Dict[str, Any]):
+        self.generate(context)
+        _type = create_model("Object", **{o.name: o.model(context) for o in self.properties})
+        context["__internal__"][_type.__name__] = _type
+        return self.to_pydantic(context, _type)
+
+
+Object.update_forward_refs()

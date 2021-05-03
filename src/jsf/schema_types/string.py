@@ -1,6 +1,6 @@
+import logging
 import random
 import re
-from dataclasses import dataclass
 from datetime import timezone
 from typing import Any, Callable, Dict, Optional
 
@@ -9,6 +9,7 @@ from faker import Faker
 
 from .base import BaseSchema, ProviderNotSetException
 
+logger = logging.getLogger()
 faker = Faker()
 
 FRAGMENT = "[a-zA-Z][a-zA-Z0-9+-.]*"
@@ -58,11 +59,10 @@ def random_fixed_length_sentence(_min: int, _max: int) -> str:
     return output.strip()
 
 
-@dataclass
 class String(BaseSchema):
     minLength: Optional[float] = 0
     maxLength: Optional[float] = 50
-    pattern: Optional[str] = re.compile(f".{{{minLength},{maxLength}}}")
+    pattern: Optional[str] = None
     format: Optional[str] = None
     # enum: Optional[List[Union[str, int, float]]] = None  # NOTE: Not used - enums go to enum class
 
@@ -74,4 +74,12 @@ class String(BaseSchema):
             format_map["relative-json-pointer"] = lambda: random.choice(context["state"]["__all_json_paths__"])
             if format_map.get(self.format) is not None:
                 return format_map[self.format]()
+            if self.pattern is not None:
+                return rstr.xeger(self.pattern)
             return random_fixed_length_sentence(self.minLength, self.maxLength)
+
+    def model(self, context: Dict[str, Any]):
+        return self.to_pydantic(context, str)
+
+    def from_dict(d):
+        return String(**d)

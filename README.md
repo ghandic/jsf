@@ -38,7 +38,7 @@ pip install jsf
 * smart_open - For opening external $ref
 * jsonschema - For schema/instance validation
 * typer - For neat commandline applications
-* dataclasses_json - For easy dataclass serialization
+* pydantic - For easy serialization and validation
 
 ## License
 

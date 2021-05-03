@@ -12,7 +12,7 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     package_dir={"": "src"},
     packages=setuptools.find_packages("src", exclude=["tests"]),
-    install_requires=["rstr", "faker", "smart_open", "jsonschema", "typer", "dataclasses_json"],
+    install_requires=["rstr", "faker", "smart_open", "jsonschema", "typer", "pydantic"],
     url="https://github.com/ghandic/jsf",
     classifiers=[
         "Programming Language :: Python :: 3",

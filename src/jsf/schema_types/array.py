@@ -1,21 +1,21 @@
 import random
-from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional, Union
 
-from dataclasses_json import config, dataclass_json
+from pydantic import Field
 
 from .base import BaseSchema, ProviderNotSetException
 
 
-@dataclass_json
-@dataclass
 class Array(BaseSchema):
     items: Optional[BaseSchema] = None
     contains: Optional[BaseSchema] = None  # NOTE: Validation only
     minItems: Optional[int] = 0
     maxItems: Optional[int] = 5
     uniqueItems: Optional[bool] = False
-    fixed: Optional[Union[str, int]] = field(default=None, metadata=config(field_name="$fixed"))
+    fixed: Optional[Union[int, str]] = Field(None, alias="$fixed")
+
+    def from_dict(d):
+        return Array(**d)
 
     def generate(self, context: Dict[str, Any]) -> Optional[List[Any]]:
         try:
@@ -34,3 +34,7 @@ class Array(BaseSchema):
                     output.add(self.items.generate(context))
                 output = list(output)
             return output
+
+    def model(self, context: Dict[str, Any]):
+        _type = eval(f"List[Union[{','.join([self.items.model(context)[0].__name__])}]]", context["__internal__"])
+        return self.to_pydantic(context, _type)
