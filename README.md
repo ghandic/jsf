@@ -1,55 +1,81 @@
-# jsf
+<h1 align="center">
+   <strong>jsf</strong><img src="docs/assets/imgs/index.png" width="50" style="position: absolute; padding-left:10px;">
+</h1>
 
-<img src="docs/assets/imgs/index.png" width="100" >
+<p align="center">
+    <a href="https://codecov.io/gh/ghandic/jsf" target="_blank">
+        <img src="https://img.shields.io/codecov/c/github/ghandic/jsf?color=%2334D058" alt="Coverage">
+    </a>
+    <a href="https://ghandic.github.io/jsf/index.html" target="_blank">
+        <img src="https://img.shields.io/badge/docs-mkdocs%20material-blue.svg?style=flat" alt="Docs">
+    </a>
+    <a href="https://pypi.org/project/jsf/" target="_blank">
+        <img src="https://img.shields.io/pypi/v/jsf.svg" alt="PyPI Latest Release">
+    </a>
+    <br />
+    <a href="https://github.com/ghandic/jsf/blob/main/LICENSE" target="_blank">
+        <img src="https://img.shields.io/github/license/ghandic/jsf.svg" alt="License">
+    </a>
+    <a href="https://github.com/psf/black" target="_blank">
+        <img src="https://img.shields.io/badge/code%20style-black-000000.svg" alt="Code style: black">
+    </a>
+</p>
 
-[![coverage](https://img.shields.io/codecov/c/github/ghandic/jsf?color=%2334D058)](https://codecov.io/gh/ghandic/jsf)
-[![documentation](https://img.shields.io/badge/docs-mkdocs%20material-blue.svg?style=flat)](https://ghandic.github.io/jsf/index.html)
-[![PyPI Latest Release](https://img.shields.io/pypi/v/jsf.svg)](https://pypi.org/project/jsf/)
-[![License](https://img.shields.io/github/license/ghandic/jsf.svg)](https://github.com/ghandic/jsf/blob/main/LICENSE)
-[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
-## What is it
-
-This repository is a Python port of [json-schema-faker](https://github.com/json-schema-faker/json-schema-faker) with some minor differences in implementation.
-
-> Use **jsf** along with fake generators to provide consistent and meaningful fake data for your system.
+Use **jsf** along with fake data generators to provide consistent and meaningful fake data for your system.
 
 ## Main Features
 
-* Provides out of the box data generation from any JSON schema
-* Extendable custom data providers using any lambda functions
-* Multi level state for dependant data (eg multiple objects sharing value, such as children with same surname)
-* Inbuilt validation of fake JSON produced
+- Provides out of the box data generation from any JSON schema 📦 
+* Extendable custom data providers using any lambda functions 🔗
+* Multi level state for dependant data (eg multiple objects sharing value, such as children with same surname) 🤓 
+* Inbuilt validation of fake JSON produced ✅
+* In memory conversion from JSON Schema to Pydantic Models with generated examples 🤯
+* Seamless integration with [FastAPI](https://fastapi.tiangolo.com/) 🚀
 
-## Where to get it
+## Installation
 
-The source code is currently hosted on GitHub at: https://github.com/ghandic/jsf
+<div class="termy">
 
-Binary installers for the latest released version are available at the [Python package index](https://pypi.org/project/jsf/)
+```console
+$ pip install jsf
 
-```bash
-pip install jsf
+---> 100%
 ```
 
-## Dependencies
-
-* faker - For fake data provisioning
-* rstr - For building strings from regex patterns
-* smart_open - For opening external $ref
-* jsonschema - For schema/instance validation
-* typer - For neat commandline applications
-* pydantic - For easy serialization and validation
-
-## License
-
-* [MIT License](/LICENSE)
+</div>
 
 ## Usage
 
-### As a program
+### Basic 😊
 
-* pip install jsf
-* In your code where you need to you will be using jsf you can refer to below script as reference:
+```python
+from jsf import JSF
+
+faker = JSF(
+    {
+        "type": "object",
+        "properties": {
+            "name": {"type": "string", "$provider": "faker.name"},
+            "email": {"type": "string", "$provider": "faker.email"},
+        },
+        "required": ["name", "email"],
+    }
+)
+
+fake_json = faker.generate()
+```
+
+Results in ...
+
+```json
+{
+    name': 'Jesse Phillips', 
+    'email': 'xroberson@hotmail.com'
+}
+```
+
+### From JSON file 📁
 
 ```python
 from jsf import JSF
@@ -58,9 +84,10 @@ faker = JSF.from_json("demo-schema.json")
 fake_json = faker.generate()
 ```
 
-### From the commandline
+<details markdown="1">
+<summary>Or run stright from the <code>commandline</code>...</summary>
 
-#### Raw install
+#### Native install
 
 ```bash
 jsf --schema src/tests/data/custom.json --instance wow.json
@@ -69,24 +96,61 @@ jsf --schema src/tests/data/custom.json --instance wow.json
 #### Docker
 
 ```bash
-docker build . -t challisa/jsf
-docker run -v $PWD:/data challisa/jsf jsf --schema /data/src/tests/data/custom.json --instance /data/wow.json
+docker run -v $PWD:/data challisa/jsf jsf --schema /data/custom.json --instance /data/example.json
 ```
 
-## Mkdocs
+</details>
 
-The documentation for this project is written in Markdown and built using mkdocs, the easiest way to get the docs up for development is to run it in Docker
 
-```bash
-docker-compose up mkdocs-jsf
+### FastAPI Integration 🚀
+
+Create a file main.py with:
+
+```python
+from jsf import JSF
+from fastapi import FastAPI
+
+app = FastAPI(docs_url="/")
+generator = JSF.from_json("custom.json")
+
+
+@app.get("/generate", response_model=generator.pydantic())
+def read_root():
+    return generator.generate()
+
 ```
 
-## Contributing to jsf
+Run the server with:
 
-To contribute to jsf, follow these steps:
+<div class="termy">
 
-1. Fork the repository
-2. Create a branch in your own fork: `git checkout -b <branch_name>`.
-3. Make your changes and commit them: `git commit -m '<commit_message>'`
-4. Push to the original branch: `git push origin <project_name>/<location>`
-5. Create the pull request back to our fork.
+```console
+$ uvicorn main:app --reload
+
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+INFO:     Started reloader process [28720]
+INFO:     Started server process [28722]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+```
+
+Navigate to [http://127.0.0.1:8000](http://127.0.0.1:8000) and check out your endpoint. Notice the following are all automatically created:
+
+- Schema with descriptions and examples
+- Example response
+- Data generation by clicking "try it out"
+
+![Example Swagger UI - Page 1](docs/assets/imgs/ui-1.png)
+![Example Swagger UI - Page 2](docs/assets/imgs/ui-2.png)
+![Example Swagger UI - Page 3](docs/assets/imgs/ui-3.png)
+![Example Swagger UI - Page 4](docs/assets/imgs/ui-4.png)
+
+</div>
+
+## Credits
+
+- This repository is a Python port of [json-schema-faker](https://github.com/json-schema-faker/json-schema-faker) with some minor differences in implementation.
+
+## License
+
+* [MIT License](/LICENSE)
