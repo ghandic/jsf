@@ -118,7 +118,6 @@ def test_fake_array(TestData):
 def test_fake_array_fixed_int(TestData):
     with open(TestData / f"array-fixed-int.json", "r") as file:
         schema = json.load(file)
-    print(schema)
     p = JSF(schema)
 
     assert isinstance(p.generate(), list)
@@ -130,7 +129,6 @@ def test_fake_array_fixed_int(TestData):
 def test_fake_array_fixed_str(TestData):
     with open(TestData / f"array-fixed-str.json", "r") as file:
         schema = json.load(file)
-    print(schema)
     p = JSF(schema)
 
     assert isinstance(p.generate(), list)
@@ -238,7 +236,6 @@ def test_external_ref(TestData):
     p = JSF(schema)
     fake_data = p.generate(50)
     for f in fake_data:
-        print(f)
         assert isinstance(f, dict)
         assert isinstance(f["ReferenceToLocalSchema"], dict)
         assert isinstance(f["ReferenceToLocalSchema"]["no-write"], bool)

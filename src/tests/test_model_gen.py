@@ -45,5 +45,4 @@ def test_gen_model(TestData, filestem, expected_type_anno):
         schema = json.load(file)
     p = JSF(schema)
     Model = p.pydantic()
-    print(type(Model), type(expected_type_anno))
     assert type(expected_type_anno) == type(Model)

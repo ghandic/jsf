@@ -28,7 +28,6 @@ class Object(BaseSchema):
     patternProperties: Optional[Dict[str, BaseSchema]] = None
 
     def from_dict(d):
-        print(d)
         return Object(**d)
 
     def should_keep(self, property_name: str) -> bool:
