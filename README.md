@@ -70,7 +70,7 @@ Results in ...
 
 ```json
 {
-    name': 'Jesse Phillips', 
+    'name': 'Jesse Phillips', 
     'email': 'xroberson@hotmail.com'
 }
 ```
