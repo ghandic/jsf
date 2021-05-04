@@ -68,7 +68,7 @@ fake_json = faker.generate()
 
 Results in ...
 
-```json
+```python
 {
     'name': 'Jesse Phillips', 
     'email': 'xroberson@hotmail.com'
