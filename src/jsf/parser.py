@@ -6,7 +6,6 @@ from datetime import datetime
 from itertools import count
 from typing import Any, Dict, List, Optional, Tuple, Union
 from json2xml import json2xml
-from json2xml.utils import readfromstring
 
 from faker import Faker
 from jsonschema import validate as val
