@@ -5,9 +5,11 @@ from copy import deepcopy
 from datetime import datetime
 from itertools import count
 from typing import Any, Dict, List, Optional, Tuple, Union
+from json2xml import json2xml
+from json2xml.utils import readfromstring
 
 from faker import Faker
-from jsonschema import validate
+from jsonschema import validate as val
 from pydantic import conlist
 from smart_open import open as s_open
 
@@ -134,13 +136,18 @@ class JSF:
     def pydantic(self):
         return self.root.model(context=self.context)[0]
 
-    def generate_and_validate(self) -> None:
+    def validate(self) -> None:
         fake = self.root.generate(context=self.context)
-        validate(instance=fake, schema=self.root_schema)
+        val(instance=fake, schema=self.root_schema)
 
     def to_json(self, path: str) -> None:
         with open(path, "w") as f:
             json.dump(self.generate(), f, indent=2)
+
+    def generate_xml(self):
+        data = self.generate()
+        data = json2xml.Json2xml(data, pretty=True).to_xml()
+        return data
 
     @staticmethod
     def from_json(path: str) -> "JSF":
