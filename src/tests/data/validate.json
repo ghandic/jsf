@@ -1,0 +1,38 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema",
+    "title": "Employee Json Template Spec",
+    "type": "object",
+    "properties": {
+      "EmpID": {
+        "type": "string",
+        "maximum": 255
+      },
+      "UserID": {
+        "type": "number",
+        "maximum": 255
+      },
+      "Name": {
+        "type": "string",
+        "minimum": 2
+      },
+      "Email": {
+        "type": "string",
+        "minLength": 6,
+        "maxLength": 255
+      },
+      "Phone": {
+        "type": "string",
+        "maxLength": 10
+      },
+      "Salary": {
+        "type": "number"
+      },
+      "Hiredate": {
+        "type": "string",
+        "format": "date"
+      },
+      "RemainingHolidays": {
+        "type": "number"
+      }
+    }
+  }

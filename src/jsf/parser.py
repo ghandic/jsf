@@ -127,10 +127,25 @@ class JSF:
     def context(self):
         return {**self.base_context, "state": deepcopy(self.base_state)}
 
-    def generate(self, n: Optional[int] = None) -> Any:
+    def generate(self, n: Optional[int] = None, validate:Optional[bool] = False) -> Any:
         if n is None or n == 1:
+            if validate:
+                data = self.root.generate(context=self.context)
+                val(instance=data,schema=self.root_schema)
+                return data
             return self.root.generate(context=self.context)
-        return [self.root.generate(context=self.context) for _ in range(n)]
+        else:
+            data_arr = []
+            for _ in range(n):
+                if validate:
+                    data = self.root.generate(context=self.context)
+                    val(instance=data,schema=self.root_schema)
+                    data_arr.append(data)
+                else:
+                    data = self.root.generate(context=self.context)
+                    data_arr.append(data)
+            return data_arr
+
 
     def pydantic(self):
         return self.root.model(context=self.context)[0]

@@ -1,7 +1,9 @@
 import json
 import re
-
+import json2xml
+import pytest
 from ..jsf.parser import JSF
+import re
 
 
 def test_fake_boolean(TestData):
@@ -229,7 +231,7 @@ def test_const(TestData):
         assert isinstance(f["country"], str)
         assert f["country"] == "United States of America"
 
-
+#@pytest.mark.xfail(reason="Always failing with "no such file or dir" error!!")
 def test_external_ref(TestData):
     with open(TestData / f"external-ref.json", "r") as file:
         schema = json.load(file)
@@ -245,8 +247,36 @@ def test_external_ref(TestData):
         assert all(isinstance(t, str) for t in f["ReferenceToExternalSchema"]["src"])
 
 
-def test_gen_and_validate(TestData):
-    with open(TestData / f"custom.json", "r") as file:
+def test_validate(TestData):
+    with open(TestData / f"validate.json", "r") as file:
         schema = json.load(file)
     p = JSF(schema)
-    [p.generate_and_validate() for _ in range(50)]
+    [p.validate() for _ in range(50)]
+
+def test_validate_and_generate_single_record(TestData):
+    """validate and generate data from schema"""
+    with open(TestData / f"validate.json", "r") as file:
+        schema = json.load(file)
+    p = JSF(schema)
+    fake_data = p.generate(validate=True)
+    assert(isinstance(fake_data,dict))
+
+def test_validate_and_generate__multiple_records(TestData):
+    """validate and generate data from schema"""
+    with open(TestData / f"validate.json", "r") as file:
+        schema = json.load(file)
+    p = JSF(schema)
+    fake_data = p.generate(validate=True,n=100)
+    assert(isinstance(fake_data,list))
+    assert(len(fake_data)==100)
+    for x in fake_data:
+        assert(isinstance(x,dict))
+    
+def test_generate_xml(TestData):
+    """validate and generate data from schema"""
+    with open(TestData / f"validate.json", "r") as file:
+        schema = json.load(file)
+    p = JSF(schema)
+    p.generate_xml()
+
+
