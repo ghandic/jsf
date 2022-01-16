@@ -1,0 +1,46 @@
+{
+  "str": {
+    "type": ["string", "null"]
+  },
+  "int": {
+    "type": ["integer", "null"]
+  },
+  "num": {
+    "type": ["number", "null"]
+  },
+  "bool": {
+    "type": ["boolean", "null"]
+  },
+  "enum": {
+    "enum": ["r", "g", "b", null]
+  },
+  "arr": {
+    "type": ["array", "null"],
+    "items": {"type": "integer"}
+  },
+  "arr_nested": {
+    "type": "array",
+    "items": {"type": ["integer", "null"]}
+  },
+  "obj": {
+    "type": ["object", "null"],
+    "required": ["req"],
+    "properties": {
+      "req": {
+        "type": "boolean"
+      },
+      "non_req": {
+        "type": "integer"
+      }
+    }
+  },
+  "obj_nested": {
+    "type": "object",
+    "required": ["req"],
+    "properties": {
+      "req": {
+        "type": ["boolean", "null"]
+      }
+    }
+  }
+}
