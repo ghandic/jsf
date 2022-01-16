@@ -68,7 +68,8 @@ class String(BaseSchema):
 
     def generate(self, context: Dict[str, Any]) -> Optional[str]:
         try:
-            return str(super().generate(context))
+            s = super().generate(context)
+            return str(s) if s else s
         except ProviderNotSetException:
             format_map["regex"] = lambda: rstr.xeger(self.pattern)
             format_map["relative-json-pointer"] = lambda: random.choice(context["state"]["__all_json_paths__"])

@@ -10,7 +10,7 @@ _types = {"string": str, "integer": int, "number": float}
 
 
 class JSFEnum(BaseSchema):
-    enum: Optional[List[Union[str, int, float]]] = []
+    enum: Optional[List[Union[str, int, float, None]]] = []
 
     def generate(self, context: Dict[str, Any]) -> Optional[Union[str, int, float]]:
         try:
