@@ -5,7 +5,6 @@ from copy import deepcopy
 from datetime import datetime
 from itertools import count
 from typing import Any, Dict, List, Optional, Tuple, Union
-from json2xml import json2xml
 
 from faker import Faker
 from jsonschema import validate as val
@@ -49,25 +48,30 @@ class JSF:
 
     def __parse_object(self, name: str, path: str, schema: Dict[str, Any]) -> Object:
         _, is_nullable = self.__is_field_nullable(schema)
-        model = Object.from_dict({"name": name, "path": path, "is_nullable": is_nullable, **schema})
+        model = Object.from_dict(
+            {"name": name, "path": path, "is_nullable": is_nullable, **schema})
         props = []
         for _name, definition in schema.get("properties", {}).items():
-            props.append(self.__parse_definition(_name, path=f"{path}/{_name}", schema=definition))
+            props.append(self.__parse_definition(
+                _name, path=f"{path}/{_name}", schema=definition))
         model.properties = props
         return model
 
     def __parse_array(self, name: str, path: str, schema: Dict[str, Any]) -> Array:
         _, is_nullable = self.__is_field_nullable(schema)
-        arr = Array.from_dict({"name": name, "path": path, "is_nullable": is_nullable, **schema})
+        arr = Array.from_dict(
+            {"name": name, "path": path, "is_nullable": is_nullable, **schema})
         arr.items = self.__parse_definition(name, name, schema["items"])
         return arr
 
     def __parse_tuple(self, name: str, path: str, schema: Dict[str, Any]) -> JSFTuple:
         _, is_nullable = self.__is_field_nullable(schema)
-        arr = JSFTuple.from_dict({"name": name, "path": path, "is_nullable": is_nullable, **schema})
+        arr = JSFTuple.from_dict(
+            {"name": name, "path": path, "is_nullable": is_nullable, **schema})
         arr.items = []
         for i, item in enumerate(schema["items"]):
-            arr.items.append(self.__parse_definition(name, path=f"{name}[{i}]", schema=item))
+            arr.items.append(self.__parse_definition(
+                name, path=f"{name}[{i}]", schema=item))
         return arr
 
     def __is_field_nullable(self, schema: Dict[str, Any]) -> Tuple[str, bool]:
@@ -114,38 +118,28 @@ class JSF:
             cls.path = path
             return cls
         else:
-            raise ValueError(f"Cannot parse schema {repr(schema)}")  # pragma: no cover
+            raise ValueError(
+                f"Cannot parse schema {repr(schema)}")  # pragma: no cover
 
     def _parse(self, schema: Dict[str, Any]) -> AllTypes:
         for name, definition in schema.get("definitions", {}).items():
-            item = self.__parse_definition(name, path="#/definitions", schema=definition)
+            item = self.__parse_definition(
+                name, path="#/definitions", schema=definition)
             self.definitions[f"#/definitions/{name}"] = item
 
-        self.root = self.__parse_definition(name="root", path="#", schema=schema)
+        self.root = self.__parse_definition(
+            name="root", path="#", schema=schema)
 
     @property
     def context(self):
         return {**self.base_context, "state": deepcopy(self.base_state)}
 
-    def generate(self, n: Optional[int] = None, validate:Optional[bool] = False) -> Any:
-        if n is None or n == 1:
-            if validate:
-                data = self.root.generate(context=self.context)
-                val(instance=data,schema=self.root_schema)
-                return data
-            return self.root.generate(context=self.context)
-        else:
-            data_arr = []
-            for _ in range(n):
-                if validate:
-                    data = self.root.generate(context=self.context)
-                    val(instance=data,schema=self.root_schema)
-                    data_arr.append(data)
-                else:
-                    data = self.root.generate(context=self.context)
-                    data_arr.append(data)
-            return data_arr
-
+    def generate(self, n: Optional[int] = None, validate: Optional[bool] = False) -> Any:
+        data = [self.root.generate(context=self.context)
+                for _ in range(n or 1)]
+        if validate:
+            [val(instance=d, schema=self.root_schema) for d in data]
+        return data[0] if n in [None, 1] else data
 
     def pydantic(self):
         return self.root.model(context=self.context)[0]
@@ -157,11 +151,6 @@ class JSF:
     def to_json(self, path: str) -> None:
         with open(path, "w") as f:
             json.dump(self.generate(), f, indent=2)
-
-    def generate_xml(self):
-        data = self.generate()
-        data = json2xml.Json2xml(data, pretty=True).to_xml()
-        return data
 
     @staticmethod
     def from_json(path: str) -> "JSF":
