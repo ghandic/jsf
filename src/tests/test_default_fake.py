@@ -4,6 +4,15 @@ import re
 from ..jsf.parser import JSF
 
 
+def test_fake_anyof(TestData):
+    with open(TestData / f"anyof.json", "r") as file:
+        schema = json.load(file)
+    p = JSF(schema)
+
+    fake_data = [p.generate() for _ in range(10)]
+    for d in fake_data:
+        assert isinstance(d, str) or isinstance(d, float)
+
 def test_fake_boolean(TestData):
     with open(TestData / f"boolean.json", "r") as file:
         schema = json.load(file)
