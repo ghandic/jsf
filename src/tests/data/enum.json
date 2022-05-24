@@ -1,3 +1,9 @@
 {
-    "enum": ["red", "amber", "green"]
+    "enum": [
+        "red",
+        "amber",
+        "green",
+        null,
+        42
+    ]
 }
