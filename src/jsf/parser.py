@@ -11,7 +11,7 @@ from jsonschema import validate
 from pydantic import conlist
 from smart_open import open as s_open
 
-from .schema_types import AllTypes, Array, JSFEnum, JSFTuple, Object, PrimativeTypes, Primitives
+from .schema_types import AllTypes, Array, JSFEnum, JSFTuple, Object, PrimativeTypes, Primitives, AnyOf
 
 logger = logging.getLogger()
 faker = Faker()
@@ -112,6 +112,11 @@ class JSF:
             cls.name = name
             cls.path = path
             return cls
+        elif "anyOf" in schema:
+            schemas = []
+            for d in schema["anyOf"]:
+                schemas.append(self.__parse_definition(name, path, d))
+            return AnyOf(schemas=schemas)
         else:
             raise ValueError(f"Cannot parse schema {repr(schema)}")  # pragma: no cover
 

@@ -8,6 +8,7 @@ from .null import Null
 from .number import Integer, Number
 from .object import Object
 from .string import String
+from .anyof import AnyOf
 
 Primitives = {
     "number": Number,
@@ -18,5 +19,5 @@ Primitives = {
     "null": Null,
 }
 
-AllTypes = Union[JSFEnum, Object, Array, JSFTuple, String, Boolean, Null, Number, Integer]
+AllTypes = Union[JSFEnum, Object, Array, JSFTuple, String, Boolean, Null, Number, Integer, AnyOf]
 PrimativeTypes = Union[String, Boolean, Null, Number, Integer]
