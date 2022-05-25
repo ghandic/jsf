@@ -26,3 +26,6 @@ class JSFEnum(BaseSchema):
         _type = Enum(value=self._get_unique_name(context), type=base, names={str(v): v for v in self.enum})
         context["__internal__"][_type.__name__] = _type
         return self.to_pydantic(context, _type)
+
+    class Config:
+        smart_union = True
