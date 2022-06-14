@@ -72,10 +72,9 @@ class JSF:
     def __is_field_nullable(self, schema: Dict[str, Any]) -> Tuple[str, bool]:
         item_type = schema.get("type")
         if isinstance(item_type, list):
-            if "null" in item_type and len(set(item_type)) == 2:
-                deepcopy(item_type).remove("null")
-                return item_type[0], True
-            raise TypeError  # pragma: no cover - not currently supporting other types TODO
+            if "null" in item_type:
+                return random.choice(item_type), True
+            return random.choice(item_type), False
         return item_type, False
 
     def __parse_definition(self, name: str, path: str, schema: Dict[str, Any]) -> AllTypes:
