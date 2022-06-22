@@ -13,6 +13,7 @@ def test_fake_anyof(TestData):
     for d in fake_data:
         assert isinstance(d, str) or isinstance(d, float)
 
+
 def test_fake_boolean(TestData):
     with open(TestData / f"boolean.json", "r") as file:
         schema = json.load(file)
@@ -122,6 +123,20 @@ def test_fake_array(TestData):
     assert all(len(set(d)) == len(d) for d in fake_data), fake_data
     assert all(len(d) <= 5 for d in fake_data), fake_data
     assert all(len(d) >= 1 for d in fake_data), fake_data
+
+
+def test_fake_array_dicts(TestData):
+    with open(TestData / f"array-dicts.json", "r") as file:
+        schema = json.load(file)
+    p = JSF(schema)
+
+    assert isinstance(p.generate(), dict)
+    fake_data = [p.generate() for _ in range(1000)]
+    assert all(len(d["Basket"]) == 2 for d in fake_data), fake_data
+    assert all("Item Name" in d["Basket"][0] for d in fake_data), fake_data
+    assert all("Amount" in d["Basket"][0] for d in fake_data), fake_data
+    assert all("Item Name" in d["Basket"][1] for d in fake_data), fake_data
+    assert all("Amount" in d["Basket"][1] for d in fake_data), fake_data
 
 
 def test_fake_array_fixed_int(TestData):

@@ -1,0 +1,32 @@
+{
+	"type": "object",
+	"properties": {
+		"Basket": {
+			"type": "array",
+			"items": { "$ref": "#/definitions/basket_of_items" },
+			"minItems": 2,
+			"maxItems": 2,
+			"uniqueItems": true
+		}
+	},
+	"definitions": {
+		"basket_of_items": {
+			"type": "object",
+			"properties": {
+				"Item Name": {
+					"type": "string"
+					},
+				"Amount": {
+					"type": "number"
+					}
+				},
+			"required": [
+					"Item Name",
+					"Amount"
+					]
+		}
+	},
+	"required": [
+		"Basket"
+	]
+}

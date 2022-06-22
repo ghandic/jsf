@@ -28,7 +28,12 @@ class Array(BaseSchema):
                 self.minItems = self.maxItems = self.fixed
 
             output = [self.items.generate(context) for _ in range(random.randint(self.minItems, self.maxItems))]
-            if self.uniqueItems:
+            if self.uniqueItems and self.items.type == "object":
+                output = [dict(s) for s in set(frozenset(d.items()) for d in output)]
+                while len(output) < self.minItems:
+                    output.append(self.items.generate(context))
+                    output = [dict(s) for s in set(frozenset(d.items()) for d in output)]
+            elif self.uniqueItems:
                 output = set(output)
                 while len(output) < self.minItems:
                     output.add(self.items.generate(context))
