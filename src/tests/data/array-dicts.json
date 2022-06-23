@@ -14,10 +14,13 @@
 			"type": "object",
 			"properties": {
 				"Item Name": {
-					"type": "string"
+					"type": "string",
+					"enum": ["A", "B", "C", "D", "E"]
 					},
 				"Amount": {
-					"type": "number"
+					"type": "integer",
+					"minimum": 0,
+					"exclusiveMaximum": 5
 					}
 				},
 			"required": [
