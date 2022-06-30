@@ -15,6 +15,7 @@ faker = Faker()
 FRAGMENT = "[a-zA-Z][a-zA-Z0-9+-.]*"
 URI_PATTERN = f"https?://{{hostname}}(?:{FRAGMENT})+"
 PARAM_PATTERN = "(?:\\?([a-z]{1,7}(=\\w{1,5})?&){0,3})?"
+DURATION_PATTERN = "[0-9]{10}"
 
 LOREM = """Lorem ipsum dolor sit amet consectetur adipisicing elit.
 Hic molestias, esse veniam placeat officiis nobis architecto modi
@@ -25,6 +26,7 @@ format_map: Dict[str, Callable] = {
     "date-time": lambda: faker.date_time(timezone.utc).isoformat(),
     "time": lambda: faker.date_time(timezone.utc).isoformat().split("T")[1],
     "date": lambda: faker.date_time(timezone.utc).isoformat().split("T")[0],
+    "duration": lambda: rstr.xeger(DURATION_PATTERN),
     "email": faker.email,
     "idn-email": faker.email,
     "hostname": faker.hostname,

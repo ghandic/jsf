@@ -11,7 +11,7 @@ from jsonschema import validate
 from pydantic import conlist
 from smart_open import open as s_open
 
-from .schema_types import AllTypes, Array, JSFEnum, JSFTuple, Object, PrimativeTypes, Primitives, AnyOf
+from .schema_types import AllTypes, AnyOf, Array, JSFEnum, JSFTuple, Object, PrimativeTypes, Primitives
 
 logger = logging.getLogger()
 faker = Faker()

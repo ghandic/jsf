@@ -20,4 +20,3 @@ class AnyOf(BaseSchema):
 
     def model(self, context: Dict[str, Any]):
         pass
-

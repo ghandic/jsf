@@ -1,5 +1,6 @@
-from jsf import JSF
 from fastapi import FastAPI
+
+from jsf import JSF
 
 app = FastAPI(docs_url="/")
 generator = JSF.from_json("custom.json")

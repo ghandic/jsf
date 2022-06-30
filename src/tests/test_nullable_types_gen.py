@@ -85,4 +85,3 @@ def test_object_nested_null_gen(TestData):
 
     actual = [p.generate() for _ in range(100)]
     assert all(type(each["req"]) in [bool, type(None)] for each in actual)
-

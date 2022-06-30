@@ -2,7 +2,7 @@ import logging
 import random
 from typing import Any, Dict, List, Optional, Union
 
-from pydantic import create_model, BaseModel
+from pydantic import BaseModel, create_model
 
 from .base import BaseSchema, ProviderNotSetException
 
