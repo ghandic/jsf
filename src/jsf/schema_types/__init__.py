@@ -1,6 +1,7 @@
 from typing import Union
 
 from ._tuple import JSFTuple
+from .anyof import AnyOf
 from .array import Array
 from .boolean import Boolean
 from .enum import JSFEnum
@@ -8,7 +9,6 @@ from .null import Null
 from .number import Integer, Number
 from .object import Object
 from .string import String
-from .anyof import AnyOf
 
 Primitives = {
     "number": Number,

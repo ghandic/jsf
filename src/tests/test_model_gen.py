@@ -38,7 +38,8 @@ else:
 
 
 @pytest.mark.parametrize(
-    "filestem, expected_type_anno", expected,
+    "filestem, expected_type_anno",
+    expected,
 )
 def test_gen_model(TestData, filestem, expected_type_anno):
     with open(TestData / f"{filestem}.json", "r") as file:
