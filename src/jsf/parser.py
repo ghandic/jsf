@@ -122,9 +122,10 @@ class JSF:
             raise ValueError(f"Cannot parse schema {repr(schema)}")  # pragma: no cover
 
     def _parse(self, schema: Dict[str, Any]) -> AllTypes:
-        for name, definition in schema.get("definitions", {}).items():
-            item = self.__parse_definition(name, path="#/definitions", schema=definition)
-            self.definitions[f"#/definitions/{name}"] = item
+        for def_tag in ("definitions", "$defs"):
+            for name, definition in schema.get(def_tag, {}).items():
+                item = self.__parse_definition(name, path=f"#/{def_tag}", schema=definition)
+                self.definitions[f"#/{def_tag}/{name}"] = item
 
         self.root = self.__parse_definition(name="root", path="#", schema=schema)
 
