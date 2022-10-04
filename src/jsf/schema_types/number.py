@@ -46,7 +46,7 @@ class Number(BaseSchema):
 class Integer(Number):
     def generate(self, context: Dict[str, Any]) -> Optional[int]:
         n = super().generate(context)
-        return int(n) if n else n
+        return int(n) if n is not None else n
 
     def model(self, context: Dict[str, Any]):
         return self.to_pydantic(context, int)
