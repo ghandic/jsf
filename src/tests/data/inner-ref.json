@@ -7,6 +7,9 @@
                 "id": {
                     "$ref": "#/definitions/positiveInt"
                 },
+                "uuid": {
+                    "$ref": "#/$defs/uuid"
+                },
                 "name": {
                     "type": "string",
                     "faker": "name.findName"
@@ -25,7 +28,7 @@
                     "faker": "internet.email"
                 }
             },
-            "required": ["id", "name", "birthday", "email"]
+            "required": ["id", "uuid", "name", "birthday", "email"]
         }
     },
     "required": ["user"],
@@ -34,6 +37,12 @@
             "type": "integer",
             "minimum": 0,
             "minimumExclusive": true
+        }
+    },
+    "$defs": {
+        "uuid": {
+            "type": "string",
+            "pattern": "^[0-9A-F]{16,}$"
         }
     }
 }
