@@ -117,12 +117,12 @@ class JSF:
             schemas = []
             for d in schema["anyOf"]:
                 schemas.append(self.__parse_definition(name, path, d))
-            return AnyOf(name=name, path=path, schemas=schemas)
+            return AnyOf(name=name, path=path, schemas=schemas, **schema)
         elif "oneOf" in schema:
             schemas = []
             for d in schema["oneOf"]:
                 schemas.append(self.__parse_definition(name, path, d))
-            return OneOf(name=name, path=path, schemas=schemas)
+            return OneOf(name=name, path=path, schemas=schemas, **schema)
         else:
             raise ValueError(f"Cannot parse schema {repr(schema)}")  # pragma: no cover
 
