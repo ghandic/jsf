@@ -79,6 +79,18 @@ class JSF:
             raise TypeError  # pragma: no cover - not currently supporting other types TODO
         return item_type, False
 
+    def __parse_anyOf(self, name: str, path: str, schema: Dict[str, Any]) -> AnyOf:
+        schemas = []
+        for d in schema["anyOf"]:
+            schemas.append(self.__parse_definition(name, path, d))
+        return AnyOf(name=name, path=path, schemas=schemas, **schema)
+
+    def __parse_oneOf(self, name: str, path: str, schema: Dict[str, Any]) -> OneOf:
+        schemas = []
+        for d in schema["oneOf"]:
+            schemas.append(self.__parse_definition(name, path, d))
+        return OneOf(name=name, path=path, schemas=schemas, **schema)
+
     def __parse_definition(self, name: str, path: str, schema: Dict[str, Any]) -> AllTypes:
         self.base_state["__all_json_paths__"].append(path)
         item_type, is_nullable = self.__is_field_nullable(schema)
@@ -95,6 +107,10 @@ class JSF:
         elif "type" in schema:
             if item_type == "object" and "properties" in schema:
                 return self.__parse_object(name, path, schema)
+            elif item_type == "object" and "anyOf" in schema:
+                return self.__parse_anyOf(name, path, schema)
+            elif item_type == "object" and "oneOf" in schema:
+                return self.__parse_oneOf(name, path, schema)
             elif item_type == "array":
                 if (schema.get("contains") is not None) or isinstance(schema.get("items"), dict):
                     return self.__parse_array(name, path, schema)
@@ -114,15 +130,9 @@ class JSF:
             cls.path = path
             return cls
         elif "anyOf" in schema:
-            schemas = []
-            for d in schema["anyOf"]:
-                schemas.append(self.__parse_definition(name, path, d))
-            return AnyOf(name=name, path=path, schemas=schemas, **schema)
+            return self.__parse_anyOf(name, path, schema)
         elif "oneOf" in schema:
-            schemas = []
-            for d in schema["oneOf"]:
-                schemas.append(self.__parse_definition(name, path, d))
-            return OneOf(name=name, path=path, schemas=schemas, **schema)
+            return self.__parse_oneOf(name, path, schema)
         else:
             raise ValueError(f"Cannot parse schema {repr(schema)}")  # pragma: no cover
 
