@@ -1,0 +1,43 @@
+{
+  "type": "object",
+  "required": [
+    "ob"
+  ],
+  "properties": {
+    "ob": {
+      "type": "object",
+      "anyOf": [
+        {
+          "type": "object",
+          "required": [
+            "name",
+            "human_readable_value"
+          ],
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "human_readable_value": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "id",
+            "machine_readable_value"
+          ],
+          "properties": {
+            "id": {
+              "type": "string"
+            },
+            "machine_readable_value": {
+              "type": "string"
+            }
+          }
+        }
+      ]
+    }
+  }
+}

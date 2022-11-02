@@ -13,6 +13,16 @@ def test_fake_anyof(TestData):
     for d in fake_data:
         assert isinstance(d, str) or isinstance(d, float)
 
+def test_fake_anyof_object(TestData):
+    with open(TestData / f"anyof_object.json", "r") as file:
+        schema = json.load(file)
+    p = JSF(schema)
+
+    fake_data = [p.generate() for _ in range(10)]
+    for d in fake_data:
+        assert isinstance(d, dict)
+        assert ("name" in d["ob"]) or ("id" in d["ob"])
+
 def test_fake_oneof(TestData):
     with open(TestData / f"oneof.json", "r") as file:
         schema = json.load(file)
@@ -21,6 +31,17 @@ def test_fake_oneof(TestData):
     fake_data = [p.generate() for _ in range(10)]
     for d in fake_data:
         assert isinstance(d, bool) or isinstance(d, str)
+
+
+def test_fake_oneof_object(TestData):
+    with open(TestData / f"oneof_object.json", "r") as file:
+        schema = json.load(file)
+    p = JSF(schema)
+
+    fake_data = [p.generate() for _ in range(10)]
+    for d in fake_data:
+        assert isinstance(d, dict)
+        assert ("name" in d["ob"]) or ("id" in d["ob"])
 
 def test_fake_boolean(TestData):
     with open(TestData / f"boolean.json", "r") as file:
