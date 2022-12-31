@@ -18,7 +18,7 @@ SchemaDependency = Dict[str, "Object"]
 
 
 class Object(BaseSchema):
-    properties: Dict[str, BaseSchema] = None
+    properties: Dict[str, BaseSchema] = {}
     additionalProperties: Optional[Union[bool, BaseSchema]] = None
     required: Optional[List[str]] = None
     propertyNames: Optional[PropertyNames] = None

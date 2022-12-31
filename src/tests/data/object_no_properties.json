@@ -1,0 +1,110 @@
+{
+  "title": "AlertSync",
+  "description": "\u5ba1\u8ba1\u544a\u8b66model",
+  "type": "object",
+  "properties": {
+    "audit_label": {
+      "title": "Audit Label",
+      "type": "string",
+      "format": "ipv4"
+    },
+    "category": {
+      "title": "Category",
+      "minimum": 1,
+      "maximum": 15,
+      "type": "integer"
+    },
+    "level": {
+      "title": "Level",
+      "minimum": 0,
+      "maximum": 3,
+      "type": "integer"
+    },
+    "src_mac": {
+      "title": "Src Mac",
+      "default": "00:00:00:00:00:00",
+      "pattern": "^([0-9A-F]{2})(\\:[0-9A-F]{2}){5}$",
+      "type": "string"
+    },
+    "src_ip": {
+      "title": "Src Ip",
+      "type": "string",
+      "format": "ipv4"
+    },
+    "src_port": {
+      "title": "Src Port",
+      "minimum": 1,
+      "maximum": 65535,
+      "type": "integer"
+    },
+    "dst_mac": {
+      "title": "Dst Mac",
+      "default": "FF:FF:FF:FF:FF:FF",
+      "pattern": "^([0-9A-F]{2})(\\:[0-9A-F]{2}){5}$",
+      "type": "string"
+    },
+    "dst_ip": {
+      "title": "Dst Ip",
+      "type": "string",
+      "format": "ipv4"
+    },
+    "dst_port": {
+      "title": "Dst Port",
+      "minimum": 1,
+      "maximum": 65535,
+      "type": "integer"
+    },
+    "l4_protocol": {
+      "$ref": "#/definitions/L4ProtocolEnum"
+    },
+    "protocol": {
+      "$ref": "#/definitions/ProtocolEnum"
+    },
+    "illegal_ip": {
+      "title": "Illegal Ip",
+      "default": [],
+      "type": "array",
+      "items": {
+        "type": "string",
+        "format": "ipv4"
+      }
+    },
+    "last_at": {
+      "title": "Last At",
+      "default": "2022-12-30T14:08:30.753677",
+      "type": "string",
+      "format": "date-time"
+    },
+    "count": {
+      "title": "Count",
+      "default": 1,
+      "minimum": 1,
+      "maximum": 100000,
+      "type": "integer"
+    },
+    "other_info": {
+      "title": "Other Info",
+      "type": "object"
+    },
+    "payload": {
+      "title": "Payload",
+      "pattern": "^([0-9A-F]{2})+$",
+      "type": "string"
+    }
+  },
+  "required": ["audit_label", "category", "level", "l4_protocol", "protocol"],
+  "definitions": {
+    "L4ProtocolEnum": {
+      "title": "L4ProtocolEnum",
+      "description": "An enumeration.",
+      "enum": ["TCP", "UDP"],
+      "type": "string"
+    },
+    "ProtocolEnum": {
+      "title": "ProtocolEnum",
+      "description": "An enumeration.",
+      "enum": ["S7COMM", "MODBUS"],
+      "type": "string"
+    }
+  }
+}
