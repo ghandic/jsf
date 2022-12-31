@@ -3,6 +3,13 @@ import re
 
 from ..jsf.parser import JSF
 
+def test_fake_object_no_properties(TestData):
+    with open(TestData / f"object_no_properties.json", "r") as file:
+        schema = json.load(file)
+    p = JSF(schema)
+
+    [p.generate() for _ in range(10)] # Just validating no errors
+
 
 def test_fake_anyof(TestData):
     with open(TestData / f"anyof.json", "r") as file:
