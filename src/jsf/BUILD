@@ -12,7 +12,7 @@ python_distribution(
     dependencies=[":src"],
     provides=python_artifact(
         name="jsf",
-        version="0.5.1",
+        version="0.5.2",
         author="ghandic",
         description="Creates fake JSON files from a JSON schema",
         url="https://github.com/ghandic/jsf",
