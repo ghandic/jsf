@@ -245,6 +245,7 @@ def test_fake_string_format(TestData):
         for d in fake_data
     ), fake_data
     assert all(bool(re.match(r"\d{4}-\d{2}-\d{2}", d["date"])) for d in fake_data), fake_data
+    assert all(bool(re.match(r"[0-9]{10}", d["duration"])) for d in fake_data), fake_data
     assert all(
         bool(re.match(r"\d{2}\:\d{2}\:\d{2}\+\d{2}\:\d{2}", d["time"])) for d in fake_data
     ), fake_data
