@@ -10,6 +10,9 @@ backend_packages = [
 	"pants.backend.experimental.python.lint.pyupgrade"
 ]
 
+[python]
+interpreter_constraints = ["CPython>=3.7,<4"]
+
 [source]
 root_patterns = [
   '/src',
