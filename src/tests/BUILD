@@ -8,5 +8,6 @@ files(
 )
 
 python_tests(
-    dependencies=[":test_data"]
+    dependencies=[":test_data"],
+    interpreter_constraints=parametrize(py3=[">=3.7,<4"]),
 )
