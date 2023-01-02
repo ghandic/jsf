@@ -4,6 +4,7 @@
         "date-time",
         "time",
         "date",
+        "duration",
         "email",
         "idn-email",
         "hostname",
@@ -32,6 +33,10 @@
         "date": {
             "type": "string",
             "format": "date"
+        },
+        "duration": {
+            "type": "string",
+            "format": "duration"
         },
         "email": {
             "type": "string",
