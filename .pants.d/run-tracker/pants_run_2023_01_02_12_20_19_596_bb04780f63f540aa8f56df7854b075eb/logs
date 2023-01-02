@@ -1,5 +1,0 @@
-12:20:19.64 [INFO] Completed: Lint with Flake8 - flake8 succeeded.
-12:20:19.64 [INFO] Completed: Format with Black - black made no changes.
-12:20:19.64 [INFO] Completed: Format with docformatter - docformatter made no changes.
-12:20:19.64 [INFO] Completed: Format with pyupgrade - pyupgrade made no changes.
-12:20:19.64 [INFO] Completed: Format with isort - isort made no changes.

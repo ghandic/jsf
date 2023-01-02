@@ -1,7 +1,0 @@
-12:20:24.54 [31m[ERROR][0m Completed: Typecheck using MyPy - mypy failed (exit code 2).
-src/jsf/parser.py: [1m[31merror:[0;10m Source file found twice under different module names: [0;10m[1m"src.jsf.parser"[0;10m and [0;10m[1m"jsf.parser"[0;10m[0;10m
-src/jsf/parser.py: [34mnote:[0;10m See [4mhttps://mypy.readthedocs.io/en/stable/running_mypy.html#mapping-file-paths-to-modules[0;10m for more info[0;10m
-src/jsf/parser.py: [34mnote:[0;10m Common resolutions include: a) adding `__init__.py` somewhere, b) using `--explicit-package-bases` or adjusting MYPYPATH[0;10m
-[1m[31mFound 1 error in 1 file (errors prevented further checking)[0;10m
-
-
