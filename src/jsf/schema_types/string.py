@@ -22,7 +22,6 @@ possimus reiciendis accusantium exercitationem quas illum libero odit magnam,
 reprehenderit ipsum, repellendus culpa!""".split()
 
 
-
 def temporal_duration(
     positive: bool = True,
     years: int = 0,
@@ -68,26 +67,28 @@ def temporal_duration(
     # direction
     if not positive:
         duration = f"-{duration}"
-        
+
     return duration
 
+
 def mostly_zero_randint(min, max):
-    return 0 if random.random()> 0.8 else random.randint(min, max)
+    return 0 if random.random() > 0.8 else random.randint(min, max)
+
 
 def fake_duration():
     generic_max = 1000
     return temporal_duration(
         positive=random.random() > 0.5,
-        years=mostly_zero_randint(0,generic_max),
-        months=mostly_zero_randint(0,generic_max),
-        weeks=mostly_zero_randint(0,generic_max),
-        days=mostly_zero_randint(0,generic_max),
-        hours=mostly_zero_randint(0,generic_max),
-        minutes=mostly_zero_randint(0,generic_max),
-        seconds=mostly_zero_randint(0,generic_max),
-        milliseconds=mostly_zero_randint(0,999),
-        microseconds=mostly_zero_randint(0,999),
-        nanoseconds=mostly_zero_randint(0,999)
+        years=mostly_zero_randint(0, generic_max),
+        months=mostly_zero_randint(0, generic_max),
+        weeks=mostly_zero_randint(0, generic_max),
+        days=mostly_zero_randint(0, generic_max),
+        hours=mostly_zero_randint(0, generic_max),
+        minutes=mostly_zero_randint(0, generic_max),
+        seconds=mostly_zero_randint(0, generic_max),
+        milliseconds=mostly_zero_randint(0, 999),
+        microseconds=mostly_zero_randint(0, 999),
+        nanoseconds=mostly_zero_randint(0, 999),
     )
 
 
