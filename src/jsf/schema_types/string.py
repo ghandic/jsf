@@ -15,7 +15,6 @@ faker = Faker()
 FRAGMENT = "[a-zA-Z][a-zA-Z0-9+-.]*"
 URI_PATTERN = f"https?://{{hostname}}(?:{FRAGMENT})+"
 PARAM_PATTERN = "(?:\\?([a-z]{1,7}(=\\w{1,5})?&){0,3})?"
-DURATION_PATTERN = r"^(-?)P(?=\d|T\d)(?:(\d+)Y)?(?:(\d+)M)?(?:(\d+)([DW]))?(?:T(?:(\d+)H)?(?:(\d+)M)?(?:(\d+(?:\.\d+)?)S)?)?$"
 
 LOREM = """Lorem ipsum dolor sit amet consectetur adipisicing elit.
 Hic molestias, esse veniam placeat officiis nobis architecto modi
