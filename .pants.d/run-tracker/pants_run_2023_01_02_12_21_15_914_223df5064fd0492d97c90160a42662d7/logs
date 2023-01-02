@@ -1,0 +1,6 @@
+12:21:16.63 [31m[ERROR][0m Completed: Typecheck using MyPy - mypy failed (exit code 2).
+usage: mypy [-h] [-v] [-V] [more options; see below]
+            [-m MODULE] [-p PACKAGE] [-c PROGRAM_TEXT] [files ...]
+mypy: error: Can only use --explicit-package-bases with --namespace-packages, since otherwise examining __init__.py's is sufficient to determine module names for files
+
+

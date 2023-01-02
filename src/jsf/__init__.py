@@ -1,1 +1,1 @@
-from .parser import JSF
+from jsf.parser import JSF

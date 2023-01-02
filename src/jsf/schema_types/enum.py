@@ -3,7 +3,7 @@ import random
 from enum import Enum
 from typing import Any, Dict, List, Optional, Union
 
-from .base import BaseSchema, ProviderNotSetException
+from jsf.schema_types.base import BaseSchema, ProviderNotSetException
 
 logger = logging.getLogger()
 _types = {"string": str, "integer": int, "number": float}
@@ -23,7 +23,11 @@ class JSFEnum(BaseSchema):
 
     def model(self, context: Dict[str, Any]):
         base = _types.get(self.type, str)
-        _type = Enum(value=self._get_unique_name(context), type=base, names={str(v): v for v in self.enum})
+        _type = Enum(
+            value=self._get_unique_name(context),
+            type=base,
+            names={str(v): v for v in self.enum},
+        )
         context["__internal__"][_type.__name__] = _type
         return self.to_pydantic(context, _type)
 

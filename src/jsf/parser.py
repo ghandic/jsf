@@ -11,7 +11,17 @@ from jsonschema import validate
 from pydantic import conlist
 from smart_open import open as s_open
 
-from .schema_types import AllTypes, Array, JSFEnum, JSFTuple, Object, PrimativeTypes, Primitives, AnyOf, OneOf
+from jsf.schema_types import (
+    AllTypes,
+    AnyOf,
+    Array,
+    JSFEnum,
+    JSFTuple,
+    Object,
+    OneOf,
+    PrimativeTypes,
+    Primitives,
+)
 
 logger = logging.getLogger()
 faker = Faker()
@@ -103,7 +113,9 @@ class JSF:
             assert all(
                 isinstance(item, (int, float, str, type(None))) for item in enum_list
             ), "Enum Type is not null, int, float or string"
-            return JSFEnum.from_dict({"name": name, "path": path, "is_nullable": is_nullable, **schema})
+            return JSFEnum.from_dict(
+                {"name": name, "path": path, "is_nullable": is_nullable, **schema}
+            )
         elif "type" in schema:
             if item_type == "object" and "properties" in schema:
                 return self.__parse_object(name, path, schema)
@@ -114,7 +126,9 @@ class JSF:
             elif item_type == "array":
                 if (schema.get("contains") is not None) or isinstance(schema.get("items"), dict):
                     return self.__parse_array(name, path, schema)
-                if isinstance(schema.get("items"), list) and all(isinstance(x, dict) for x in schema.get("items", [])):
+                if isinstance(schema.get("items"), list) and all(
+                    isinstance(x, dict) for x in schema.get("items", [])
+                ):
                     return self.__parse_tuple(name, path, schema)
             else:
                 return self.__parse_primitive(name, path, schema)

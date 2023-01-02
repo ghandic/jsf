@@ -2,8 +2,18 @@ import json
 
 import pytest
 
-from ..jsf.parser import JSF
-from ..jsf.schema_types import *
+from jsf.parser import JSF
+from jsf.schema_types import (
+    Array,
+    Boolean,
+    Integer,
+    JSFEnum,
+    JSFTuple,
+    Null,
+    Number,
+    Object,
+    String,
+)
 
 
 @pytest.mark.parametrize(
@@ -31,7 +41,7 @@ def test_types(TestData, filestem, expected_type):
 
 
 def test_nested_array(TestData):
-    with open(TestData / f"array.json", "r") as file:
+    with open(TestData / "array.json", "r") as file:
         schema = json.load(file)
     p = JSF(schema)
 
@@ -41,7 +51,7 @@ def test_nested_array(TestData):
 
 
 def test_nested_tuple(TestData):
-    with open(TestData / f"tuple.json", "r") as file:
+    with open(TestData / "tuple.json", "r") as file:
         schema = json.load(file)
     p = JSF(schema)
 
@@ -52,18 +62,23 @@ def test_nested_tuple(TestData):
 
 
 def test_nested_object(TestData):
-    with open(TestData / f"object.json", "r") as file:
+    with open(TestData / "object.json", "r") as file:
         schema = json.load(file)
     p = JSF(schema)
 
     assert isinstance(p.root, Object)
     assert hasattr(p.root, "properties")
-    expected_types = {"name": String, "credit_card": Number, "test": Integer, "non_required": Integer}
+    expected_types = {
+        "name": String,
+        "credit_card": Number,
+        "test": Integer,
+        "non_required": Integer,
+    }
     assert {prop.name: type(prop) for prop in p.root.properties} == expected_types
 
 
 def test_nested_object_ref(TestData):
-    with open(TestData / f"inner-ref.json", "r") as file:
+    with open(TestData / "inner-ref.json", "r") as file:
         schema = json.load(file)
     p = JSF(schema)
 
@@ -71,5 +86,11 @@ def test_nested_object_ref(TestData):
     assert hasattr(p.root, "properties")
     expected_types = {"user": Object}
     assert {prop.name: type(prop) for prop in p.root.properties} == expected_types
-    expected_types = {"birthday": String, "email": String, "name": String, "id": Integer, "uuid": String}
+    expected_types = {
+        "birthday": String,
+        "email": String,
+        "name": String,
+        "id": Integer,
+        "uuid": String,
+    }
     assert {prop.name: type(prop) for prop in p.root.properties[0].properties} == expected_types

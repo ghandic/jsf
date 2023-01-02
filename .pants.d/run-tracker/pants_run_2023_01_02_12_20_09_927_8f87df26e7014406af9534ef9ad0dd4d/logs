@@ -1,0 +1,26 @@
+12:20:09.98 [33m[WARN][0m Pants cannot infer owners for the following imports in the target src/tests/test_parser.py:
+
+  * pytest (line: 3)
+
+If you do not expect an import to be inferrable, add `# pants: no-infer-dep` to the import line. Otherwise, see https://www.pantsbuild.org/v2.14/docs/troubleshooting#import-errors-and-missing-dependencies for common problems.
+12:20:09.98 [33m[WARN][0m Pants cannot infer owners for the following imports in the target src/tests/test_utils.py:
+
+  * pytest (line: 1)
+
+If you do not expect an import to be inferrable, add `# pants: no-infer-dep` to the import line. Otherwise, see https://www.pantsbuild.org/v2.14/docs/troubleshooting#import-errors-and-missing-dependencies for common problems.
+12:20:09.98 [33m[WARN][0m Pants cannot infer owners for the following imports in the target src/tests/test_model_gen.py:
+
+  * pytest (line: 6)
+
+If you do not expect an import to be inferrable, add `# pants: no-infer-dep` to the import line. Otherwise, see https://www.pantsbuild.org/v2.14/docs/troubleshooting#import-errors-and-missing-dependencies for common problems.
+12:20:10.00 [33m[WARN][0m Pants cannot infer owners for the following imports in the target src/tests/conftest.py:test_utils:
+
+  * pytest (line: 3)
+
+If you do not expect an import to be inferrable, add `# pants: no-infer-dep` to the import line. Otherwise, see https://www.pantsbuild.org/v2.14/docs/troubleshooting#import-errors-and-missing-dependencies for common problems.
+12:20:10.08 [INFO] Completed: Run Pytest - src/tests/test_nullable_types_gen.py succeeded.
+12:20:10.09 [INFO] Completed: Run Pytest - src/tests/test_parser.py succeeded.
+12:20:10.09 [INFO] Completed: Run Pytest - src/tests/test_default_fake.py succeeded.
+12:20:10.09 [INFO] Completed: Run Pytest - src/tests/test_model_gen.py succeeded.
+12:20:10.09 [INFO] Completed: Run Pytest - src/tests/test_utils.py succeeded.
+12:20:10.09 [INFO] Completed: Run Pytest - src/tests/test_cli.py succeeded.
