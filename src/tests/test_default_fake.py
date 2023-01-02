@@ -1,18 +1,19 @@
 import json
 import re
 
-from ..jsf.parser import JSF
+from jsf.parser import JSF
+
 
 def test_fake_object_no_properties(TestData):
-    with open(TestData / f"object_no_properties.json", "r") as file:
+    with open(TestData / "object_no_properties.json", "r") as file:
         schema = json.load(file)
     p = JSF(schema)
 
-    [p.generate() for _ in range(10)] # Just validating no errors
+    [p.generate() for _ in range(10)]  # Just validating no errors
 
 
 def test_fake_anyof(TestData):
-    with open(TestData / f"anyof.json", "r") as file:
+    with open(TestData / "anyof.json", "r") as file:
         schema = json.load(file)
     p = JSF(schema)
 
@@ -20,8 +21,9 @@ def test_fake_anyof(TestData):
     for d in fake_data:
         assert isinstance(d, str) or isinstance(d, float)
 
+
 def test_fake_anyof_object(TestData):
-    with open(TestData / f"anyof_object.json", "r") as file:
+    with open(TestData / "anyof_object.json", "r") as file:
         schema = json.load(file)
     p = JSF(schema)
 
@@ -30,8 +32,9 @@ def test_fake_anyof_object(TestData):
         assert isinstance(d, dict)
         assert ("name" in d["ob"]) or ("id" in d["ob"])
 
+
 def test_fake_oneof(TestData):
-    with open(TestData / f"oneof.json", "r") as file:
+    with open(TestData / "oneof.json", "r") as file:
         schema = json.load(file)
     p = JSF(schema)
 
@@ -41,7 +44,7 @@ def test_fake_oneof(TestData):
 
 
 def test_fake_oneof_object(TestData):
-    with open(TestData / f"oneof_object.json", "r") as file:
+    with open(TestData / "oneof_object.json", "r") as file:
         schema = json.load(file)
     p = JSF(schema)
 
@@ -50,8 +53,9 @@ def test_fake_oneof_object(TestData):
         assert isinstance(d, dict)
         assert ("name" in d["ob"]) or ("id" in d["ob"])
 
+
 def test_fake_boolean(TestData):
-    with open(TestData / f"boolean.json", "r") as file:
+    with open(TestData / "boolean.json", "r") as file:
         schema = json.load(file)
     p = JSF(schema)
 
@@ -62,7 +66,7 @@ def test_fake_boolean(TestData):
 
 
 def test_fake_string(TestData):
-    with open(TestData / f"string.json", "r") as file:
+    with open(TestData / "string.json", "r") as file:
         schema = json.load(file)
     p = JSF(schema)
     assert isinstance(p.generate(), str)
@@ -71,7 +75,7 @@ def test_fake_string(TestData):
 
 
 def test_fake_null(TestData):
-    with open(TestData / f"null.json", "r") as file:
+    with open(TestData / "null.json", "r") as file:
         schema = json.load(file)
     p = JSF(schema)
 
@@ -81,7 +85,7 @@ def test_fake_null(TestData):
 
 
 def test_fake_enum(TestData):
-    with open(TestData / f"enum.json", "r") as file:
+    with open(TestData / "enum.json", "r") as file:
         schema = json.load(file)
     p = JSF(schema)
 
@@ -90,7 +94,7 @@ def test_fake_enum(TestData):
 
 
 def test_fake_string_enum(TestData):
-    with open(TestData / f"string-enum.json", "r") as file:
+    with open(TestData / "string-enum.json", "r") as file:
         schema = json.load(file)
     p = JSF(schema)
 
@@ -99,7 +103,7 @@ def test_fake_string_enum(TestData):
 
 
 def test_fake_int(TestData):
-    with open(TestData / f"integer.json", "r") as file:
+    with open(TestData / "integer.json", "r") as file:
         schema = json.load(file)
     p = JSF(schema)
 
@@ -112,7 +116,7 @@ def test_fake_int(TestData):
 
 
 def test_fake_number(TestData):
-    with open(TestData / f"number.json", "r") as file:
+    with open(TestData / "number.json", "r") as file:
         schema = json.load(file)
     p = JSF(schema)
 
@@ -124,7 +128,7 @@ def test_fake_number(TestData):
 
 
 def test_fake_number_exclusive(TestData):
-    with open(TestData / f"number-exclusive.json", "r") as file:
+    with open(TestData / "number-exclusive.json", "r") as file:
         schema = json.load(file)
     p = JSF(schema)
 
@@ -136,7 +140,7 @@ def test_fake_number_exclusive(TestData):
 
 
 def test_fake_number_exclusive_float(TestData):
-    with open(TestData / f"number-exclusive-float.json", "r") as file:
+    with open(TestData / "number-exclusive-float.json", "r") as file:
         schema = json.load(file)
     p = JSF(schema)
 
@@ -149,7 +153,7 @@ def test_fake_number_exclusive_float(TestData):
 
 
 def test_fake_array(TestData):
-    with open(TestData / f"array.json", "r") as file:
+    with open(TestData / "array.json", "r") as file:
         schema = json.load(file)
     p = JSF(schema)
 
@@ -162,21 +166,25 @@ def test_fake_array(TestData):
 
 
 def test_fake_array_dicts(TestData):
-    with open(TestData / f"array-dicts.json", "r") as file:
+    with open(TestData / "array-dicts.json", "r") as file:
         schema = json.load(file)
     p = JSF(schema)
 
     assert isinstance(p.generate(), dict)
     fake_data = [p.generate() for _ in range(1000)]
     assert all(len(d["Basket"]) == 2 for d in fake_data), fake_data
-    assert all(d["Basket"][0]["Item Name"] in ["A", "B", "C", "D", "E"] for d in fake_data), fake_data
-    assert all(d["Basket"][1]["Item Name"] in ["A", "B", "C", "D", "E"] for d in fake_data), fake_data
+    assert all(
+        d["Basket"][0]["Item Name"] in ["A", "B", "C", "D", "E"] for d in fake_data
+    ), fake_data
+    assert all(
+        d["Basket"][1]["Item Name"] in ["A", "B", "C", "D", "E"] for d in fake_data
+    ), fake_data
     assert all(0 <= d["Basket"][0]["Amount"] < 5 for d in fake_data), fake_data
     assert all(0 <= d["Basket"][1]["Amount"] < 5 for d in fake_data), fake_data
 
 
 def test_fake_array_fixed_int(TestData):
-    with open(TestData / f"array-fixed-int.json", "r") as file:
+    with open(TestData / "array-fixed-int.json", "r") as file:
         schema = json.load(file)
     p = JSF(schema)
 
@@ -187,7 +195,7 @@ def test_fake_array_fixed_int(TestData):
 
 
 def test_fake_array_fixed_str(TestData):
-    with open(TestData / f"array-fixed-str.json", "r") as file:
+    with open(TestData / "array-fixed-str.json", "r") as file:
         schema = json.load(file)
     p = JSF(schema)
 
@@ -198,7 +206,7 @@ def test_fake_array_fixed_str(TestData):
 
 
 def test_fake_tuple(TestData):
-    with open(TestData / f"tuple.json", "r") as file:
+    with open(TestData / "tuple.json", "r") as file:
         schema = json.load(file)
     p = JSF(schema)
 
@@ -212,7 +220,7 @@ def test_fake_tuple(TestData):
 
 
 def test_fake_object(TestData):
-    with open(TestData / f"object.json", "r") as file:
+    with open(TestData / "object.json", "r") as file:
         schema = json.load(file)
     p = JSF(schema)
 
@@ -224,7 +232,7 @@ def test_fake_object(TestData):
 
 
 def test_fake_string_format(TestData):
-    with open(TestData / f"string-format.json", "r") as file:
+    with open(TestData / "string-format.json", "r") as file:
         schema = json.load(file)
     p = JSF(schema)
 
@@ -233,12 +241,19 @@ def test_fake_string_format(TestData):
     assert all(bool(re.match(r".*@.*", d["email"])) for d in fake_data), fake_data
     assert all(bool(re.match(r".*@.*", d["idn-email"])) for d in fake_data), fake_data
     assert all(
-        bool(re.match(r"\d{4}-\d{2}-\d{2}T\d{2}\:\d{2}\:\d{2}\+\d{2}\:\d{2}", d["date-time"])) for d in fake_data
+        bool(re.match(r"\d{4}-\d{2}-\d{2}T\d{2}\:\d{2}\:\d{2}\+\d{2}\:\d{2}", d["date-time"]))
+        for d in fake_data
     ), fake_data
     assert all(bool(re.match(r"\d{4}-\d{2}-\d{2}", d["date"])) for d in fake_data), fake_data
-    assert all(bool(re.match(r"\d{2}\:\d{2}\:\d{2}\+\d{2}\:\d{2}", d["time"])) for d in fake_data), fake_data
-    assert all(bool(re.match(r"[a-zA-Z0-9+-\.]{1,33}\.[a-z]{2,4}", d["hostname"])) for d in fake_data)
-    assert all(bool(re.match(r"[a-zA-Z0-9+-\.]{1,33}\.[a-z]{2,4}", d["idn-hostname"])) for d in fake_data)
+    assert all(
+        bool(re.match(r"\d{2}\:\d{2}\:\d{2}\+\d{2}\:\d{2}", d["time"])) for d in fake_data
+    ), fake_data
+    assert all(
+        bool(re.match(r"[a-zA-Z0-9+-\.]{1,33}\.[a-z]{2,4}", d["hostname"])) for d in fake_data
+    )
+    assert all(
+        bool(re.match(r"[a-zA-Z0-9+-\.]{1,33}\.[a-z]{2,4}", d["idn-hostname"])) for d in fake_data
+    )
     assert all(bool(re.match(r"[a-f0-9]{0,4}(:[a-f0-9]{0,4}){7}", d["ipv6"])) for d in fake_data), [
         d["ipv6"] for d in fake_data
     ]
@@ -256,9 +271,9 @@ def test_fake_string_format(TestData):
     # "regex"
 
 
-## NO LONGER REQUIRED - dont think you can have unique items in a tuple?
+# NO LONGER REQUIRED - dont think you can have unique items in a tuple?
 # def test_unique_items_tuple(TestData):
-#     with open(TestData / f"unique-items-tuple.json", "r") as file:
+#     with open(TestData / "unique-items-tuple.json", "r") as file:
 #         schema = json.load(file)
 #     p = JSF(schema)
 #     fake_data = p.generate(50)
@@ -269,7 +284,7 @@ def test_fake_string_format(TestData):
 
 
 def test_unique_items_array(TestData):
-    with open(TestData / f"unique-items-array.json", "r") as file:
+    with open(TestData / "unique-items-array.json", "r") as file:
         schema = json.load(file)
     p = JSF(schema)
     fake_data = p.generate(50)
@@ -280,7 +295,7 @@ def test_unique_items_array(TestData):
 
 
 def test_const(TestData):
-    with open(TestData / f"const.json", "r") as file:
+    with open(TestData / "const.json", "r") as file:
         schema = json.load(file)
     p = JSF(schema)
     fake_data = p.generate(50)
@@ -291,7 +306,7 @@ def test_const(TestData):
 
 
 def test_external_ref(TestData):
-    with open(TestData / f"external-ref.json", "r") as file:
+    with open(TestData / "external-ref.json", "r") as file:
         schema = json.load(file)
     p = JSF(schema)
     fake_data = p.generate(50)
@@ -306,7 +321,7 @@ def test_external_ref(TestData):
 
 
 def test_gen_and_validate(TestData):
-    with open(TestData / f"custom.json", "r") as file:
+    with open(TestData / "custom.json", "r") as file:
         schema = json.load(file)
     p = JSF(schema)
     [p.generate_and_validate() for _ in range(50)]

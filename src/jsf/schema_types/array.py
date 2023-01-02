@@ -3,7 +3,7 @@ from typing import Any, Dict, List, Optional, Union
 
 from pydantic import Field
 
-from .base import BaseSchema, ProviderNotSetException
+from jsf.schema_types.base import BaseSchema, ProviderNotSetException
 
 
 class Array(BaseSchema):
@@ -27,12 +27,15 @@ class Array(BaseSchema):
             elif isinstance(self.fixed, int):
                 self.minItems = self.maxItems = self.fixed
 
-            output = [self.items.generate(context) for _ in range(random.randint(self.minItems, self.maxItems))]
+            output = [
+                self.items.generate(context)
+                for _ in range(random.randint(self.minItems, self.maxItems))
+            ]
             if self.uniqueItems and self.items.type == "object":
-                output = [dict(s) for s in set(frozenset(d.items()) for d in output)]
+                output = [dict(s) for s in {frozenset(d.items()) for d in output}]
                 while len(output) < self.minItems:
                     output.append(self.items.generate(context))
-                    output = [dict(s) for s in set(frozenset(d.items()) for d in output)]
+                    output = [dict(s) for s in {frozenset(d.items()) for d in output}]
             elif self.uniqueItems:
                 output = set(output)
                 while len(output) < self.minItems:
@@ -41,5 +44,8 @@ class Array(BaseSchema):
             return output
 
     def model(self, context: Dict[str, Any]):
-        _type = eval(f"List[Union[{','.join([self.items.model(context)[0].__name__])}]]", context["__internal__"])
+        _type = eval(
+            f"List[Union[{','.join([self.items.model(context)[0].__name__])}]]",
+            context["__internal__"],
+        )
         return self.to_pydantic(context, _type)

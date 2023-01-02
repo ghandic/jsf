@@ -1,7 +1,7 @@
 import random
 from typing import Any, Dict, Optional
 
-from .base import BaseSchema, ProviderNotSetException
+from jsf.schema_types.base import BaseSchema, ProviderNotSetException
 
 
 class Boolean(BaseSchema):

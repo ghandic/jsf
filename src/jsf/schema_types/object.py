@@ -2,9 +2,9 @@ import logging
 import random
 from typing import Any, Dict, List, Optional, Union
 
-from pydantic import create_model, BaseModel
+from pydantic import BaseModel, create_model
 
-from .base import BaseSchema, ProviderNotSetException
+from jsf.schema_types.base import BaseSchema, ProviderNotSetException
 
 logger = logging.getLogger()
 
@@ -39,7 +39,9 @@ class Object(BaseSchema):
         try:
             return super().generate(context)
         except ProviderNotSetException:
-            return {o.name: o.generate(context) for o in self.properties if self.should_keep(o.name)}
+            return {
+                o.name: o.generate(context) for o in self.properties if self.should_keep(o.name)
+            }
 
     def model(self, context: Dict[str, Any]):
         self.generate(context)

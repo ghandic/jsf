@@ -2,12 +2,14 @@ from typing import Any, Dict, List, Optional, Tuple, Union
 
 from pydantic import Field
 
-from .base import BaseSchema, ProviderNotSetException
+from jsf.schema_types.base import BaseSchema, ProviderNotSetException
 
 
 class JSFTuple(BaseSchema):
     items: Optional[List[BaseSchema]] = None
-    additionalItems: Optional[Union[bool, BaseSchema]] = None  # TODO: Random additional items to be appended
+    additionalItems: Optional[
+        Union[bool, BaseSchema]
+    ] = None  # TODO: Random additional items to be appended
     minItems: Optional[int] = 0
     maxItems: Optional[int] = 5
     uniqueItems: Optional[bool] = False
@@ -21,7 +23,7 @@ class JSFTuple(BaseSchema):
         try:
             return super().generate(context)
         except ProviderNotSetException:
-            return tuple([item.generate(context) for item in self.items])
+            return tuple(item.generate(context) for item in self.items)
 
     def model(self, context: Dict[str, Any]):
         _type = eval(

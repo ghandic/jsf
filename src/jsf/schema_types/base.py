@@ -59,5 +59,8 @@ class BaseSchema(BaseModel):
     def to_pydantic(self, context, _type):
         example = self.generate(context)
         if self.is_nullable:
-            return (Optional[_type], Field(..., description=self.description, example=example))
+            return (
+                Optional[_type],
+                Field(..., description=self.description, example=example),
+            )
         return (_type, Field(..., description=self.description, example=example))

@@ -14,26 +14,48 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [3.7, 3.8, 3.9]
+        python-version: ["3.7", "3.8", "3.9"]
 
     steps:
       - uses: actions/checkout@v2
+      - uses: actions/cache@v2
+        id: cache
+        with:
+          path: |
+            ~/.cache/pants/setup
+            ~/.cache/pants/lmdb_store
+            ~/.cache/pants/named_caches
+          key: ${{ runner.os }}-
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v2
         with:
           python-version: ${{ matrix.python-version }}
-      - name: Install dependencies
+      - name: Bootstrap Pants
         run: |
-          pip install .
-          pip install flake8 pytest pytest-cov
-      - name: Lint with flake8
+          ./pants --version
+      - name: Check BUILD files
+        run: ./pants tailor --check update-build-files --check
+      - name: Lint
         run: |
-          # stop the build if there are Python syntax errors or undefined names
-          flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
-          # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
-          flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
-      - name: Test with pytest
+          make lint
+      - name: Test
         run: |
-          pytest --cov=src/jsf --cov-report html
+          make test
+      - name: Package
+        run: |
+          make build
+      - name: Validate package
+        run: |
+          ls dist
+          pip3 install dist/jsf-*.tar.gz
+          jsf --help
       - name: Upload coverage
         uses: codecov/codecov-action@v1
+        with:
+          files: ./dist/coverage/python/coverage.xml
+      - name: Upload pants log
+        uses: actions/upload-artifact@v2
+        with:
+          name: pants-log
+          path: .pants.d/pants.log
+        if: always() # We want the log even on failures.

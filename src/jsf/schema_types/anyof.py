@@ -1,9 +1,7 @@
 import random
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional
 
-from pydantic import Field
-
-from .base import BaseSchema, ProviderNotSetException
+from jsf.schema_types.base import BaseSchema, ProviderNotSetException
 
 
 class AnyOf(BaseSchema):
@@ -20,4 +18,3 @@ class AnyOf(BaseSchema):
 
     def model(self, context: Dict[str, Any]):
         pass
-

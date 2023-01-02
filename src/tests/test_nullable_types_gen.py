@@ -1,10 +1,10 @@
 import json
 
-from ..jsf.parser import JSF
+from jsf.parser import JSF
 
 
 def test_string_null_gen(TestData):
-    with open(TestData / f"type-list-null.json", "r") as file:
+    with open(TestData / "type-list-null.json", "r") as file:
         schema = json.load(file)
     p = JSF(schema["str"])
 
@@ -14,7 +14,7 @@ def test_string_null_gen(TestData):
 
 
 def test_int_null_gen(TestData):
-    with open(TestData / f"type-list-null.json", "r") as file:
+    with open(TestData / "type-list-null.json", "r") as file:
         schema = json.load(file)
     p = JSF(schema["int"])
 
@@ -23,7 +23,7 @@ def test_int_null_gen(TestData):
 
 
 def test_number_null_gen(TestData):
-    with open(TestData / f"type-list-null.json", "r") as file:
+    with open(TestData / "type-list-null.json", "r") as file:
         schema = json.load(file)
     p = JSF(schema["num"])
 
@@ -32,7 +32,7 @@ def test_number_null_gen(TestData):
 
 
 def test_boolean_null_gen(TestData):
-    with open(TestData / f"type-list-null.json", "r") as file:
+    with open(TestData / "type-list-null.json", "r") as file:
         schema = json.load(file)
     p = JSF(schema["bool"])
 
@@ -41,7 +41,7 @@ def test_boolean_null_gen(TestData):
 
 
 def test_enum_null_gen(TestData):
-    with open(TestData / f"type-list-null.json", "r") as file:
+    with open(TestData / "type-list-null.json", "r") as file:
         schema = json.load(file)
     p = JSF(schema["enum"])
 
@@ -50,7 +50,7 @@ def test_enum_null_gen(TestData):
 
 
 def test_array_null_gen(TestData):
-    with open(TestData / f"type-list-null.json", "r") as file:
+    with open(TestData / "type-list-null.json", "r") as file:
         schema = json.load(file)
     p = JSF(schema["arr"])
 
@@ -59,7 +59,7 @@ def test_array_null_gen(TestData):
 
 
 def test_array_nested_null_gen(TestData):
-    with open(TestData / f"type-list-null.json", "r") as file:
+    with open(TestData / "type-list-null.json", "r") as file:
         schema = json.load(file)
     p = JSF(schema["arr_nested"])
 
@@ -70,7 +70,7 @@ def test_array_nested_null_gen(TestData):
 
 
 def test_object_null_gen(TestData):
-    with open(TestData / f"type-list-null.json", "r") as file:
+    with open(TestData / "type-list-null.json", "r") as file:
         schema = json.load(file)
     p = JSF(schema["obj"])
 
@@ -79,10 +79,9 @@ def test_object_null_gen(TestData):
 
 
 def test_object_nested_null_gen(TestData):
-    with open(TestData / f"type-list-null.json", "r") as file:
+    with open(TestData / "type-list-null.json", "r") as file:
         schema = json.load(file)
     p = JSF(schema["obj_nested"])
 
     actual = [p.generate() for _ in range(100)]
     assert all(type(each["req"]) in [bool, type(None)] for each in actual)
-

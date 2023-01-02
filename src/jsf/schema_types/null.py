@@ -1,6 +1,6 @@
 from typing import Any, Dict
 
-from .base import BaseSchema, ProviderNotSetException
+from jsf.schema_types.base import BaseSchema, ProviderNotSetException
 
 
 class Null(BaseSchema):
