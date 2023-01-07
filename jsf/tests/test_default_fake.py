@@ -74,7 +74,8 @@ def test_fake_oneof_allof(TestData):
 
     fake_data = [p.generate() for _ in range(10)]
     for d in fake_data:
-        assert isinstance(d, bool) or (isinstance(d, str) and len(d) <= 5) 
+        assert isinstance(d, bool) or (isinstance(d, str) and len(d) <= 5)
+
 
 def test_fake_oneof_object(TestData):
     with open(TestData / "oneof_object.json", "r") as file:
