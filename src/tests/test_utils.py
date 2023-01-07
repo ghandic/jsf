@@ -1,4 +1,4 @@
-import pytest
+import pytest  # pants: no-infer-dep
 
 from jsf.schema_types.string import random_fixed_length_sentence
 

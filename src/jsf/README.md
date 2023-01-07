@@ -90,6 +90,7 @@ fake_json = faker.generate()
 #### Native install
 
 ```bash
+pip install jsf[cli]
 jsf --schema src/tests/data/custom.json --instance wow.json
 ```
 
