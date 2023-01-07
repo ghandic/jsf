@@ -91,7 +91,7 @@ fake_json = faker.generate()
 
 ```bash
 pip install jsf[cli]
-jsf --schema src/tests/data/custom.json --instance wow.json
+jsf --schema jsf/tests/data/custom.json --instance wow.json
 ```
 
 #### Docker

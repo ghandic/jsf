@@ -23,12 +23,12 @@ fake_json = faker.generate()
 #### Raw install
 
 ```bash
-jsf --schema src/tests/data/custom.json --instance wow.json
+jsf --schema jsf/tests/data/custom.json --instance wow.json
 ```
 
 #### Docker
 
 ```bash
 docker build . -t challisa/jsf
-docker run -v $PWD:/data challisa/jsf jsf --schema /data/src/tests/data/custom.json --instance /data/wow.json
+docker run -v $PWD:/data challisa/jsf jsf --schema /data/jsf/tests/data/custom.json --instance /data/wow.json
 ```
