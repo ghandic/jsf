@@ -1,16 +1,14 @@
-python_sources(name="src")
-
 python_test_utils(
     name="test_utils",
 )
 
 files(
-    name="test_data", 
-    sources=["data/*.json"]
+    name="tests", 
+    sources=["data/*.json", "*.py"]
 )
 
 python_tests(
     name="pytest",
-    dependencies=[":test_data"],
+    dependencies=[":tests"],
     interpreter_constraints=parametrize(py3=[">=3.7,<4"]),
 )

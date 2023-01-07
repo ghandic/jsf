@@ -17,8 +17,7 @@ python_distribution(
     dependencies=[
         ":src", 
         ":build_resources", 
-        "./tests:src", 
-        "./tests:test_data"
+        "./tests:tests",
     ],
     long_description_path="README.md",
     provides=python_artifact(
