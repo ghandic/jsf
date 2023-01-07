@@ -108,6 +108,16 @@ def test_fake_string(TestData):
     assert len(fake_data) - len(set(fake_data)) < 50
 
 
+def test_fake_string_content_encoding(TestData):
+    with open(TestData / "string-content-encoding.json", "r") as file:
+        schema = json.load(file)
+    p = JSF(schema)
+    assert isinstance(p.generate(), dict)
+    fake_data = [p.generate() for _ in range(100)]
+    for d in fake_data:
+        assert set(d["binary"]) - {"1", "0"} == set()
+
+
 def test_fake_null(TestData):
     with open(TestData / "null.json", "r") as file:
         schema = json.load(file)
