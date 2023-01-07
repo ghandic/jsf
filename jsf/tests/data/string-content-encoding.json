@@ -1,0 +1,34 @@
+{
+  "type": "object",
+  "properties": {
+    "7-bit": {
+      "type": "string",
+      "contentEncoding": "7-bit"
+    },
+    "8-bit": {
+      "type": "string",
+      "contentEncoding": "8-bit"
+    },
+    "binary": {
+      "type": "string",
+      "contentEncoding": "binary"
+    },
+    "quoted-printable": {
+      "type": "string",
+      "contentEncoding": "quoted-printable"
+    },
+    "base-16": {
+      "type": "string",
+      "contentEncoding": "base-16"
+    },
+    "base-32": {
+      "type": "string",
+      "contentEncoding": "base-32"
+    },
+    "base-64": {
+      "type": "string",
+      "contentEncoding": "base-64"
+    }
+  },
+  "required": ["7-bit", "8-bit", "binary", "quoted-printable", "base-16", "base-32", "base-64"]
+}

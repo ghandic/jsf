@@ -1,7 +1,10 @@
+import base64
 import logging
+import quopri
 import random
 import re
 from datetime import timezone
+from enum import Enum
 from typing import Any, Callable, Dict, Optional
 
 import rstr
@@ -133,27 +136,89 @@ def random_fixed_length_sentence(_min: int, _max: int) -> str:
     return output.strip()
 
 
+class ContentEncoding(str, Enum):
+    SEVEN_BIT = "7-bit"
+    EIGHT_BIT = "8-bit"
+    BINARY = "binary"
+    QUOTED_PRINTABLE = "quoted-printable"
+    BASE16 = "base-16"
+    BASE32 = "base-32"
+    BASE64 = "base-64"
+
+
+def binary_encoder(string: str) -> str:
+    return "".join(format(x, "b") for x in bytearray(string, "utf-8"))
+
+
+def bytes_str_repr(b: bytes) -> str:
+    return repr(b)[2:-1]
+
+
+def seven_bit_encoder(string: str) -> str:
+    return bytes_str_repr(string.encode("utf-7"))
+
+
+def eight_bit_encoder(string: str) -> str:
+    return bytes_str_repr(string.encode("utf-8"))
+
+
+def quoted_printable_encoder(string: str) -> str:
+    return bytes_str_repr(quopri.encodestring(string.encode("utf-8")))
+
+
+def b16_encoder(string: str) -> str:
+    return bytes_str_repr(base64.b16encode(string.encode("utf-8")))
+
+
+def b32_encoder(string: str) -> str:
+    return bytes_str_repr(base64.b32encode(string.encode("utf-8")))
+
+
+def b64_encoder(string: str) -> str:
+    return bytes_str_repr(base64.b64encode(string.encode("utf-8")))
+
+
+Encoder = {
+    ContentEncoding.SEVEN_BIT: seven_bit_encoder,
+    ContentEncoding.EIGHT_BIT: eight_bit_encoder,
+    ContentEncoding.BINARY: binary_encoder,
+    ContentEncoding.QUOTED_PRINTABLE: quoted_printable_encoder,
+    ContentEncoding.BASE16: b16_encoder,
+    ContentEncoding.BASE32: b32_encoder,
+    ContentEncoding.BASE64: b64_encoder,
+}
+
+
+def encode(string: str, encoding: Optional[ContentEncoding]) -> str:
+    return Encoder.get(encoding, lambda s: s)(string)
+
+
 class String(BaseSchema):
     minLength: Optional[float] = 0
     maxLength: Optional[float] = 50
     pattern: Optional[str] = None
     format: Optional[str] = None
     # enum: Optional[List[Union[str, int, float]]] = None  # NOTE: Not used - enums go to enum class
+    # contentMediaType: Optional[str] = None  # TODO: Long list, need to document which ones will be supported and how to extend
+    contentEncoding: Optional[ContentEncoding]
+    # contentSchema # No docs detailing this yet...
 
     def generate(self, context: Dict[str, Any]) -> Optional[str]:
         try:
             s = super().generate(context)
-            return str(s) if s else s
+            return str(encode(s, self.contentEncoding)) if s else s
         except ProviderNotSetException:
             format_map["regex"] = lambda: rstr.xeger(self.pattern)
             format_map["relative-json-pointer"] = lambda: random.choice(
                 context["state"]["__all_json_paths__"]
             )
             if format_map.get(self.format) is not None:
-                return format_map[self.format]()
+                return encode(format_map[self.format](), self.contentEncoding)
             if self.pattern is not None:
-                return rstr.xeger(self.pattern)
-            return random_fixed_length_sentence(self.minLength, self.maxLength)
+                return encode(rstr.xeger(self.pattern), self.contentEncoding)
+            return encode(
+                random_fixed_length_sentence(self.minLength, self.maxLength), self.contentEncoding
+            )
 
     def model(self, context: Dict[str, Any]):
         return self.to_pydantic(context, str)
