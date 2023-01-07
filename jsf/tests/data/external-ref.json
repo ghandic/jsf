@@ -8,7 +8,7 @@
             "$ref": "#/definitions/LocalType"
         },
         "ReferenceToExternalSchema": {
-            "$ref": "file://src/tests/data/external-ref-common.json#/definitions/ExternalType"
+            "$ref": "file://jsf/tests/data/external-ref-common.json#/definitions/ExternalType"
         }
     },
     "definitions": {

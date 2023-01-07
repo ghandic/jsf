@@ -13,11 +13,6 @@ backend_packages = [
 [python]
 interpreter_constraints = ["CPython>=3.7,<4"]
 
-[source]
-root_patterns = [
-  '/src',
-]
-
 [flake8]
 config = ".flake8"
 

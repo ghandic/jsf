@@ -1,1 +1,1 @@
-src/jsf/README.md
+jsf/README.md

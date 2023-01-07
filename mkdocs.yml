@@ -51,14 +51,11 @@ plugins:
       default_handler: python
       handlers:
         python:
-          setup_commands:
-            - import sys
-            - sys.path.append("src")
           rendering:
             show_root_heading: no
             show_if_no_docstring: no
       watch:
-        - src/jsf
+        - jsf
 
 extra:
   social:
