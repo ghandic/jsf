@@ -22,6 +22,30 @@ def test_fake_anyof(TestData):
         assert isinstance(d, str) or isinstance(d, float)
 
 
+def test_fake_allof(TestData):
+    with open(TestData / "allof.json", "r") as file:
+        schema = json.load(file)
+    p = JSF(schema)
+
+    fake_data = [p.generate() for _ in range(10)]
+    for d in fake_data:
+        assert isinstance(d, str) and len(d) <= 5
+
+
+def test_fake_allof_complex(TestData):
+    with open(TestData / "allof-complex.json", "r") as file:
+        schema = json.load(file)
+    p = JSF(schema)
+
+    fake_data = [p.generate() for _ in range(10)]
+    for d in fake_data:
+        assert isinstance(d, dict)
+        assert set(d.keys()) == {"prometheus"}
+        assert set(d["prometheus"].keys()) == {"port", "path"}
+        assert isinstance(d["prometheus"]["port"], int)
+        assert isinstance(d["prometheus"]["path"], str)
+
+
 def test_fake_anyof_object(TestData):
     with open(TestData / "anyof_object.json", "r") as file:
         schema = json.load(file)
@@ -41,6 +65,16 @@ def test_fake_oneof(TestData):
     fake_data = [p.generate() for _ in range(10)]
     for d in fake_data:
         assert isinstance(d, bool) or isinstance(d, str)
+
+
+def test_fake_oneof_allof(TestData):
+    with open(TestData / "oneof_allof.json", "r") as file:
+        schema = json.load(file)
+    p = JSF(schema)
+
+    fake_data = [p.generate() for _ in range(10)]
+    for d in fake_data:
+        assert isinstance(d, bool) or (isinstance(d, str) and len(d) <= 5)
 
 
 def test_fake_oneof_object(TestData):
