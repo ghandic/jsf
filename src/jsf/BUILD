@@ -18,7 +18,7 @@ python_distribution(
     long_description_path="README.md",
     provides=python_artifact(
         name="jsf",
-        version="0.5.2",
+        version="0.5.3",
         author="ghandic",
         description="Creates fake JSON files from a JSON schema",
         url="https://github.com/ghandic/jsf",
