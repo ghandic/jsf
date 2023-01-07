@@ -24,6 +24,13 @@ config = ".flake8"
 [test]
 use_coverage = true
 
+[pytest]
+extra_requirements = [
+	"typer>=0.7.0",
+	"pytest-cov"
+]
+lockfile = "<none>"
+
 [coverage-py]
 report = ["xml", "html"]
 

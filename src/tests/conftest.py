@@ -1,6 +1,6 @@
 from pathlib import Path
 
-import pytest
+import pytest  # pants: no-infer-dep
 
 
 @pytest.fixture()

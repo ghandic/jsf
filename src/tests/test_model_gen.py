@@ -3,7 +3,7 @@ import platform
 from enum import Enum
 from typing import List
 
-import pytest
+import pytest  # pants: no-infer-dep
 from pydantic.main import create_model
 
 from jsf.parser import JSF

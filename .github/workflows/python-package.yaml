@@ -47,7 +47,8 @@ jobs:
       - name: Validate package
         run: |
           ls dist
-          pip3 install dist/jsf-*.tar.gz
+          PACKAGE=`ls dist/jsf-*.tar.gz`
+          pip3 install $PACKAGE\[cli\]
           jsf --help
       - name: Upload coverage
         uses: codecov/codecov-action@v1
