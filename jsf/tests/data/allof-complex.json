@@ -1,0 +1,39 @@
+{
+  "title": "ParsingModel[PodConfig]",
+  "$ref": "#/definitions/PodConfig",
+  "definitions": {
+    "Prometheus": {
+      "title": "Prometheus",
+      "type": "object",
+      "properties": {
+        "port": {
+          "title": "Port",
+          "description": "Port at which Prometheus metrics are exposed",
+          "type": "integer"
+        },
+        "path": {
+          "title": "Path",
+          "description": "Path at which Prometheus metrics are exposed",
+          "type": "string"
+        }
+      },
+      "required": ["port", "path"]
+    },
+    "PodConfig": {
+      "title": "PodConfig",
+      "type": "object",
+      "properties": {
+        "prometheus": {
+          "title": "Prometheus",
+          "description": "Prometheus details",
+          "allOf": [
+            {
+              "$ref": "#/definitions/Prometheus"
+            }
+          ]
+        }
+      },
+      "required": ["prometheus"]
+    }
+  }
+}

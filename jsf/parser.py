@@ -1,3 +1,4 @@
+from collections import ChainMap
 import json
 import logging
 import random
@@ -14,6 +15,7 @@ from smart_open import open as s_open
 from jsf.schema_types import (
     AllTypes,
     AnyOf,
+    AllOf,
     Array,
     JSFEnum,
     JSFTuple,
@@ -94,6 +96,10 @@ class JSF:
         for d in schema["anyOf"]:
             schemas.append(self.__parse_definition(name, path, d))
         return AnyOf(name=name, path=path, schemas=schemas, **schema)
+    
+    def __parse_allOf(self, name: str, path: str, schema: Dict[str, Any]) -> AllOf:
+        combined_schema = dict(ChainMap(*schema["allOf"]))
+        return AllOf(name=name, path=path, combined_schema=self.__parse_definition(name, path, combined_schema), **schema)
 
     def __parse_oneOf(self, name: str, path: str, schema: Dict[str, Any]) -> OneOf:
         schemas = []
@@ -121,6 +127,8 @@ class JSF:
                 return self.__parse_object(name, path, schema)
             elif item_type == "object" and "anyOf" in schema:
                 return self.__parse_anyOf(name, path, schema)
+            elif item_type == "object" and "allOf" in schema:
+                return self.__parse_allOf(name, path, schema)
             elif item_type == "object" and "oneOf" in schema:
                 return self.__parse_oneOf(name, path, schema)
             elif item_type == "array":
@@ -145,6 +153,8 @@ class JSF:
             return cls
         elif "anyOf" in schema:
             return self.__parse_anyOf(name, path, schema)
+        elif "allOf" in schema:
+            return self.__parse_allOf(name, path, schema)
         elif "oneOf" in schema:
             return self.__parse_oneOf(name, path, schema)
         else:
