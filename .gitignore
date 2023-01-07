@@ -1,6 +1,6 @@
 # Application
 *.json
-!src/tests/data/*.json
+!src/jsf/tests/data/*.json
 TODO.md
 
 # MacOS

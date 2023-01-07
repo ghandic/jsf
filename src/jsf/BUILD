@@ -14,7 +14,12 @@ python_distribution(
             "jsf": "jsf.cli:app"
         },
     },
-    dependencies=[":src", ":build_resources"],
+    dependencies=[
+        ":src", 
+        ":build_resources", 
+        "./tests:src", 
+        "./tests:test_data"
+    ],
     long_description_path="README.md",
     provides=python_artifact(
         name="jsf",
