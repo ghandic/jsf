@@ -1,7 +1,7 @@
-from collections import ChainMap
 import json
 import logging
 import random
+from collections import ChainMap
 from copy import deepcopy
 from datetime import datetime
 from itertools import count
@@ -13,9 +13,9 @@ from pydantic import conlist
 from smart_open import open as s_open
 
 from jsf.schema_types import (
+    AllOf,
     AllTypes,
     AnyOf,
-    AllOf,
     Array,
     JSFEnum,
     JSFTuple,
@@ -96,10 +96,15 @@ class JSF:
         for d in schema["anyOf"]:
             schemas.append(self.__parse_definition(name, path, d))
         return AnyOf(name=name, path=path, schemas=schemas, **schema)
-    
+
     def __parse_allOf(self, name: str, path: str, schema: Dict[str, Any]) -> AllOf:
         combined_schema = dict(ChainMap(*schema["allOf"]))
-        return AllOf(name=name, path=path, combined_schema=self.__parse_definition(name, path, combined_schema), **schema)
+        return AllOf(
+            name=name,
+            path=path,
+            combined_schema=self.__parse_definition(name, path, combined_schema),
+            **schema,
+        )
 
     def __parse_oneOf(self, name: str, path: str, schema: Dict[str, Any]) -> OneOf:
         schemas = []

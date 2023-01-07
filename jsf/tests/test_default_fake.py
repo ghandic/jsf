@@ -30,8 +30,8 @@ def test_fake_allof(TestData):
     fake_data = [p.generate() for _ in range(10)]
     for d in fake_data:
         assert isinstance(d, str) and len(d) <= 5
-        
-        
+
+
 def test_fake_allof_complex(TestData):
     with open(TestData / "allof-complex.json", "r") as file:
         schema = json.load(file)
@@ -42,8 +42,8 @@ def test_fake_allof_complex(TestData):
         assert isinstance(d, dict)
         assert set(d.keys()) == {"prometheus"}
         assert set(d["prometheus"].keys()) == {"port", "path"}
-        assert isinstance(d["prometheus"]["port"], int) 
-        assert isinstance(d["prometheus"]["path"], str) 
+        assert isinstance(d["prometheus"]["port"], int)
+        assert isinstance(d["prometheus"]["path"], str)
 
 
 def test_fake_anyof_object(TestData):

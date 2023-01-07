@@ -1,8 +1,8 @@
 from typing import Union
 
 from jsf.schema_types._tuple import JSFTuple
-from jsf.schema_types.anyof import AnyOf
 from jsf.schema_types.allof import AllOf
+from jsf.schema_types.anyof import AnyOf
 from jsf.schema_types.array import Array
 from jsf.schema_types.boolean import Boolean
 from jsf.schema_types.enum import JSFEnum
