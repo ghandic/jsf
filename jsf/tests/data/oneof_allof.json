@@ -1,0 +1,13 @@
+{
+  "oneOf": [
+    {
+      "allOf": [
+        { "type": "string" },
+        { "maxLength": 5 }
+      ]
+    },
+    {
+      "type": "boolean"
+    }
+  ]
+}
