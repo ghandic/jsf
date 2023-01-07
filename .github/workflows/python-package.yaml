@@ -48,8 +48,13 @@ jobs:
         run: |
           ls dist
           PACKAGE=`ls dist/jsf-*.tar.gz`
+          # Validate the CLI works
           pip3 install $PACKAGE\[cli\]
           jsf --help
+          # Validate the sdist tests work for conda
+          tar -xvf $PACKAGE
+          cd jsf-*
+          pytest
       - name: Upload coverage
         uses: codecov/codecov-action@v1
         with:
