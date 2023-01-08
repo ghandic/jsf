@@ -2,5 +2,5 @@ faker>=15.3.4
 jsonschema>=4.17.3
 pydantic>=1.10.4
 rstr>=3.2.0
-smart-open>=6.3.0
+smart-open[http]>=6.3.0
 
