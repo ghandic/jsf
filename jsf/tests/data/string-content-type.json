@@ -1,0 +1,39 @@
+{
+  "type": "object",
+  "properties": {
+    "application/jwt": {
+      "type": "string",
+      "contentMediaType": "application/jwt"
+    },
+    "application/zip": {
+      "type": "string",
+      "contentMediaType": "application/zip"
+    },
+    "application/gzip": {
+      "type": "string",
+      "contentMediaType": "application/gzip"
+    },
+    "text/plain": {
+      "type": "string",
+      "contentMediaType": "text/plain",
+      "minLength": 5,
+      "maxLength": 10
+    },
+    "image/jpeg": {
+      "type": "string",
+      "contentMediaType": "image/jpeg"
+    },
+    "image/webp": {
+      "type": "string",
+      "contentMediaType": "image/webp"
+    }
+  },
+  "required": [
+    "application/jwt",
+    "application/zip",
+    "application/gzip",
+    "text/plain",
+    "image/jpeg",
+    "image/webp"
+  ]
+}

@@ -22,6 +22,7 @@ use_coverage = true
 [pytest]
 extra_requirements = [
 	"typer>=0.7.0",
+	"pyjwt",
 	"pytest-cov"
 ]
 lockfile = "<none>"
