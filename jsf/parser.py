@@ -65,6 +65,13 @@ class JSF:
         for _name, definition in schema.get("properties", {}).items():
             props.append(self.__parse_definition(_name, path=f"{path}/{_name}", schema=definition))
         model.properties = props
+        pattern_props = []
+        for _name, definition in schema.get("patternProperties", {}).items():
+            pattern_props.append(
+                self.__parse_definition(_name, path=f"{path}/{_name}", schema=definition)
+            )
+        model.patternProperties = pattern_props
+
         return model
 
     def __parse_array(self, name: str, path: str, schema: Dict[str, Any]) -> Array:
