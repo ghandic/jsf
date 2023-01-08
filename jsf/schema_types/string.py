@@ -8,8 +8,7 @@ import rstr
 from faker import Faker
 
 from jsf.schema_types.base import BaseSchema, ProviderNotSetException
-from jsf.schema_types.string_utils import content_encoding
-from jsf.schema_types.string_utils import content_type
+from jsf.schema_types.string_utils import content_encoding, content_type
 from jsf.schema_types.string_utils.content_type.text__plain import random_fixed_length_sentence
 
 logger = logging.getLogger()
@@ -124,7 +123,9 @@ class String(BaseSchema):
     pattern: Optional[str] = None
     format: Optional[str] = None
     # enum: Optional[List[Union[str, int, float]]] = None  # NOTE: Not used - enums go to enum class
-    contentMediaType: Optional[str] = None  # TODO: Long list, need to document which ones will be supported and how to extend
+    contentMediaType: Optional[
+        str
+    ] = None  # TODO: Long list, need to document which ones will be supported and how to extend
     contentEncoding: Optional[content_encoding.ContentEncoding]
     # contentSchema # Doesnt help with generation
 
@@ -142,7 +143,10 @@ class String(BaseSchema):
             if self.pattern is not None:
                 return content_encoding.encode(rstr.xeger(self.pattern), self.contentEncoding)
             if self.contentMediaType is not None:
-                return content_encoding.encode(content_type.generate(self.contentMediaType, self.minLength, self.maxLength), self.contentEncoding)
+                return content_encoding.encode(
+                    content_type.generate(self.contentMediaType, self.minLength, self.maxLength),
+                    self.contentEncoding,
+                )
             return content_encoding.encode(
                 random_fixed_length_sentence(self.minLength, self.maxLength), self.contentEncoding
             )

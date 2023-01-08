@@ -2,7 +2,6 @@ import json
 import re
 
 import jwt
-
 from jsf.parser import JSF
 
 
@@ -126,13 +125,15 @@ def test_fake_string_content_type(TestData):
         schema = json.load(file)
     p = JSF(schema)
     assert isinstance(p.generate(), dict)
-    fake_data = [p.generate() for _ in range(100)]
+    fake_data = [p.generate() for _ in range(10)]  # Reducing for rate limiting of external requests
     for d in fake_data:
         assert len(d["text/plain"]) >= 5 and len(d["text/plain"]) <= 10
-        decoded_jwt = jwt.decode(d["application/jwt"], options={"verify_signature": False}) 
+
+        decoded_jwt = jwt.decode(d["application/jwt"], options={"verify_signature": False})
         assert set(decoded_jwt.keys()) == {"exp", "iss"}
         assert isinstance(decoded_jwt["exp"], int)
         assert isinstance(decoded_jwt["iss"], str)
+
 
 def test_fake_null(TestData):
     with open(TestData / "null.json", "r") as file:
