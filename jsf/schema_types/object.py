@@ -18,10 +18,6 @@ PropertyDependency = Dict[str, List[str]]
 SchemaDependency = Dict[str, "Object"]
 
 
-def generate_pattern_properties(pattern, schema):
-    return {rstr.xeger(pattern): schema for _ in range(random.randint(1, 10))}
-
-
 class Object(BaseSchema):
     properties: Dict[str, BaseSchema] = {}
     additionalProperties: Optional[Union[bool, BaseSchema]] = None
