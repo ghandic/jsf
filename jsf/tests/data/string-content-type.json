@@ -1,0 +1,16 @@
+{
+  "type": "object",
+  "properties": {
+    "application/jwt": {
+      "type": "string",
+      "contentMediaType": "application/jwt"
+    },
+    "text/plain": {
+      "type": "string",
+      "contentMediaType": "text/plain",
+      "minLength": 5,
+      "maxLength": 10
+    }
+  },
+  "required": ["application/jwt", "text/plain"]
+}

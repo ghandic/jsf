@@ -1,16 +1,16 @@
-import base64
 import logging
-import quopri
 import random
 import re
 from datetime import timezone
-from enum import Enum
 from typing import Any, Callable, Dict, Optional
 
 import rstr
 from faker import Faker
 
 from jsf.schema_types.base import BaseSchema, ProviderNotSetException
+from jsf.schema_types.string_utils import content_encoding
+from jsf.schema_types.string_utils import content_type
+from jsf.schema_types.string_utils.content_type.text__plain import random_fixed_length_sentence
 
 logger = logging.getLogger()
 faker = Faker()
@@ -18,11 +18,6 @@ faker = Faker()
 FRAGMENT = "[a-zA-Z][a-zA-Z0-9+-.]*"
 URI_PATTERN = f"https?://{{hostname}}(?:{FRAGMENT})+"
 PARAM_PATTERN = "(?:\\?([a-z]{1,7}(=\\w{1,5})?&){0,3})?"
-
-LOREM = """Lorem ipsum dolor sit amet consectetur adipisicing elit.
-Hic molestias, esse veniam placeat officiis nobis architecto modi
-possimus reiciendis accusantium exercitationem quas illum libero odit magnam,
-reprehenderit ipsum, repellendus culpa!""".split()
 
 
 def temporal_duration(
@@ -123,100 +118,32 @@ format_map: Dict[str, Callable] = {
 }
 
 
-def random_fixed_length_sentence(_min: int, _max: int) -> str:
-    output = ""
-    while len(output) < _max:
-        remaining = _max - len(output)
-        valid_words = list(filter(lambda s: len(s) < remaining, LOREM))
-        if len(valid_words) == 0:
-            break
-        output += random.choice(valid_words) + " "
-        if len(output) > _min and random.uniform(0, 1) > 0.9:
-            break
-    return output.strip()
-
-
-class ContentEncoding(str, Enum):
-    SEVEN_BIT = "7-bit"
-    EIGHT_BIT = "8-bit"
-    BINARY = "binary"
-    QUOTED_PRINTABLE = "quoted-printable"
-    BASE16 = "base-16"
-    BASE32 = "base-32"
-    BASE64 = "base-64"
-
-
-def binary_encoder(string: str) -> str:
-    return "".join(format(x, "b") for x in bytearray(string, "utf-8"))
-
-
-def bytes_str_repr(b: bytes) -> str:
-    return repr(b)[2:-1]
-
-
-def seven_bit_encoder(string: str) -> str:
-    return bytes_str_repr(string.encode("utf-7"))
-
-
-def eight_bit_encoder(string: str) -> str:
-    return bytes_str_repr(string.encode("utf-8"))
-
-
-def quoted_printable_encoder(string: str) -> str:
-    return bytes_str_repr(quopri.encodestring(string.encode("utf-8")))
-
-
-def b16_encoder(string: str) -> str:
-    return bytes_str_repr(base64.b16encode(string.encode("utf-8")))
-
-
-def b32_encoder(string: str) -> str:
-    return bytes_str_repr(base64.b32encode(string.encode("utf-8")))
-
-
-def b64_encoder(string: str) -> str:
-    return bytes_str_repr(base64.b64encode(string.encode("utf-8")))
-
-
-Encoder = {
-    ContentEncoding.SEVEN_BIT: seven_bit_encoder,
-    ContentEncoding.EIGHT_BIT: eight_bit_encoder,
-    ContentEncoding.BINARY: binary_encoder,
-    ContentEncoding.QUOTED_PRINTABLE: quoted_printable_encoder,
-    ContentEncoding.BASE16: b16_encoder,
-    ContentEncoding.BASE32: b32_encoder,
-    ContentEncoding.BASE64: b64_encoder,
-}
-
-
-def encode(string: str, encoding: Optional[ContentEncoding]) -> str:
-    return Encoder.get(encoding, lambda s: s)(string)
-
-
 class String(BaseSchema):
     minLength: Optional[float] = 0
     maxLength: Optional[float] = 50
     pattern: Optional[str] = None
     format: Optional[str] = None
     # enum: Optional[List[Union[str, int, float]]] = None  # NOTE: Not used - enums go to enum class
-    # contentMediaType: Optional[str] = None  # TODO: Long list, need to document which ones will be supported and how to extend
-    contentEncoding: Optional[ContentEncoding]
-    # contentSchema # No docs detailing this yet...
+    contentMediaType: Optional[str] = None  # TODO: Long list, need to document which ones will be supported and how to extend
+    contentEncoding: Optional[content_encoding.ContentEncoding]
+    # contentSchema # Doesnt help with generation
 
     def generate(self, context: Dict[str, Any]) -> Optional[str]:
         try:
             s = super().generate(context)
-            return str(encode(s, self.contentEncoding)) if s else s
+            return str(content_encoding.encode(s, self.contentEncoding)) if s else s
         except ProviderNotSetException:
             format_map["regex"] = lambda: rstr.xeger(self.pattern)
             format_map["relative-json-pointer"] = lambda: random.choice(
                 context["state"]["__all_json_paths__"]
             )
             if format_map.get(self.format) is not None:
-                return encode(format_map[self.format](), self.contentEncoding)
+                return content_encoding.encode(format_map[self.format](), self.contentEncoding)
             if self.pattern is not None:
-                return encode(rstr.xeger(self.pattern), self.contentEncoding)
-            return encode(
+                return content_encoding.encode(rstr.xeger(self.pattern), self.contentEncoding)
+            if self.contentMediaType is not None:
+                return content_encoding.encode(content_type.generate(self.contentMediaType, self.minLength, self.maxLength), self.contentEncoding)
+            return content_encoding.encode(
                 random_fixed_length_sentence(self.minLength, self.maxLength), self.contentEncoding
             )
 

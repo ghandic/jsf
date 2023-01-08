@@ -147,6 +147,10 @@ Navigate to [http://127.0.0.1:8000](http://127.0.0.1:8000) and check out your en
 
 </div>
 
+### Partially supported features
+
+- string `contentMediaType` - only a subset of these are supported, however they can be expanded within [this file](jsf/schema_types/string_utils/content_type/__init__.py)  
+
 ## Credits
 
 - This repository is a Python port of [json-schema-faker](https://github.com/json-schema-faker/json-schema-faker) with some minor differences in implementation.
