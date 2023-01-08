@@ -123,9 +123,7 @@ class String(BaseSchema):
     pattern: Optional[str] = None
     format: Optional[str] = None
     # enum: Optional[List[Union[str, int, float]]] = None  # NOTE: Not used - enums go to enum class
-    contentMediaType: Optional[
-        str
-    ] = None  # TODO: Long list, need to document which ones will be supported and how to extend
+    contentMediaType: Optional[str] = None
     contentEncoding: Optional[content_encoding.ContentEncoding]
     # contentSchema # Doesnt help with generation
 
