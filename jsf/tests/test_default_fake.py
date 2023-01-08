@@ -292,6 +292,28 @@ def test_fake_object(TestData):
     assert all(isinstance(d["test"], int) for d in fake_data), fake_data
 
 
+def test_fake_object_pattern_properties(TestData):
+    with open(TestData / "object-pattern-properties.json", "r") as file:
+        schema = json.load(file)
+    p = JSF(schema)
+
+    assert isinstance(p.generate(), dict)
+    fake_data = [p.generate() for _ in range(1000)]
+    assert all(isinstance(d["name"], str) for d in fake_data), fake_data
+    all_str_names = set()
+    all_int_names = set()
+    for d in fake_data:
+        string_types = [k for k in d.keys() if k.startswith("S_")]
+        int_types = [k for k in d.keys() if k.startswith("I_")]
+        all_str_names = all_str_names.union(set(string_types))
+        all_int_names = all_int_names.union(set(int_types))
+        assert all(isinstance(d[key], str) for key in string_types)
+        assert all(isinstance(d[key], int) for key in int_types)
+
+    assert len(all_str_names) > 0
+    assert len(all_int_names) > 0
+
+
 def test_fake_string_format(TestData):
     with open(TestData / "string-format.json", "r") as file:
         schema = json.load(file)

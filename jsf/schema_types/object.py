@@ -2,6 +2,7 @@ import logging
 import random
 from typing import Any, Dict, List, Optional, Union
 
+import rstr
 from pydantic import BaseModel, create_model
 
 from jsf.schema_types.base import BaseSchema, ProviderNotSetException
@@ -15,6 +16,10 @@ class PropertyNames(BaseModel):
 
 PropertyDependency = Dict[str, List[str]]
 SchemaDependency = Dict[str, "Object"]
+
+
+def generate_pattern_properties(pattern, schema):
+    return {rstr.xeger(pattern): schema for _ in range(random.randint(1, 10))}
 
 
 class Object(BaseSchema):
@@ -39,9 +44,16 @@ class Object(BaseSchema):
         try:
             return super().generate(context)
         except ProviderNotSetException:
-            return {
+            explicit_properties = {
                 o.name: o.generate(context) for o in self.properties if self.should_keep(o.name)
             }
+            pattern_props = {}
+            if self.patternProperties:
+                for o in self.patternProperties:
+                    for _ in range(random.randint(0, 10)):
+                        if self.should_keep(o.name):
+                            pattern_props[rstr.xeger(o.name)] = o.generate(context)
+            return {**pattern_props, **explicit_properties}
 
     def model(self, context: Dict[str, Any]):
         self.generate(context)

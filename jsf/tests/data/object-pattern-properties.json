@@ -1,0 +1,11 @@
+{
+  "type": "object",
+  "required": ["name", "credit_card", "test"],
+  "properties": {
+    "name": { "type": "string" }
+  },
+  "patternProperties": {
+    "^S_": { "type": "string" },
+    "^I_": { "type": "integer" }
+  }
+}
