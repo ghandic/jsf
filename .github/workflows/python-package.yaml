@@ -57,6 +57,7 @@ jobs:
           pip install .
           PACKAGE_DIR=`pip show jsf | grep "Location" | sed 's/^.*: //'`
           cd $PACKAGE_DIR/jsf
+          pip install pytest
           pytest
       - name: Upload coverage
         uses: codecov/codecov-action@v1
