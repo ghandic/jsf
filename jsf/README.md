@@ -14,24 +14,24 @@
     </a>
     <br />
     <a href="https://github.com/ghandic/jsf/blob/main/LICENSE" target="_blank">
-        <img src="https://img.shields.io/github/license/ghandic/jsf.svg" alt="License">
+        <img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License">
     </a>
     <a href="https://github.com/psf/black" target="_blank">
         <img src="https://img.shields.io/badge/code%20style-black-000000.svg" alt="Code style: black">
     </a>
 </p>
 
-
 Use **jsf** along with fake data generators to provide consistent and meaningful fake data for your system.
 
 ## Main Features
 
-- Provides out of the box data generation from any JSON schema 📦 
+- Provides out of the box data generation from any JSON schema 📦
+
 * Extendable custom data providers using any lambda functions 🔗
-* Multi level state for dependant data (eg multiple objects sharing value, such as children with same surname) 🤓 
-* Inbuilt validation of fake JSON produced ✅
-* In memory conversion from JSON Schema to Pydantic Models with generated examples 🤯
-* Seamless integration with [FastAPI](https://fastapi.tiangolo.com/) 🚀
+- Multi level state for dependant data (eg multiple objects sharing value, such as children with same surname) 🤓
+- Inbuilt validation of fake JSON produced ✅
+- In memory conversion from JSON Schema to Pydantic Models with generated examples 🤯
+- Seamless integration with [FastAPI](https://fastapi.tiangolo.com/) 🚀
 
 ## Installation
 
@@ -102,7 +102,6 @@ docker run -v $PWD:/data challisa/jsf jsf --schema /data/custom.json --instance 
 
 </details>
 
-
 ### FastAPI Integration 🚀
 
 Create a file main.py with:
@@ -154,4 +153,4 @@ Navigate to [http://127.0.0.1:8000](http://127.0.0.1:8000) and check out your en
 
 ## License
 
-* [MIT License](/LICENSE)
+- [MIT License](/LICENSE)
