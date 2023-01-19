@@ -417,3 +417,16 @@ def test_gen_and_validate(TestData):
         schema = json.load(file)
     p = JSF(schema)
     [p.generate_and_validate() for _ in range(50)]
+
+
+def test_list_of_types(TestData):
+    with open(TestData / "type-list.json", "r") as file:
+        schema = json.load(file)
+    fake_data = [JSF(schema).generate() for _ in range(100)]
+    for f in fake_data:
+        print(f)
+    assert all(isinstance(f, dict) for f in fake_data), fake_data
+    assert all(type(f["randTypeValueNullable"]) in [type(None), bool] for f in fake_data), fake_data
+    assert all(type(f["randTypeValue"]) in [bool, int, float, str] for f in fake_data), fake_data
+    assert all(isinstance(f["int"], int) for f in fake_data), fake_data
+    assert all(isinstance(f["null"], type(None)) for f in fake_data), fake_data
