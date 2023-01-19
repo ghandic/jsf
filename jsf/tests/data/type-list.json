@@ -1,0 +1,36 @@
+{
+    "type": "object",
+    "properties": {
+        "randTypeValueNullable": {
+            "type": [
+                "null",
+                "boolean"
+            ]
+        },
+        "randTypeValue": {
+            "type": [
+                "boolean",
+                "number",
+                "integer",
+                "string"
+            ]
+        },
+        "int": {
+            "type": [
+                "integer"
+            ]
+        },
+        "null": {
+            "type": [
+                "null"
+            ]
+        }
+    },
+    "additionalProperties": false,
+    "required": [
+        "randTypeValueNullable",
+        "randTypeValue",
+        "int",
+        "null"
+    ]
+}

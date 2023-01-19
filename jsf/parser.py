@@ -95,7 +95,9 @@ class JSF:
                 item_type_deep_copy = deepcopy(item_type)
                 item_type_deep_copy.remove("null")
                 return random.choice(item_type_deep_copy), True
-            raise TypeError  # pragma: no cover - not currently supporting other types TODO
+            if len(set(item_type)) >= 1:
+                item_type_deep_copy = deepcopy(item_type)
+                return random.choice(item_type_deep_copy), False
         return item_type, False
 
     def __parse_anyOf(self, name: str, path: str, schema: Dict[str, Any]) -> AnyOf:
