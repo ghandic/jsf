@@ -60,7 +60,7 @@ jobs:
           pip install pytest pyjwt
           pytest
       - name: Upload coverage
-        uses: codecov/codecov-action@v1
+        uses: codecov/codecov-action@v3
         with:
           files: ./dist/coverage/python/coverage.xml
       - name: Upload pants log
