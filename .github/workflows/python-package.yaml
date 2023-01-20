@@ -27,7 +27,7 @@ jobs:
             ~/.cache/pants/named_caches
           key: ${{ runner.os }}-
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
       - name: Bootstrap Pants
