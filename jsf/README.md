@@ -77,10 +77,21 @@ Results in ...
 
 ### From JSON file 📁
 
+This will generate required and optionally non-required fields
+
 ```python
 from jsf import JSF
 
 faker = JSF.from_json("demo-schema.json")
+fake_json = faker.generate()
+```
+
+To generate all fields use 
+
+```python
+from jsf import JSF
+
+faker = JSF.from_json("demo-schema.json", should_keep_all=True)
 fake_json = faker.generate()
 ```
 

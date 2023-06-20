@@ -35,6 +35,7 @@ class JSF:
         schema: Dict[str, Any],
         context: Optional[Dict[str, Any]] = None,
         initial_state: Optional[Dict[str, Any]] = None,
+        should_keep_all: bool = False
     ):
         if not context:
             context = {
@@ -47,6 +48,7 @@ class JSF:
         if not initial_state:
             initial_state = {}
 
+        self.should_keep_all = should_keep_all
         self.root_schema = schema
         self.definitions = {}
         self.base_state = {
@@ -66,7 +68,15 @@ class JSF:
 
     def __parse_object(self, name: str, path: str, schema: Dict[str, Any]) -> Object:
         _, is_nullable = self.__is_field_nullable(schema)
-        model = Object.from_dict({"name": name, "path": path, "is_nullable": is_nullable, **schema})
+        model = Object.from_dict(
+            {
+                "name": name,
+                "path": path,
+                "is_nullable": is_nullable,
+                "should_keep_all":
+                    self.should_keep_all, **schema
+            }
+        )
         props = []
         for _name, definition in schema.get("properties", {}).items():
             props.append(self.__parse_definition(_name, path=f"{path}/{_name}", schema=definition))
@@ -208,7 +218,8 @@ class JSF:
         with open(path, "w") as f:
             json.dump(self.generate(), f, indent=2)
 
+
     @staticmethod
-    def from_json(path: str) -> "JSF":
+    def from_json(path: str, should_keep_all: bool = False) -> "JSF":
         with open(path, "r") as f:
-            return JSF(json.load(f))
+            return JSF(json.load(f), should_keep_all=should_keep_all)

@@ -27,11 +27,15 @@ class Object(BaseSchema):
     maxProperties: Optional[int] = None
     dependencies: Optional[Union[PropertyDependency, SchemaDependency]] = None
     patternProperties: Optional[Dict[str, BaseSchema]] = None
+    should_keep_all: bool = False
 
     def from_dict(d):
         return Object(**d)
 
     def should_keep(self, property_name: str) -> bool:
+        if self.should_keep_all:
+            return True
+
         if isinstance(self.required, list) and property_name in self.required:
             return True
         return random.uniform(0, 1) < 0.5
