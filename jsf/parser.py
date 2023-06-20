@@ -33,14 +33,20 @@ class JSF:
     def __init__(
         self,
         schema: Dict[str, Any],
-        context: Dict[str, Any] = {
-            "faker": faker,
-            "random": random,
-            "datetime": datetime,
-            "__internal__": {"List": List, "Union": Union, "conlist": conlist},
-        },
-        initial_state: Dict[str, Any] = {},
+        context: Optional[Dict[str, Any]] = None,
+        initial_state: Optional[Dict[str, Any]] = None,
     ):
+        if not context:
+            context = {
+                "faker": faker,
+                "random": random,
+                "datetime": datetime,
+                "__internal__": {"List": List, "Union": Union, "conlist": conlist},
+            }
+
+        if not initial_state:
+            initial_state = {}
+
         self.root_schema = schema
         self.definitions = {}
         self.base_state = {
