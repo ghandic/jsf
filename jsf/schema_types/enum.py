@@ -3,6 +3,8 @@ import random
 from enum import Enum
 from typing import Any, Dict, List, Optional, Union
 
+from pydantic import ConfigDict
+
 from jsf.schema_types.base import BaseSchema, ProviderNotSetException
 
 logger = logging.getLogger()
@@ -31,5 +33,6 @@ class JSFEnum(BaseSchema):
         context["__internal__"][_type.__name__] = _type
         return self.to_pydantic(context, _type)
 
-    class Config:
-        smart_union = True
+    # TODO[pydantic]: The following keys were removed: `smart_union`.
+    # Check https://docs.pydantic.dev/dev-v2/migration/#changes-to-config for more information.
+    model_config = ConfigDict(smart_union=True)

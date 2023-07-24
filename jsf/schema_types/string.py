@@ -51,9 +51,8 @@ def temporal_duration(
     if minutes != 0:
         duration = f"{duration}{minutes}M"
     if seconds + milliseconds + microseconds + nanoseconds != 0:
-        if remainder := "".join(
-            str(part) for part in [milliseconds, microseconds, nanoseconds] if part
-        ):
+        remainder = "".join(str(part) for part in [milliseconds, microseconds, nanoseconds] if part)
+        if remainder:
             seconds = f"{seconds}.{remainder}"
         duration = f"{duration}{seconds}S"
 
@@ -124,7 +123,7 @@ class String(BaseSchema):
     format: Optional[str] = None
     # enum: Optional[List[Union[str, int, float]]] = None  # NOTE: Not used - enums go to enum class
     contentMediaType: Optional[str] = None
-    contentEncoding: Optional[content_encoding.ContentEncoding]
+    contentEncoding: Optional[content_encoding.ContentEncoding] = None
     # contentSchema # Doesnt help with generation
 
     def generate(self, context: Dict[str, Any]) -> Optional[str]:

@@ -7,11 +7,11 @@ backend_packages = [
 	"pants.backend.python.lint.docformatter",
 	"pants.backend.python.lint.isort",
 	"pants.backend.python.lint.black",
-	"pants.backend.experimental.python.lint.pyupgrade"
+	"pants.backend.experimental.python.lint.pyupgrade",
 ]
 
 [python]
-interpreter_constraints = ["CPython>=3.7,<4"]
+interpreter_constraints = ["CPython>=3.8,<4"]
 
 [flake8]
 config = ".flake8"
@@ -20,11 +20,7 @@ config = ".flake8"
 use_coverage = true
 
 [pytest]
-extra_requirements = [
-	"typer>=0.7.0",
-	"pyjwt",
-	"pytest-cov"
-]
+extra_requirements = ["typer>=0.7.0", "pyjwt", "pytest-cov"]
 lockfile = "<none>"
 
 [coverage-py]

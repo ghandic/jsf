@@ -10,5 +10,5 @@ files(
 python_tests(
     name="pytest",
     dependencies=[":tests"],
-    interpreter_constraints=parametrize(py3=[">=3.7,<4"]),
+    interpreter_constraints=parametrize(py3=[">=3.8,<4"]),
 )

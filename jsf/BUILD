@@ -44,7 +44,7 @@ python_distribution(
             "Data contract",
         ],
         zip_safe=True,
-        python_requires=">=3.7",
+        python_requires=">=3.8",
         extras_require={"cli": ["typer>=0.7.0"]}
     ),
 )
