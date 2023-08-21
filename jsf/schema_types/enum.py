@@ -14,9 +14,7 @@ _types = {"string": str, "integer": int, "number": float}
 class JSFEnum(BaseSchema):
     enum: Optional[List[Union[str, int, float, None]]] = []
 
-    def generate(
-        self, context: Dict[str, Any]
-    ) -> Optional[Union[str, int, float]]:
+    def generate(self, context: Dict[str, Any]) -> Optional[Union[str, int, float]]:
         try:
             return super().generate(context)
         except ProviderNotSetException:
