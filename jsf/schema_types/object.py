@@ -59,4 +59,4 @@ class Object(BaseSchema):
         return self.to_pydantic(context, _type)
 
 
-Object.update_forward_refs()
+Object.model_rebuild()
