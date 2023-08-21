@@ -38,6 +38,7 @@ class BaseSchema(BaseModel):
         raise NotImplementedError  # pragma: no cover
 
     def generate(self, context: Dict[str, Any]) -> Any:
+
         if self.set_state is not None:
             context["state"][self.path] = {k: eval(v, context)() for k, v in self.set_state.items()}
 
@@ -62,4 +63,4 @@ class BaseSchema(BaseModel):
                 Optional[_type],
                 Field(..., description=self.description, example=example),
             )
-        return (_type,Field(..., description=self.description, example=example))
+        return (_type, Field(..., description=self.description, example=example))
