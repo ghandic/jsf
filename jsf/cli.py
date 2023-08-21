@@ -1,6 +1,6 @@
 from pathlib import Path
 
-import typer
+import typer  # pants: no-infer-dep
 
 from jsf.parser import JSF
 

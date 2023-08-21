@@ -1,7 +1,7 @@
 import json
 import re
 
-import jwt
+import jwt  # pants: no-infer-dep
 from jsf.parser import JSF
 
 

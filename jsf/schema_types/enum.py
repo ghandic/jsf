@@ -33,6 +33,4 @@ class JSFEnum(BaseSchema):
         context["__internal__"][_type.__name__] = _type
         return self.to_pydantic(context, _type)
 
-    # TODO[pydantic]: The following keys were removed: `smart_union`.
-    # Check https://docs.pydantic.dev/dev-v2/migration/#changes-to-config for more information.
     model_config = ConfigDict()

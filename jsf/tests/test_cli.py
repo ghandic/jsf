@@ -3,7 +3,7 @@ from pathlib import Path
 
 from jsf.cli import app
 from jsonschema import validate
-from typer.testing import CliRunner
+from typer.testing import CliRunner  # pants: no-infer-dep
 
 runner = CliRunner()
 

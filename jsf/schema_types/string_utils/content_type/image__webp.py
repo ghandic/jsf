@@ -1,6 +1,6 @@
 import random
 
-import requests
+import requests  # pants: no-infer-dep
 
 from jsf.schema_types.string_utils.content_encoding import bytes_str_repr
 
