@@ -35,4 +35,4 @@ class JSFEnum(BaseSchema):
 
     # TODO[pydantic]: The following keys were removed: `smart_union`.
     # Check https://docs.pydantic.dev/dev-v2/migration/#changes-to-config for more information.
-    model_config = ConfigDict(smart_union=True)
+    model_config = ConfigDict()
