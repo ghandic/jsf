@@ -1,7 +1,7 @@
 import json
 import platform
 from enum import Enum
-from typing import List
+from typing import List, _GenericAlias
 
 import pytest  # pants: no-infer-dep
 from jsf.parser import JSF
@@ -20,13 +20,11 @@ expected = [
     ("custom", Object),
     ("string-enum", Enum),
     ("string", str),
-    ("tuple", tuple),
 ]
 if int(platform.python_version_tuple()[1]) < 9:
     expected.append(("array", List))
 
 else:
-    from typing import _GenericAlias
 
     def test_gen_model_list(TestData):
         with open(TestData / "array.json", "r") as file:
@@ -34,6 +32,14 @@ else:
         p = JSF(schema)
         Model = p.pydantic()
         assert _GenericAlias == type(Model)
+
+
+def test_gen_model_tuple(TestData):
+    with open(TestData / "tuple.json", "r") as file:
+        schema = json.load(file)
+    p = JSF(schema)
+    Model = p.pydantic()
+    assert _GenericAlias == type(Model)
 
 
 @pytest.mark.parametrize(

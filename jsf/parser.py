@@ -9,7 +9,6 @@ from typing import Any, Dict, List, Optional, Tuple, Union
 
 from faker import Faker
 from jsonschema import validate
-from pydantic import conlist
 from smart_open import open as s_open
 
 from jsf.schema_types import (
@@ -37,7 +36,7 @@ class JSF:
             "faker": faker,
             "random": random,
             "datetime": datetime,
-            "__internal__": {"List": List, "Union": Union, "conlist": conlist},
+            "__internal__": {"List": List, "Union": Union, "Tuple": Tuple},
         },
         initial_state: Dict[str, Any] = {},
     ):

@@ -27,7 +27,7 @@ class JSFTuple(BaseSchema):
 
     def model(self, context: Dict[str, Any]):
         _type = eval(
-            f"conlist(Union[{','.join([item.model(context)[0].__name__ for item in self.items])}], min_items={len(self.items)}, max_items={len(self.items)})",
+            f"Tuple[{','.join([item.model(context)[0].__name__ for item in self.items])}]",
             context["__internal__"],
         )
         return self.to_pydantic(context, _type)
