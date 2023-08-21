@@ -14,7 +14,9 @@ _types = {"string": str, "integer": int, "number": float}
 class JSFEnum(BaseSchema):
     enum: Optional[List[Union[str, int, float, None]]] = []
 
-    def generate(self, context: Dict[str, Any]) -> Optional[Union[str, int, float]]:
+    def generate(
+        self, context: Dict[str, Any]
+    ) -> Optional[Union[str, int, float]]:
         try:
             return super().generate(context)
         except ProviderNotSetException:
@@ -35,4 +37,4 @@ class JSFEnum(BaseSchema):
 
     # TODO[pydantic]: The following keys were removed: `smart_union`.
     # Check https://docs.pydantic.dev/dev-v2/migration/#changes-to-config for more information.
-    model_config = ConfigDict(smart_union=True)
+    model_config = ConfigDict()
