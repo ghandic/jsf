@@ -94,3 +94,32 @@ def test_nested_object_ref(TestData):
         "uuid": String,
     }
     assert {prop.name: type(prop) for prop in p.root.properties[0].properties} == expected_types
+
+def test_ordered_refs_object(TestData):
+    with open(TestData / "ordered-refs.json", "r") as file:
+        schema = json.load(file)
+    p = JSF(schema)
+
+    assert isinstance(p.root, Object)
+    assert hasattr(p.root, "properties")
+    expected_types = {"foobar": Object}
+    assert {prop.name: type(prop) for prop in p.root.properties} == expected_types
+    expected_types = {
+        "bar": JSFEnum,
+    }
+    assert {prop.name: type(prop) for prop in p.root.properties[0].properties} == expected_types
+
+def test_unordered_refs_object(TestData):
+    with open(TestData / "unordered-refs.json", "r") as file:
+        schema = json.load(file)
+    p = JSF(schema)
+
+    assert isinstance(p.root, Object)
+    assert hasattr(p.root, "properties")
+    expected_types = {"foobar": Object}
+    assert {prop.name: type(prop) for prop in p.root.properties} == expected_types
+    expected_types = {
+        "bar": JSFEnum,
+    }
+    assert {prop.name: type(prop) for prop in p.root.properties[0].properties} == expected_types
+
