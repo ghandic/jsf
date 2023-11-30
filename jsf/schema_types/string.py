@@ -104,9 +104,7 @@ format_map: Dict[str, Callable] = {
     "iri": faker.uri,
     "iri-reference": lambda: faker.uri() + rstr.xeger(PARAM_PATTERN),
     "uri-template": lambda: rstr.xeger(
-        URI_PATTERN.format(hostname=re.escape(faker.hostname())).replace(
-            "(?:", "(?:/\\{[a-z][:a-zA-Z0-9-]*\\}|"
-        )
+        URI_PATTERN.format(hostname=re.escape(faker.hostname())).replace("(?:", "(?:/\\{[a-z][:a-zA-Z0-9-]*\\}|")
     ),
     "json-pointer": lambda: rstr.xeger(f"(/(?:${FRAGMENT.replace(']*', '/]*')}|~[01]))+"),
     "relative-json-pointer": lambda: rstr.xeger(
@@ -132,9 +130,7 @@ class String(BaseSchema):
             return str(content_encoding.encode(s, self.contentEncoding)) if s else s
         except ProviderNotSetException:
             format_map["regex"] = lambda: rstr.xeger(self.pattern)
-            format_map["relative-json-pointer"] = lambda: random.choice(
-                context["state"]["__all_json_paths__"]
-            )
+            format_map["relative-json-pointer"] = lambda: random.choice(context["state"]["__all_json_paths__"])
             if format_map.get(self.format) is not None:
                 return content_encoding.encode(format_map[self.format](), self.contentEncoding)
             if self.pattern is not None:

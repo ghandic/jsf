@@ -1,9 +1,10 @@
 import json
 from pathlib import Path
 
-from jsf.cli import app
 from jsonschema import validate
 from typer.testing import CliRunner  # pants: no-infer-dep
+
+from jsf.cli import app
 
 runner = CliRunner()
 
@@ -11,9 +12,7 @@ runner = CliRunner()
 def test_app(TestData):
     file = Path("tmp.json")
     try:
-        result = runner.invoke(
-            app, ["--schema", TestData / "custom.json", "--instance", "tmp.json"]
-        )
+        result = runner.invoke(app, ["--schema", TestData / "custom.json", "--instance", "tmp.json"])
         assert result.exit_code == 0
         assert file.exists()
         with open(file, "r") as f:

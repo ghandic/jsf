@@ -2,6 +2,7 @@ import json
 import re
 
 import jwt  # pants: no-infer-dep
+
 from jsf.parser import JSF
 
 
@@ -234,12 +235,8 @@ def test_fake_array_dicts(TestData):
     assert isinstance(p.generate(), dict)
     fake_data = [p.generate() for _ in range(1000)]
     assert all(len(d["Basket"]) == 2 for d in fake_data), fake_data
-    assert all(
-        d["Basket"][0]["Item Name"] in ["A", "B", "C", "D", "E"] for d in fake_data
-    ), fake_data
-    assert all(
-        d["Basket"][1]["Item Name"] in ["A", "B", "C", "D", "E"] for d in fake_data
-    ), fake_data
+    assert all(d["Basket"][0]["Item Name"] in ["A", "B", "C", "D", "E"] for d in fake_data), fake_data
+    assert all(d["Basket"][1]["Item Name"] in ["A", "B", "C", "D", "E"] for d in fake_data), fake_data
     assert all(0 <= d["Basket"][0]["Amount"] < 5 for d in fake_data), fake_data
     assert all(0 <= d["Basket"][1]["Amount"] < 5 for d in fake_data), fake_data
 
@@ -324,8 +321,7 @@ def test_fake_string_format(TestData):
     assert all(bool(re.match(r".*@.*", d["email"])) for d in fake_data), fake_data
     assert all(bool(re.match(r".*@.*", d["idn-email"])) for d in fake_data), fake_data
     assert all(
-        bool(re.match(r"\d{4}-\d{2}-\d{2}T\d{2}\:\d{2}\:\d{2}\+\d{2}\:\d{2}", d["date-time"]))
-        for d in fake_data
+        bool(re.match(r"\d{4}-\d{2}-\d{2}T\d{2}\:\d{2}\:\d{2}\+\d{2}\:\d{2}", d["date-time"])) for d in fake_data
     ), fake_data
     assert all(bool(re.match(r"\d{4}-\d{2}-\d{2}", d["date"])) for d in fake_data), fake_data
     assert all(
@@ -337,15 +333,9 @@ def test_fake_string_format(TestData):
         )
         for d in fake_data
     ), fake_data
-    assert all(
-        bool(re.match(r"\d{2}\:\d{2}\:\d{2}\+\d{2}\:\d{2}", d["time"])) for d in fake_data
-    ), fake_data
-    assert all(
-        bool(re.match(r"[a-zA-Z0-9+-\.]{1,33}\.[a-z]{2,4}", d["hostname"])) for d in fake_data
-    )
-    assert all(
-        bool(re.match(r"[a-zA-Z0-9+-\.]{1,33}\.[a-z]{2,4}", d["idn-hostname"])) for d in fake_data
-    )
+    assert all(bool(re.match(r"\d{2}\:\d{2}\:\d{2}\+\d{2}\:\d{2}", d["time"])) for d in fake_data), fake_data
+    assert all(bool(re.match(r"[a-zA-Z0-9+-\.]{1,33}\.[a-z]{2,4}", d["hostname"])) for d in fake_data)
+    assert all(bool(re.match(r"[a-zA-Z0-9+-\.]{1,33}\.[a-z]{2,4}", d["idn-hostname"])) for d in fake_data)
     assert all(bool(re.match(r"[a-f0-9]{0,4}(:[a-f0-9]{0,4}){7}", d["ipv6"])) for d in fake_data), [
         d["ipv6"] for d in fake_data
     ]

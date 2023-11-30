@@ -1,8 +1,8 @@
 import json
 
 import pytest  # pants: no-infer-dep
-from jsf.parser import JSF
 
+from jsf.parser import JSF
 from jsf.schema_types import (
     Array,
     Boolean,
@@ -95,6 +95,7 @@ def test_nested_object_ref(TestData):
     }
     assert {prop.name: type(prop) for prop in p.root.properties[0].properties} == expected_types
 
+
 def test_ordered_refs_object(TestData):
     with open(TestData / "ordered-refs.json", "r") as file:
         schema = json.load(file)
@@ -109,6 +110,7 @@ def test_ordered_refs_object(TestData):
     }
     assert {prop.name: type(prop) for prop in p.root.properties[0].properties} == expected_types
 
+
 def test_unordered_refs_object(TestData):
     with open(TestData / "unordered-refs.json", "r") as file:
         schema = json.load(file)
@@ -122,4 +124,3 @@ def test_unordered_refs_object(TestData):
         "bar": JSFEnum,
     }
     assert {prop.name: type(prop) for prop in p.root.properties[0].properties} == expected_types
-

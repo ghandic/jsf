@@ -21,16 +21,12 @@ class Array(BaseSchema):
         try:
             return super().generate(context)
         except ProviderNotSetException:
-
             if isinstance(self.fixed, str):
                 self.minItems = self.maxItems = eval(self.fixed, context)()
             elif isinstance(self.fixed, int):
                 self.minItems = self.maxItems = self.fixed
 
-            output = [
-                self.items.generate(context)
-                for _ in range(random.randint(self.minItems, self.maxItems))
-            ]
+            output = [self.items.generate(context) for _ in range(random.randint(self.minItems, self.maxItems))]
             if self.uniqueItems and self.items.type == "object":
                 output = [dict(s) for s in {frozenset(d.items()) for d in output}]
                 while len(output) < self.minItems:

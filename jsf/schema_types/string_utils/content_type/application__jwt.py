@@ -15,7 +15,6 @@ def base64url_encode(input: bytes):
 
 
 def jwt(api_key, expiry, api_sec):
-
     segments = []
 
     header = {"typ": "JWT", "alg": "HS256"}
@@ -39,7 +38,6 @@ def jwt(api_key, expiry, api_sec):
 
 
 def create_random_jwt(*args, **kwargs):
-
     api_key = secrets.token_urlsafe(16)
     api_sec = secrets.token_urlsafe(16)
 
