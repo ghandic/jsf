@@ -40,7 +40,9 @@ class Object(BaseSchema):
         try:
             return super().generate(context)
         except ProviderNotSetException:
-            explicit_properties = {o.name: o.generate(context) for o in self.properties if self.should_keep(o.name)}
+            explicit_properties = {
+                o.name: o.generate(context) for o in self.properties if self.should_keep(o.name)
+            }
             pattern_props = {}
             if self.patternProperties:
                 for o in self.patternProperties:

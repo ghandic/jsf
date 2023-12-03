@@ -66,7 +66,9 @@ class JSF:
         model.properties = props
         pattern_props = []
         for _name, definition in schema.get("patternProperties", {}).items():
-            pattern_props.append(self.__parse_definition(_name, path=f"{path}/{_name}", schema=definition))
+            pattern_props.append(
+                self.__parse_definition(_name, path=f"{path}/{_name}", schema=definition)
+            )
         model.patternProperties = pattern_props
 
         return model
@@ -124,7 +126,9 @@ class JSF:
         for def_tag in ("definitions", "$defs"):
             for name, definition in schema.get(def_tag, {}).items():
                 if name == def_name:
-                    parsed_definition = self.__parse_definition(name, path=f"#/{def_tag}", schema=definition)
+                    parsed_definition = self.__parse_definition(
+                        name, path=f"#/{def_tag}", schema=definition
+                    )
                     self.definitions[f"#/{def_tag}/{name}"] = parsed_definition
         return parsed_definition
 
@@ -140,7 +144,9 @@ class JSF:
             assert all(
                 isinstance(item, (int, float, str, type(None))) for item in enum_list
             ), "Enum Type is not null, int, float or string"
-            return JSFEnum.from_dict({"name": name, "path": path, "is_nullable": is_nullable, **schema})
+            return JSFEnum.from_dict(
+                {"name": name, "path": path, "is_nullable": is_nullable, **schema}
+            )
         elif "type" in schema:
             if item_type == "object" and "properties" in schema:
                 return self.__parse_object(name, path, schema)
@@ -153,7 +159,9 @@ class JSF:
             elif item_type == "array":
                 if (schema.get("contains") is not None) or isinstance(schema.get("items"), dict):
                     return self.__parse_array(name, path, schema)
-                if isinstance(schema.get("items"), list) and all(isinstance(x, dict) for x in schema.get("items", [])):
+                if isinstance(schema.get("items"), list) and all(
+                    isinstance(x, dict) for x in schema.get("items", [])
+                ):
                     return self.__parse_tuple(name, path, schema)
             else:
                 return self.__parse_primitive(name, path, schema)

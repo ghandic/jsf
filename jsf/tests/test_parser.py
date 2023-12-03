@@ -1,8 +1,8 @@
 import json
 
 import pytest  # pants: no-infer-dep
-
 from jsf.parser import JSF
+
 from jsf.schema_types import (
     Array,
     Boolean,

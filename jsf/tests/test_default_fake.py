@@ -3,7 +3,6 @@ import re
 from typing import Optional
 
 import jwt  # pants: no-infer-dep
-
 from jsf.parser import JSF
 
 
@@ -236,8 +235,12 @@ def test_fake_array_dicts(TestData):
     assert isinstance(p.generate(), dict)
     fake_data = [p.generate() for _ in range(1000)]
     assert all(len(d["Basket"]) == 2 for d in fake_data), fake_data
-    assert all(d["Basket"][0]["Item Name"] in ["A", "B", "C", "D", "E"] for d in fake_data), fake_data
-    assert all(d["Basket"][1]["Item Name"] in ["A", "B", "C", "D", "E"] for d in fake_data), fake_data
+    assert all(
+        d["Basket"][0]["Item Name"] in ["A", "B", "C", "D", "E"] for d in fake_data
+    ), fake_data
+    assert all(
+        d["Basket"][1]["Item Name"] in ["A", "B", "C", "D", "E"] for d in fake_data
+    ), fake_data
     assert all(0 <= d["Basket"][0]["Amount"] < 5 for d in fake_data), fake_data
     assert all(0 <= d["Basket"][1]["Amount"] < 5 for d in fake_data), fake_data
 

@@ -7,7 +7,9 @@ from jsf.schema_types.base import BaseSchema, ProviderNotSetException
 
 class JSFTuple(BaseSchema):
     items: Optional[List[BaseSchema]] = None
-    additionalItems: Optional[Union[bool, BaseSchema]] = None  # TODO: Random additional items to be appended
+    additionalItems: Optional[
+        Union[bool, BaseSchema]
+    ] = None  # TODO: Random additional items to be appended
     minItems: Optional[int] = 0
     maxItems: Optional[int] = 5
     uniqueItems: Optional[bool] = False

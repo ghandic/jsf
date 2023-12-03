@@ -33,7 +33,9 @@ class Number(BaseSchema):
             else:
                 _max = self.maximum
 
-            return float(step * random.randint(math.ceil(float(_min) / step), math.floor(float(_max) / step)))
+            return float(
+                step * random.randint(math.ceil(float(_min) / step), math.floor(float(_max) / step))
+            )
 
     def model(self, context: Dict[str, Any]):
         return self.to_pydantic(context, float)

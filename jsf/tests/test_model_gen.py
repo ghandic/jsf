@@ -4,9 +4,8 @@ from enum import Enum
 from typing import List, _GenericAlias
 
 import pytest  # pants: no-infer-dep
-from pydantic.main import create_model
-
 from jsf.parser import JSF
+from pydantic.main import create_model
 
 Object = create_model("Object")
 
