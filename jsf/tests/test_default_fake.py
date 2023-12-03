@@ -1,5 +1,6 @@
 import json
 import re
+from typing import Optional
 
 import jwt  # pants: no-infer-dep
 
@@ -311,6 +312,10 @@ def test_fake_object_pattern_properties(TestData):
     assert len(all_int_names) > 0
 
 
+def assert_regex(pattern: str, string: str, info: Optional[str]) -> None:
+    assert bool(re.match(pattern, string)), (string, info)
+
+
 def test_fake_string_format(TestData):
     with open(TestData / "string-format.json", "r") as file:
         schema = json.load(file)
@@ -318,27 +323,25 @@ def test_fake_string_format(TestData):
 
     assert isinstance(p.generate(), dict)
     fake_data = [p.generate() for _ in range(10)]
-    assert all(bool(re.match(r".*@.*", d["email"])) for d in fake_data), fake_data
-    assert all(bool(re.match(r".*@.*", d["idn-email"])) for d in fake_data), fake_data
-    assert all(
-        bool(re.match(r"\d{4}-\d{2}-\d{2}T\d{2}\:\d{2}\:\d{2}\+\d{2}\:\d{2}", d["date-time"])) for d in fake_data
-    ), fake_data
-    assert all(bool(re.match(r"\d{4}-\d{2}-\d{2}", d["date"])) for d in fake_data), fake_data
-    assert all(
-        bool(
-            re.match(
-                r"^(-?)P(?=\d|T\d)(?:(\d+)Y)?(?:(\d+)M)?(?:(\d+)W)?(?:(\d+)D)?(?:T(?:(\d+)H)?(?:(\d+)M)?(?:(\d+(?:\.\d+)?)S)?)?$",
-                d["duration"],
-            )
+
+    for d in fake_data:
+        assert_regex(r".*@.*", d["email"], "email")
+        assert_regex(r".*@.*", d["idn-email"], "idn-email")
+        assert_regex(
+            r"\d{4}-\d{2}-\d{2}T\d{2}\:\d{2}\:\d{2}\.*\d*[-\+]\d{2}\:\d{2}",
+            d["date-time"],
+            "date-time",
         )
-        for d in fake_data
-    ), fake_data
-    assert all(bool(re.match(r"\d{2}\:\d{2}\:\d{2}\+\d{2}\:\d{2}", d["time"])) for d in fake_data), fake_data
-    assert all(bool(re.match(r"[a-zA-Z0-9+-\.]{1,33}\.[a-z]{2,4}", d["hostname"])) for d in fake_data)
-    assert all(bool(re.match(r"[a-zA-Z0-9+-\.]{1,33}\.[a-z]{2,4}", d["idn-hostname"])) for d in fake_data)
-    assert all(bool(re.match(r"[a-f0-9]{0,4}(:[a-f0-9]{0,4}){7}", d["ipv6"])) for d in fake_data), [
-        d["ipv6"] for d in fake_data
-    ]
+        assert_regex(r"\d{4}-\d{2}-\d{2}", d["date"], "date")
+        assert_regex(
+            r"^(-?)P(?=\d|T\d)(?:(\d+)Y)?(?:(\d+)M)?(?:(\d+)W)?(?:(\d+)D)?(?:T(?:(\d+)H)?(?:(\d+)M)?(?:(\d+(?:\.\d+)?)S)?)?$",
+            d["duration"],
+            "duration",
+        )
+        assert_regex(r"\d{2}\:\d{2}\:\d{2}\.*\d*[-\+]\d{2}\:\d{2}", d["time"], "time")
+        assert_regex(r"[a-zA-Z0-9+-\.]{1,33}\.[a-z]{2,4}", d["hostname"], "hostname")
+        assert_regex(r"[a-zA-Z0-9+-\.]{1,33}\.[a-z]{2,4}", d["idn-hostname"], "idn-hostname")
+        assert_regex(r"[a-f0-9]{0,4}(:[a-f0-9]{0,4}){7}", d["ipv6"], "ipv6")
 
     # TODO:  add more regex tests
     # "ipv4"
