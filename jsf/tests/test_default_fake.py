@@ -315,8 +315,8 @@ def test_fake_object_pattern_properties(TestData):
     assert len(all_int_names) > 0
 
 
-def assert_regex(pattern: str, string: str, info:Optional[str]) -> None:
-    assert(bool(re.match(pattern, string))), (string, info)
+def assert_regex(pattern: str, string: str, info: Optional[str]) -> None:
+    assert bool(re.match(pattern, string)), (string, info)
 
 
 def test_fake_string_format(TestData):
@@ -326,13 +326,21 @@ def test_fake_string_format(TestData):
 
     assert isinstance(p.generate(), dict)
     fake_data = [p.generate() for _ in range(10)]
-    
+
     for d in fake_data:
         assert_regex(r".*@.*", d["email"], "email")
         assert_regex(r".*@.*", d["idn-email"], "idn-email")
-        assert_regex(r"\d{4}-\d{2}-\d{2}T\d{2}\:\d{2}\:\d{2}\.*\d*[-\+]\d{2}\:\d{2}", d["date-time"], "date-time")
+        assert_regex(
+            r"\d{4}-\d{2}-\d{2}T\d{2}\:\d{2}\:\d{2}\.*\d*[-\+]\d{2}\:\d{2}",
+            d["date-time"],
+            "date-time",
+        )
         assert_regex(r"\d{4}-\d{2}-\d{2}", d["date"], "date")
-        assert_regex(r"^(-?)P(?=\d|T\d)(?:(\d+)Y)?(?:(\d+)M)?(?:(\d+)W)?(?:(\d+)D)?(?:T(?:(\d+)H)?(?:(\d+)M)?(?:(\d+(?:\.\d+)?)S)?)?$", d["duration"], "duration")
+        assert_regex(
+            r"^(-?)P(?=\d|T\d)(?:(\d+)Y)?(?:(\d+)M)?(?:(\d+)W)?(?:(\d+)D)?(?:T(?:(\d+)H)?(?:(\d+)M)?(?:(\d+(?:\.\d+)?)S)?)?$",
+            d["duration"],
+            "duration",
+        )
         assert_regex(r"\d{2}\:\d{2}\:\d{2}\.*\d*[-\+]\d{2}\:\d{2}", d["time"], "time")
         assert_regex(r"[a-zA-Z0-9+-\.]{1,33}\.[a-z]{2,4}", d["hostname"], "hostname")
         assert_regex(r"[a-zA-Z0-9+-\.]{1,33}\.[a-z]{2,4}", d["idn-hostname"], "idn-hostname")
