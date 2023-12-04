@@ -17,7 +17,6 @@ class Number(BaseSchema):
         try:
             return super().generate(context)
         except ProviderNotSetException:
-
             step = self.multipleOf if self.multipleOf is not None else 1
 
             if isinstance(self.exclusiveMinimum, bool):

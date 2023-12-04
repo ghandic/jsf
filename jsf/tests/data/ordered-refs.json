@@ -1,0 +1,15 @@
+{
+    "$defs": {
+        "SomeEnum": {"enum": ["A", "B"], "title": "SomeEnum", "type": "string"},
+        "Foo": {
+            "properties": {"bar": {"$ref": "#/$defs/SomeEnum"}},
+            "required": ["bar"],
+            "title": "Foo",
+            "type": "object"
+        }
+    },
+    "properties": {"foobar": {"$ref": "#/$defs/Foo"}},
+    "required": ["foobar"],
+    "title": "FooBarObject",
+    "type": "object"
+}

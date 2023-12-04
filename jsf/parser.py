@@ -20,8 +20,8 @@ from jsf.schema_types import (
     JSFTuple,
     Object,
     OneOf,
-    PrimativeTypes,
     Primitives,
+    PrimitiveTypes,
 )
 
 logger = logging.getLogger()
@@ -52,7 +52,7 @@ class JSF:
         self.root = None
         self._parse(schema)
 
-    def __parse_primitive(self, name: str, path: str, schema: Dict[str, Any]) -> PrimativeTypes:
+    def __parse_primitive(self, name: str, path: str, schema: Dict[str, Any]) -> PrimitiveTypes:
         item_type, is_nullable = self.__is_field_nullable(schema)
         cls = Primitives.get(item_type)
         return cls.from_dict({"name": name, "path": path, "is_nullable": is_nullable, **schema})
@@ -120,6 +120,18 @@ class JSF:
             schemas.append(self.__parse_definition(name, path, d))
         return OneOf(name=name, path=path, schemas=schemas, **schema)
 
+    def __parse_named_definition(self, def_name: str) -> AllTypes:
+        schema = self.root_schema
+        parsed_definition = None
+        for def_tag in ("definitions", "$defs"):
+            for name, definition in schema.get(def_tag, {}).items():
+                if name == def_name:
+                    parsed_definition = self.__parse_definition(
+                        name, path=f"#/{def_tag}", schema=definition
+                    )
+                    self.definitions[f"#/{def_tag}/{name}"] = parsed_definition
+        return parsed_definition
+
     def __parse_definition(self, name: str, path: str, schema: Dict[str, Any]) -> AllTypes:
         self.base_state["__all_json_paths__"].append(path)
         item_type, is_nullable = self.__is_field_nullable(schema)
@@ -156,7 +168,12 @@ class JSF:
         elif "$ref" in schema:
             ext, frag = schema["$ref"].split("#")
             if ext == "":
-                cls = deepcopy(self.definitions.get(f"#{frag}"))
+                if f"#{frag}" in self.definitions:
+                    cls = deepcopy(self.definitions.get(f"#{frag}"))
+                else:
+                    # parse referenced definition
+                    ref_name = frag.split("/")[-1]
+                    cls = self.__parse_named_definition(ref_name)
             else:
                 with s_open(ext, "r") as f:
                     external_jsf = JSF(json.load(f))
@@ -176,8 +193,9 @@ class JSF:
     def _parse(self, schema: Dict[str, Any]) -> AllTypes:
         for def_tag in ("definitions", "$defs"):
             for name, definition in schema.get(def_tag, {}).items():
-                item = self.__parse_definition(name, path=f"#/{def_tag}", schema=definition)
-                self.definitions[f"#/{def_tag}/{name}"] = item
+                if f"#/{def_tag}/{name}" not in self.definitions:
+                    item = self.__parse_definition(name, path=f"#/{def_tag}", schema=definition)
+                    self.definitions[f"#/{def_tag}/{name}"] = item
 
         self.root = self.__parse_definition(name="root", path="#", schema=schema)
 

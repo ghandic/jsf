@@ -21,7 +21,6 @@ class Array(BaseSchema):
         try:
             return super().generate(context)
         except ProviderNotSetException:
-
             if isinstance(self.fixed, str):
                 self.minItems = self.maxItems = eval(self.fixed, context)()
             elif isinstance(self.fixed, int):

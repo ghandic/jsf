@@ -35,4 +35,4 @@ AllTypes = Union[
     AllOf,
     OneOf,
 ]
-PrimativeTypes = Union[String, Boolean, Null, Number, Integer]
+PrimitiveTypes = Union[String, Boolean, Null, Number, Integer]
