@@ -33,15 +33,17 @@ class BaseSchema(BaseModel):
     provider: Optional[str] = Field(None, alias="$provider")
     set_state: Optional[Dict[str, str]] = Field(None, alias="$state")
     is_nullable: bool = False
+    allow_none_optionals: bool = True
 
-    def from_dict(d):
+    @classmethod
+    def from_dict(cls, d: Dict):
         raise NotImplementedError  # pragma: no cover
 
     def generate(self, context: Dict[str, Any]) -> Any:
         if self.set_state is not None:
             context["state"][self.path] = {k: eval(v, context)() for k, v in self.set_state.items()}
 
-        if self.is_nullable and random.uniform(0, 1) < 0.9:
+        if self.is_nullable and self.allow_none_optionals and random.uniform(0, 1) < 0.9:
             return None
         if self.provider is not None:
             return eval(self.provider, context)()
@@ -62,4 +64,4 @@ class BaseSchema(BaseModel):
                 Optional[_type],
                 Field(..., description=self.description, example=example),
             )
-        return (_type, Field(..., description=self.description, example=example))
+        return _type, Field(..., description=self.description, example=example)

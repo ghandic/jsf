@@ -14,7 +14,8 @@ class Array(BaseSchema):
     uniqueItems: Optional[bool] = False
     fixed: Optional[Union[int, str]] = Field(None, alias="$fixed")
 
-    def from_dict(d):
+    @classmethod
+    def from_dict(cls, d: Dict):
         return Array(**d)
 
     def generate(self, context: Dict[str, Any]) -> Optional[List[Any]]:

@@ -67,8 +67,8 @@ def temporal_duration(
     return duration
 
 
-def mostly_zero_randint(min, max):
-    return 0 if random.random() > 0.8 else random.randint(min, max)
+def mostly_zero_randint(_min: int, _max: int):
+    return 0 if random.random() > 0.8 else random.randint(_min, _max)
 
 
 def fake_duration():
@@ -117,8 +117,8 @@ format_map: Dict[str, Callable] = {
 
 
 class String(BaseSchema):
-    minLength: Optional[float] = 0
-    maxLength: Optional[float] = 50
+    minLength: Optional[int] = 0
+    maxLength: Optional[int] = 50
     pattern: Optional[str] = None
     format: Optional[str] = None
     # enum: Optional[List[Union[str, int, float]]] = None  # NOTE: Not used - enums go to enum class
@@ -151,5 +151,6 @@ class String(BaseSchema):
     def model(self, context: Dict[str, Any]):
         return self.to_pydantic(context, str)
 
-    def from_dict(d):
+    @classmethod
+    def from_dict(cls, d: Dict):
         return String(**d)
