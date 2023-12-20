@@ -1,7 +1,6 @@
 import base64
 import quopri
 from enum import Enum
-from typing import Optional
 
 
 class ContentEncoding(str, Enum):
@@ -57,5 +56,5 @@ Encoder = {
 }
 
 
-def encode(string: str, encoding: Optional[ContentEncoding]) -> str:
+def encode(string: str, encoding: ContentEncoding) -> str:
     return Encoder.get(encoding, lambda s: s)(string)

@@ -5,8 +5,8 @@ from collections import ChainMap
 from copy import deepcopy
 from datetime import datetime
 from itertools import count
-from typing import Any, Dict, List, Optional, Tuple, Union
 from types import MappingProxyType
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 from faker import Faker
 from jsonschema import validate
@@ -33,14 +33,16 @@ class JSF:
     def __init__(
         self,
         schema: Dict[str, Any],
-        context: Dict[str, Any] = MappingProxyType({
-            "faker": faker,
-            "random": random,
-            "datetime": datetime,
-            "__internal__": {"List": List, "Union": Union, "Tuple": Tuple},
-        }),
+        context: Dict[str, Any] = MappingProxyType(
+            {
+                "faker": faker,
+                "random": random,
+                "datetime": datetime,
+                "__internal__": {"List": List, "Union": Union, "Tuple": Tuple},
+            }
+        ),
         initial_state: Dict[str, Any] = MappingProxyType({}),
-        allow_none_optionals: bool = True
+        allow_none_optionals: bool = True,
     ):
         self.root_schema = schema
         self.definitions = {}
@@ -58,11 +60,27 @@ class JSF:
     def __parse_primitive(self, name: str, path: str, schema: Dict[str, Any]) -> PrimitiveTypes:
         item_type, is_nullable = self.__is_field_nullable(schema)
         cls = Primitives.get(item_type)
-        return cls.from_dict({"name": name, "path": path, "is_nullable": is_nullable, "allow_none_optionals": self.allow_none_optionals, **schema})
+        return cls.from_dict(
+            {
+                "name": name,
+                "path": path,
+                "is_nullable": is_nullable,
+                "allow_none_optionals": self.allow_none_optionals,
+                **schema,
+            }
+        )
 
     def __parse_object(self, name: str, path: str, schema: Dict[str, Any]) -> Object:
         _, is_nullable = self.__is_field_nullable(schema)
-        model = Object.from_dict({"name": name, "path": path, "is_nullable": is_nullable, "allow_none_optionals": self.allow_none_optionals, **schema})
+        model = Object.from_dict(
+            {
+                "name": name,
+                "path": path,
+                "is_nullable": is_nullable,
+                "allow_none_optionals": self.allow_none_optionals,
+                **schema,
+            }
+        )
         props = []
         for _name, definition in schema.get("properties", {}).items():
             props.append(self.__parse_definition(_name, path=f"{path}/{_name}", schema=definition))
@@ -78,13 +96,29 @@ class JSF:
 
     def __parse_array(self, name: str, path: str, schema: Dict[str, Any]) -> Array:
         _, is_nullable = self.__is_field_nullable(schema)
-        arr = Array.from_dict({"name": name, "path": path, "is_nullable": is_nullable, "allow_none_optionals": self.allow_none_optionals, **schema})
+        arr = Array.from_dict(
+            {
+                "name": name,
+                "path": path,
+                "is_nullable": is_nullable,
+                "allow_none_optionals": self.allow_none_optionals,
+                **schema,
+            }
+        )
         arr.items = self.__parse_definition(name, name, schema["items"])
         return arr
 
     def __parse_tuple(self, name: str, path: str, schema: Dict[str, Any]) -> JSFTuple:
         _, is_nullable = self.__is_field_nullable(schema)
-        arr = JSFTuple.from_dict({"name": name, "path": path, "is_nullable": is_nullable, "allow_none_optionals": self.allow_none_optionals, **schema})
+        arr = JSFTuple.from_dict(
+            {
+                "name": name,
+                "path": path,
+                "is_nullable": is_nullable,
+                "allow_none_optionals": self.allow_none_optionals,
+                **schema,
+            }
+        )
         arr.items = []
         for i, item in enumerate(schema["items"]):
             arr.items.append(self.__parse_definition(name, path=f"{name}[{i}]", schema=item))
@@ -148,7 +182,13 @@ class JSF:
                 isinstance(item, (int, float, str, type(None))) for item in enum_list
             ), "Enum Type is not null, int, float or string"
             return JSFEnum.from_dict(
-                {"name": name, "path": path, "is_nullable": is_nullable, "allow_none_optionals": self.allow_none_optionals, **schema}
+                {
+                    "name": name,
+                    "path": path,
+                    "is_nullable": is_nullable,
+                    "allow_none_optionals": self.allow_none_optionals,
+                    **schema,
+                }
             )
         elif "type" in schema:
             if item_type == "object" and "properties" in schema:
