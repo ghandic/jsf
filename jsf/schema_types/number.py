@@ -34,7 +34,7 @@ class Number(BaseSchema):
                 _max = self.maximum
 
             return float(
-                step * random.uniform(math.ceil(float(_min) / step), math.floor(float(_max) / step))
+                step * random.randint(math.ceil(float(_min) / step), math.floor(float(_max) / step))
             )
 
     def model(self, context: Dict[str, Any]):

@@ -42,7 +42,7 @@ class JSF:
             }
         ),
         initial_state: Dict[str, Any] = MappingProxyType({}),
-        allow_none_optionals: float = 0.0,
+        allow_none_optionals: float = 0.5,
     ):
         self.root_schema = schema
         self.definitions = {}

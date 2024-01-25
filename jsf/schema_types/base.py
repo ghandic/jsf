@@ -33,7 +33,7 @@ class BaseSchema(BaseModel):
     provider: Optional[str] = Field(None, alias="$provider")
     set_state: Optional[Dict[str, str]] = Field(None, alias="$state")
     is_nullable: bool = False
-    allow_none_optionals: float = 1.0
+    allow_none_optionals: float = 0.5
 
     @classmethod
     def from_dict(cls, d: Dict):

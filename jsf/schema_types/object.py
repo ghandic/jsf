@@ -33,11 +33,9 @@ class Object(BaseSchema):
         return Object(**d)
 
     def should_keep(self, property_name: str) -> bool:
-        if random.uniform(0, 1) > self.allow_none_optionals or (
-            isinstance(self.required, list) and property_name in self.required
-        ):
+        if isinstance(self.required, list) and property_name in self.required:
             return True
-        return random.uniform(0, 1) < 0.5
+        return random.uniform(0, 1) > self.allow_none_optionals
 
     def generate(self, context: Dict[str, Any]) -> Optional[Dict[str, Any]]:
         try:
