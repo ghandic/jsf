@@ -440,7 +440,8 @@ def test_list_of_types(TestData):
 def test_non_required_are_not_none(TestData):
     with open(TestData / "object-with-optionals.json", "r") as file:
         schema = json.load(file)
-    fake_data = JSF(schema, allow_none_optionals=False).generate()
+    for _ in range(10):
+        fake_data = JSF(schema, allow_none_optionals=0.0).generate()
 
-    assert fake_data["name"] is not None
-    assert fake_data["credit_card"] is not None
+        assert fake_data["name"] is not None
+        assert fake_data["credit_card"] is not None

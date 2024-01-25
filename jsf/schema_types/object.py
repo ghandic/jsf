@@ -33,7 +33,7 @@ class Object(BaseSchema):
         return Object(**d)
 
     def should_keep(self, property_name: str) -> bool:
-        if not self.allow_none_optionals or (
+        if random.uniform(0, 1) > self.allow_none_optionals or (
             isinstance(self.required, list) and property_name in self.required
         ):
             return True

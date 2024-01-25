@@ -33,7 +33,7 @@ class BaseSchema(BaseModel):
     provider: Optional[str] = Field(None, alias="$provider")
     set_state: Optional[Dict[str, str]] = Field(None, alias="$state")
     is_nullable: bool = False
-    allow_none_optionals: bool = True
+    allow_none_optionals: float = 1.0
 
     @classmethod
     def from_dict(cls, d: Dict):
@@ -43,7 +43,7 @@ class BaseSchema(BaseModel):
         if self.set_state is not None:
             context["state"][self.path] = {k: eval(v, context)() for k, v in self.set_state.items()}
 
-        if self.is_nullable and self.allow_none_optionals and random.uniform(0, 1) < 0.9:
+        if self.is_nullable and random.uniform(0, 1) < self.allow_none_optionals:
             return None
         if self.provider is not None:
             return eval(self.provider, context)()

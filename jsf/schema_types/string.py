@@ -67,7 +67,7 @@ def temporal_duration(
     return duration
 
 
-def mostly_zero_randint(_min: int, _max: int):
+def mostly_zero_randint(_min: int, _max: int) -> int:
     return 0 if random.random() > 0.8 else random.randint(_min, _max)
 
 
