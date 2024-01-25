@@ -29,7 +29,7 @@ class Array(BaseSchema):
 
             output = [
                 self.items.generate(context)
-                for _ in range(random.randint(self.minItems, self.maxItems))
+                for _ in range(random.randint(int(self.minItems), int(self.maxItems)))
             ]
             if self.uniqueItems and self.items.type == "object":
                 output = [dict(s) for s in {frozenset(d.items()) for d in output}]

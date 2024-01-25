@@ -68,7 +68,7 @@ def temporal_duration(
 
 
 def mostly_zero_randint(_min: int, _max: int) -> int:
-    return 0 if random.random() > 0.8 else random.randint(_min, _max)
+    return 0 if random.random() > 0.8 else random.randint(int(_min), int(_max))
 
 
 def fake_duration():
