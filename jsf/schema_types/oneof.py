@@ -7,7 +7,8 @@ from jsf.schema_types.base import BaseSchema, ProviderNotSetException
 class OneOf(BaseSchema):
     schemas: List[BaseSchema] = None
 
-    def from_dict(d):
+    @classmethod
+    def from_dict(cls, d: Dict):
         return OneOf(**d)
 
     def generate(self, context: Dict[str, Any]) -> Optional[List[Any]]:

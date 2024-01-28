@@ -110,6 +110,15 @@ def test_fake_string(TestData):
     assert len(fake_data) - len(set(fake_data)) < 50
 
 
+def test_fake_string_max_min_length(TestData):
+    with open(TestData / "string-max-min-length.json", "r") as file:
+        schema = json.load(file)
+    p = JSF(schema)
+    assert isinstance(p.generate(), str)
+    fake_data = [p.generate() for _ in range(10)]
+    assert all(len(fd) == 2 for fd in fake_data)
+
+
 def test_fake_string_content_encoding(TestData):
     with open(TestData / "string-content-encoding.json", "r") as file:
         schema = json.load(file)
@@ -426,3 +435,13 @@ def test_list_of_types(TestData):
     assert all(type(f["randTypeValue"]) in [bool, int, float, str] for f in fake_data), fake_data
     assert all(isinstance(f["int"], int) for f in fake_data), fake_data
     assert all(isinstance(f["null"], type(None)) for f in fake_data), fake_data
+
+
+def test_non_required_are_not_none(TestData):
+    with open(TestData / "object-with-optionals.json", "r") as file:
+        schema = json.load(file)
+    for _ in range(10):
+        fake_data = JSF(schema, allow_none_optionals=0.0).generate()
+
+        assert fake_data["name"] is not None
+        assert fake_data["credit_card"] is not None
