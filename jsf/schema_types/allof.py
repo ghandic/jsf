@@ -6,7 +6,8 @@ from jsf.schema_types.base import BaseSchema, ProviderNotSetException
 class AllOf(BaseSchema):
     combined_schema: BaseSchema = None
 
-    def from_dict(d):
+    @classmethod
+    def from_dict(cls, d: Dict):
         return AllOf(**d)
 
     def generate(self, context: Dict[str, Any]) -> Optional[Any]:
