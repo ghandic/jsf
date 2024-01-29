@@ -1,0 +1,8 @@
+{
+    "type": "object",
+    "properties": {
+        "name": {"type": "string", "$provider": "faker.name", "title": "Full Name"},
+        "email": {"type": "string", "$provider": "faker.email", "title": "Email"}
+    },
+    "required": ["name", "email"]
+}
