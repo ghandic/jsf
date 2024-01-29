@@ -27,7 +27,7 @@ if int(platform.python_version_tuple()[1]) < 9:
 else:
 
     def test_gen_model_list(TestData):
-        with open(TestData / "array.json", "r") as file:
+        with open(TestData / "array.json") as file:
             schema = json.load(file)
         p = JSF(schema)
         Model = p.pydantic()
@@ -35,7 +35,7 @@ else:
 
 
 def test_gen_model_tuple(TestData):
-    with open(TestData / "tuple.json", "r") as file:
+    with open(TestData / "tuple.json") as file:
         schema = json.load(file)
     p = JSF(schema)
     Model = p.pydantic()
@@ -47,7 +47,7 @@ def test_gen_model_tuple(TestData):
     expected,
 )
 def test_gen_model(TestData, filestem, expected_type_anno):
-    with open(TestData / f"{filestem}.json", "r") as file:
+    with open(TestData / f"{filestem}.json") as file:
         schema = json.load(file)
     p = JSF(schema)
     Model = p.pydantic()

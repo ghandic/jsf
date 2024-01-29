@@ -40,7 +40,8 @@ class Number(BaseSchema):
     def model(self, context: Dict[str, Any]):
         return self.to_pydantic(context, float)
 
-    def from_dict(d):
+    @classmethod
+    def from_dict(cls, d: Dict):
         return Number(**d)
 
 
@@ -52,5 +53,6 @@ class Integer(Number):
     def model(self, context: Dict[str, Any]):
         return self.to_pydantic(context, int)
 
-    def from_dict(d):
+    @classmethod
+    def from_dict(cls, d: Dict):
         return Integer(**d)

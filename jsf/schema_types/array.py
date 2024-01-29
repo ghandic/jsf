@@ -14,7 +14,8 @@ class Array(BaseSchema):
     uniqueItems: Optional[bool] = False
     fixed: Optional[Union[int, str]] = Field(None, alias="$fixed")
 
-    def from_dict(d):
+    @classmethod
+    def from_dict(cls, d: Dict):
         return Array(**d)
 
     def generate(self, context: Dict[str, Any]) -> Optional[List[Any]]:
@@ -28,7 +29,7 @@ class Array(BaseSchema):
 
             output = [
                 self.items.generate(context)
-                for _ in range(random.randint(self.minItems, self.maxItems))
+                for _ in range(random.randint(int(self.minItems), int(self.maxItems)))
             ]
             if self.uniqueItems and self.items.type == "object":
                 output = [dict(s) for s in {frozenset(d.items()) for d in output}]
