@@ -8,13 +8,11 @@ resources(
 python_distribution(
     name="jsf-dist",
     entry_points={
-        "console_scripts": {
-            "jsf": "jsf.cli:app"
-        },
+        "console_scripts": {"jsf": "jsf.cli:app"},
     },
     dependencies=[
-        ":src", 
-        ":build_resources", 
+        ":src",
+        ":build_resources",
         "./tests:tests",
     ],
     long_description_path="README.md",
@@ -43,12 +41,6 @@ python_distribution(
         ],
         zip_safe=True,
         python_requires=">=3.8",
-        extras_require={"cli": ["typer>=0.7.0"]}
+        extras_require={"cli": ["typer>=0.7.0"]},
     ),
 )
-
-    
-    
-    
-    
-    
