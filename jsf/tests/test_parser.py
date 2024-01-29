@@ -33,7 +33,7 @@ from jsf.schema_types import (
     ],
 )
 def test_types(TestData, filestem, expected_type):
-    with open(TestData / f"{filestem}.json", "r") as file:
+    with open(TestData / f"{filestem}.json") as file:
         schema = json.load(file)
     p = JSF(schema)
 
@@ -41,7 +41,7 @@ def test_types(TestData, filestem, expected_type):
 
 
 def test_nested_array(TestData):
-    with open(TestData / "array.json", "r") as file:
+    with open(TestData / "array.json") as file:
         schema = json.load(file)
     p = JSF(schema)
 
@@ -51,7 +51,7 @@ def test_nested_array(TestData):
 
 
 def test_nested_tuple(TestData):
-    with open(TestData / "tuple.json", "r") as file:
+    with open(TestData / "tuple.json") as file:
         schema = json.load(file)
     p = JSF(schema)
 
@@ -62,7 +62,7 @@ def test_nested_tuple(TestData):
 
 
 def test_nested_object(TestData):
-    with open(TestData / "object.json", "r") as file:
+    with open(TestData / "object.json") as file:
         schema = json.load(file)
     p = JSF(schema)
 
@@ -78,7 +78,7 @@ def test_nested_object(TestData):
 
 
 def test_nested_object_ref(TestData):
-    with open(TestData / "inner-ref.json", "r") as file:
+    with open(TestData / "inner-ref.json") as file:
         schema = json.load(file)
     p = JSF(schema)
 
@@ -97,7 +97,7 @@ def test_nested_object_ref(TestData):
 
 
 def test_ordered_refs_object(TestData):
-    with open(TestData / "ordered-refs.json", "r") as file:
+    with open(TestData / "ordered-refs.json") as file:
         schema = json.load(file)
     p = JSF(schema)
 
@@ -112,7 +112,7 @@ def test_ordered_refs_object(TestData):
 
 
 def test_unordered_refs_object(TestData):
-    with open(TestData / "unordered-refs.json", "r") as file:
+    with open(TestData / "unordered-refs.json") as file:
         schema = json.load(file)
     p = JSF(schema)
 

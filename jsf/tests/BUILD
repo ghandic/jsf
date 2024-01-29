@@ -2,10 +2,7 @@ python_test_utils(
     name="test_utils",
 )
 
-files(
-    name="tests", 
-    sources=["data/*.json", "*.py"]
-)
+files(name="tests", sources=["data/*.json", "*.py"])
 
 python_tests(
     name="pytest",

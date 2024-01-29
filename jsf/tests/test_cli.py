@@ -16,9 +16,9 @@ def test_app(TestData):
         )
         assert result.exit_code == 0
         assert file.exists()
-        with open(file, "r") as f:
+        with open(file) as f:
             instance = json.load(f)
-        with open(TestData / "custom.json", "r") as f:
+        with open(TestData / "custom.json") as f:
             schema = json.load(f)
         validate(instance, schema)
     finally:
