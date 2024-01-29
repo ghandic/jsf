@@ -52,7 +52,7 @@ jobs:
           # Alternatively you change gha-cache-key to ignore old caches.
       - name: Check BUILD files
         run: |
-        pants tailor --check update-build-files --check ::
+          pants tailor --check update-build-files --check ::
       - name: Lint
         run: |
           make lint
