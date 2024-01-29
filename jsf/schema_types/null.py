@@ -13,5 +13,6 @@ class Null(BaseSchema):
     def model(self, context: Dict[str, Any]):
         return self.to_pydantic(context, type(None))
 
-    def from_dict(d):
+    @classmethod
+    def from_dict(cls, d: Dict):
         return Null(**d)

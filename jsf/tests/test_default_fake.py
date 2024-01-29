@@ -7,7 +7,7 @@ from jsf.parser import JSF
 
 
 def test_fake_object_no_properties(TestData):
-    with open(TestData / "object_no_properties.json", "r") as file:
+    with open(TestData / "object_no_properties.json") as file:
         schema = json.load(file)
     p = JSF(schema)
 
@@ -15,7 +15,7 @@ def test_fake_object_no_properties(TestData):
 
 
 def test_fake_anyof(TestData):
-    with open(TestData / "anyof.json", "r") as file:
+    with open(TestData / "anyof.json") as file:
         schema = json.load(file)
     p = JSF(schema)
 
@@ -25,7 +25,7 @@ def test_fake_anyof(TestData):
 
 
 def test_fake_allof(TestData):
-    with open(TestData / "allof.json", "r") as file:
+    with open(TestData / "allof.json") as file:
         schema = json.load(file)
     p = JSF(schema)
 
@@ -35,7 +35,7 @@ def test_fake_allof(TestData):
 
 
 def test_fake_allof_complex(TestData):
-    with open(TestData / "allof-complex.json", "r") as file:
+    with open(TestData / "allof-complex.json") as file:
         schema = json.load(file)
     p = JSF(schema)
 
@@ -49,7 +49,7 @@ def test_fake_allof_complex(TestData):
 
 
 def test_fake_anyof_object(TestData):
-    with open(TestData / "anyof_object.json", "r") as file:
+    with open(TestData / "anyof_object.json") as file:
         schema = json.load(file)
     p = JSF(schema)
 
@@ -60,7 +60,7 @@ def test_fake_anyof_object(TestData):
 
 
 def test_fake_oneof(TestData):
-    with open(TestData / "oneof.json", "r") as file:
+    with open(TestData / "oneof.json") as file:
         schema = json.load(file)
     p = JSF(schema)
 
@@ -70,7 +70,7 @@ def test_fake_oneof(TestData):
 
 
 def test_fake_oneof_allof(TestData):
-    with open(TestData / "oneof_allof.json", "r") as file:
+    with open(TestData / "oneof_allof.json") as file:
         schema = json.load(file)
     p = JSF(schema)
 
@@ -80,7 +80,7 @@ def test_fake_oneof_allof(TestData):
 
 
 def test_fake_oneof_object(TestData):
-    with open(TestData / "oneof_object.json", "r") as file:
+    with open(TestData / "oneof_object.json") as file:
         schema = json.load(file)
     p = JSF(schema)
 
@@ -91,7 +91,7 @@ def test_fake_oneof_object(TestData):
 
 
 def test_fake_boolean(TestData):
-    with open(TestData / "boolean.json", "r") as file:
+    with open(TestData / "boolean.json") as file:
         schema = json.load(file)
     p = JSF(schema)
 
@@ -102,7 +102,7 @@ def test_fake_boolean(TestData):
 
 
 def test_fake_string(TestData):
-    with open(TestData / "string.json", "r") as file:
+    with open(TestData / "string.json") as file:
         schema = json.load(file)
     p = JSF(schema)
     assert isinstance(p.generate(), str)
@@ -110,8 +110,17 @@ def test_fake_string(TestData):
     assert len(fake_data) - len(set(fake_data)) < 50
 
 
+def test_fake_string_max_min_length(TestData):
+    with open(TestData / "string-max-min-length.json") as file:
+        schema = json.load(file)
+    p = JSF(schema)
+    assert isinstance(p.generate(), str)
+    fake_data = [p.generate() for _ in range(10)]
+    assert all(len(fd) == 2 for fd in fake_data)
+
+
 def test_fake_string_content_encoding(TestData):
-    with open(TestData / "string-content-encoding.json", "r") as file:
+    with open(TestData / "string-content-encoding.json") as file:
         schema = json.load(file)
     p = JSF(schema)
     assert isinstance(p.generate(), dict)
@@ -122,7 +131,7 @@ def test_fake_string_content_encoding(TestData):
 
 
 def test_fake_string_content_type(TestData):
-    with open(TestData / "string-content-type.json", "r") as file:
+    with open(TestData / "string-content-type.json") as file:
         schema = json.load(file)
     p = JSF(schema)
     assert isinstance(p.generate(), dict)
@@ -137,7 +146,7 @@ def test_fake_string_content_type(TestData):
 
 
 def test_fake_null(TestData):
-    with open(TestData / "null.json", "r") as file:
+    with open(TestData / "null.json") as file:
         schema = json.load(file)
     p = JSF(schema)
 
@@ -147,7 +156,7 @@ def test_fake_null(TestData):
 
 
 def test_fake_enum(TestData):
-    with open(TestData / "enum.json", "r") as file:
+    with open(TestData / "enum.json") as file:
         schema = json.load(file)
     p = JSF(schema)
 
@@ -156,7 +165,7 @@ def test_fake_enum(TestData):
 
 
 def test_fake_string_enum(TestData):
-    with open(TestData / "string-enum.json", "r") as file:
+    with open(TestData / "string-enum.json") as file:
         schema = json.load(file)
     p = JSF(schema)
 
@@ -165,7 +174,7 @@ def test_fake_string_enum(TestData):
 
 
 def test_fake_int(TestData):
-    with open(TestData / "integer.json", "r") as file:
+    with open(TestData / "integer.json") as file:
         schema = json.load(file)
     p = JSF(schema)
 
@@ -178,7 +187,7 @@ def test_fake_int(TestData):
 
 
 def test_fake_number(TestData):
-    with open(TestData / "number.json", "r") as file:
+    with open(TestData / "number.json") as file:
         schema = json.load(file)
     p = JSF(schema)
 
@@ -190,7 +199,7 @@ def test_fake_number(TestData):
 
 
 def test_fake_number_exclusive(TestData):
-    with open(TestData / "number-exclusive.json", "r") as file:
+    with open(TestData / "number-exclusive.json") as file:
         schema = json.load(file)
     p = JSF(schema)
 
@@ -202,7 +211,7 @@ def test_fake_number_exclusive(TestData):
 
 
 def test_fake_number_exclusive_float(TestData):
-    with open(TestData / "number-exclusive-float.json", "r") as file:
+    with open(TestData / "number-exclusive-float.json") as file:
         schema = json.load(file)
     p = JSF(schema)
 
@@ -215,7 +224,7 @@ def test_fake_number_exclusive_float(TestData):
 
 
 def test_fake_array(TestData):
-    with open(TestData / "array.json", "r") as file:
+    with open(TestData / "array.json") as file:
         schema = json.load(file)
     p = JSF(schema)
 
@@ -228,7 +237,7 @@ def test_fake_array(TestData):
 
 
 def test_fake_array_dicts(TestData):
-    with open(TestData / "array-dicts.json", "r") as file:
+    with open(TestData / "array-dicts.json") as file:
         schema = json.load(file)
     p = JSF(schema)
 
@@ -246,7 +255,7 @@ def test_fake_array_dicts(TestData):
 
 
 def test_fake_array_fixed_int(TestData):
-    with open(TestData / "array-fixed-int.json", "r") as file:
+    with open(TestData / "array-fixed-int.json") as file:
         schema = json.load(file)
     p = JSF(schema)
 
@@ -257,7 +266,7 @@ def test_fake_array_fixed_int(TestData):
 
 
 def test_fake_array_fixed_str(TestData):
-    with open(TestData / "array-fixed-str.json", "r") as file:
+    with open(TestData / "array-fixed-str.json") as file:
         schema = json.load(file)
     p = JSF(schema)
 
@@ -268,7 +277,7 @@ def test_fake_array_fixed_str(TestData):
 
 
 def test_fake_tuple(TestData):
-    with open(TestData / "tuple.json", "r") as file:
+    with open(TestData / "tuple.json") as file:
         schema = json.load(file)
     p = JSF(schema)
 
@@ -282,7 +291,7 @@ def test_fake_tuple(TestData):
 
 
 def test_fake_object(TestData):
-    with open(TestData / "object.json", "r") as file:
+    with open(TestData / "object.json") as file:
         schema = json.load(file)
     p = JSF(schema)
 
@@ -294,7 +303,7 @@ def test_fake_object(TestData):
 
 
 def test_fake_object_pattern_properties(TestData):
-    with open(TestData / "object-pattern-properties.json", "r") as file:
+    with open(TestData / "object-pattern-properties.json") as file:
         schema = json.load(file)
     p = JSF(schema)
 
@@ -320,7 +329,7 @@ def assert_regex(pattern: str, string: str, info: Optional[str]) -> None:
 
 
 def test_fake_string_format(TestData):
-    with open(TestData / "string-format.json", "r") as file:
+    with open(TestData / "string-format.json") as file:
         schema = json.load(file)
     p = JSF(schema)
 
@@ -372,7 +381,7 @@ def test_fake_string_format(TestData):
 
 
 def test_unique_items_array(TestData):
-    with open(TestData / "unique-items-array.json", "r") as file:
+    with open(TestData / "unique-items-array.json") as file:
         schema = json.load(file)
     p = JSF(schema)
     fake_data = p.generate(50)
@@ -383,7 +392,7 @@ def test_unique_items_array(TestData):
 
 
 def test_const(TestData):
-    with open(TestData / "const.json", "r") as file:
+    with open(TestData / "const.json") as file:
         schema = json.load(file)
     p = JSF(schema)
     fake_data = p.generate(50)
@@ -394,7 +403,7 @@ def test_const(TestData):
 
 
 def test_external_ref(TestData):
-    with open(TestData / "external-ref.json", "r") as file:
+    with open(TestData / "external-ref.json") as file:
         schema = json.load(file)
     p = JSF(schema)
     fake_data = p.generate(50)
@@ -409,14 +418,14 @@ def test_external_ref(TestData):
 
 
 def test_gen_and_validate(TestData):
-    with open(TestData / "custom.json", "r") as file:
+    with open(TestData / "custom.json") as file:
         schema = json.load(file)
     p = JSF(schema)
     [p.generate_and_validate() for _ in range(50)]
 
 
 def test_list_of_types(TestData):
-    with open(TestData / "type-list.json", "r") as file:
+    with open(TestData / "type-list.json") as file:
         schema = json.load(file)
     fake_data = [JSF(schema).generate() for _ in range(100)]
     for f in fake_data:
@@ -426,3 +435,13 @@ def test_list_of_types(TestData):
     assert all(type(f["randTypeValue"]) in [bool, int, float, str] for f in fake_data), fake_data
     assert all(isinstance(f["int"], int) for f in fake_data), fake_data
     assert all(isinstance(f["null"], type(None)) for f in fake_data), fake_data
+
+
+def test_non_required_are_not_none(TestData):
+    with open(TestData / "object-with-optionals.json") as file:
+        schema = json.load(file)
+    for _ in range(10):
+        fake_data = JSF(schema, allow_none_optionals=0.0).generate()
+
+        assert fake_data["name"] is not None
+        assert fake_data["credit_card"] is not None

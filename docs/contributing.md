@@ -7,11 +7,14 @@ Every little bit helps, and credit will always be given.
 
 Nothing easier!
 
-Fork and clone the repository, then:
+Fork and clone the repository, then install [`pants`](https://www.pantsbuild.org/2.18/docs/getting-started/installing-pants)
 
 ```bash
-docker build . -t challisa/jsf
-docker run -it challisa/jsf bash
+# Install `pants` on macos
+brew install pantsbuild/tap/pants
+
+# Export the virtual environment for IDE
+pants export --py-resolve-format=symlinked_immutable_virtualenv --resolve=python-default
 ```
 
 That's it!
@@ -27,7 +30,7 @@ As usual:
 
 **Before committing:**
 
-1. Ensure to run `isort -rc .` followed by `black . --line-length=120` from the root directory
+1. Ensure to run `pants fmt ::` from the root directory to format all of the code in the repo before PR submission.
 2. Follow our [commit message convention](#commit-message-convention)
 
 If you are unsure about how to fix or ignore a warning,

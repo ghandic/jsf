@@ -20,7 +20,8 @@ class JSFEnum(BaseSchema):
         except ProviderNotSetException:
             return random.choice(self.enum)
 
-    def from_dict(d):
+    @classmethod
+    def from_dict(cls, d: Dict):
         return JSFEnum(**d)
 
     def model(self, context: Dict[str, Any]):

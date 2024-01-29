@@ -28,13 +28,14 @@ class Object(BaseSchema):
     dependencies: Optional[Union[PropertyDependency, SchemaDependency]] = None
     patternProperties: Optional[Dict[str, BaseSchema]] = None
 
-    def from_dict(d):
+    @classmethod
+    def from_dict(cls, d: dict):
         return Object(**d)
 
     def should_keep(self, property_name: str) -> bool:
         if isinstance(self.required, list) and property_name in self.required:
             return True
-        return random.uniform(0, 1) < 0.5
+        return random.uniform(0, 1) > self.allow_none_optionals
 
     def generate(self, context: Dict[str, Any]) -> Optional[Dict[str, Any]]:
         try:

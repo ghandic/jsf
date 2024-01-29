@@ -1,5 +1,6 @@
 # Application
 *.json
+!.vscode/settings.json
 !jsf/tests/data/*.json
 TODO.md
 
