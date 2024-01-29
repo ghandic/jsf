@@ -1,0 +1,4 @@
+mypy==1.1.1
+mypy-typing-asserts
+types-requests
+types-jsonschema

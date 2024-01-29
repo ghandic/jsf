@@ -264,5 +264,5 @@ class JSF:
 
     @staticmethod
     def from_json(path: str) -> "JSF":
-        with open(path, "r") as f:
+        with open(path) as f:
             return JSF(json.load(f))
