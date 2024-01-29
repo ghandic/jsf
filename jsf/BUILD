@@ -1,7 +1,5 @@
 python_sources(name="src")
 
-python_requirements(name="reqs")
-
 resources(
     name="build_resources",
     sources=["README.md", "LICENSE"],

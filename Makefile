@@ -1,19 +1,19 @@
 .PHONY: build
 
 test:
-	@./pants test ::
+	@pants test ::
 
 lint:
-	@./pants lint ::
+	@pants lint ::
 
 fmt:
-	@./pants fmt ::
+	@pants fmt ::
 
 build:
-	@./pants package ::
+	@pants package ::
 
 check:
-	@./pants check ::
+	@pants check ::
 
 clean:
 	@rm -rf dist/ .pids/ .pants.d/
