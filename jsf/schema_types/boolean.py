@@ -14,5 +14,6 @@ class Boolean(BaseSchema):
     def model(self, context: Dict[str, Any]):
         return self.to_pydantic(context, bool)
 
-    def from_dict(d):
+    @classmethod
+    def from_dict(cls, d: Dict):
         return Boolean(**d)

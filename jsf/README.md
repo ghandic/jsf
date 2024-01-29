@@ -85,7 +85,7 @@ fake_json = faker.generate()
 ```
 
 <details markdown="1">
-<summary>Or run stright from the <code>commandline</code>...</summary>
+<summary>Or run straight from the <code>commandline</code>...</summary>
 
 #### Native install
 

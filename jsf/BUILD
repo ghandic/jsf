@@ -1,7 +1,5 @@
 python_sources(name="src")
 
-python_requirements(name="reqs")
-
 resources(
     name="build_resources",
     sources=["README.md", "LICENSE"],
@@ -10,19 +8,17 @@ resources(
 python_distribution(
     name="jsf-dist",
     entry_points={
-        "console_scripts": {
-            "jsf": "jsf.cli:app"
-        },
+        "console_scripts": {"jsf": "jsf.cli:app"},
     },
     dependencies=[
-        ":src", 
-        ":build_resources", 
+        ":src",
+        ":build_resources",
         "./tests:tests",
     ],
     long_description_path="README.md",
     provides=python_artifact(
         name="jsf",
-        version="0.9.0",
+        version="0.10.0",
         author="ghandic",
         description="Creates fake JSON files from a JSON schema",
         url="https://github.com/ghandic/jsf",
@@ -45,12 +41,6 @@ python_distribution(
         ],
         zip_safe=True,
         python_requires=">=3.8",
-        extras_require={"cli": ["typer>=0.7.0"]}
+        extras_require={"cli": ["typer>=0.7.0"]},
     ),
 )
-
-    
-    
-    
-    
-    
