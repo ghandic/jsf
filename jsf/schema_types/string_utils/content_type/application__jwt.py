@@ -10,11 +10,11 @@ from faker import Faker
 faker = Faker()
 
 
-def base64url_encode(input: bytes):
+def base64url_encode(input: bytes) -> str:
     return base64.urlsafe_b64encode(input).decode("utf-8").replace("=", "")
 
 
-def jwt(api_key, expiry, api_sec):
+def jwt(api_key: str, expiry: int, api_sec: str) -> str:
     segments = []
 
     header = {"typ": "JWT", "alg": "HS256"}
@@ -37,7 +37,7 @@ def jwt(api_key, expiry, api_sec):
     return encoded_string
 
 
-def create_random_jwt(*args, **kwargs):
+def create_random_jwt(*args, **kwargs) -> str:
     api_key = secrets.token_urlsafe(16)
     api_sec = secrets.token_urlsafe(16)
 

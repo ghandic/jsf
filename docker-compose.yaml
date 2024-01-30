@@ -7,5 +7,6 @@ services:
         ports:
             - "8000:8000"
         volumes:
-            - .:/docs
+            - ./docs:/docs
+            - ./mkdocs.yml:/mkdocs.yml
         entrypoint: mkdocs serve --dev-addr 0.0.0.0:8000

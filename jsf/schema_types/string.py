@@ -2,7 +2,7 @@ import logging
 import random
 import re
 from datetime import timezone
-from typing import Any, Callable, Dict, Optional
+from typing import Any, Callable, Dict, Optional, Tuple, Type
 
 import rstr
 from faker import Faker
@@ -71,7 +71,7 @@ def mostly_zero_randint(_min: int, _max: int) -> int:
     return 0 if random.random() > 0.8 else random.randint(int(_min), int(_max))
 
 
-def fake_duration():
+def fake_duration() -> str:
     generic_max = 1000
     return temporal_duration(
         positive=random.random() > 0.5,
@@ -148,9 +148,9 @@ class String(BaseSchema):
                 random_fixed_length_sentence(self.minLength, self.maxLength), self.contentEncoding
             )
 
-    def model(self, context: Dict[str, Any]):
+    def model(self, context: Dict[str, Any]) -> Tuple[Type, Any]:
         return self.to_pydantic(context, str)
 
     @classmethod
-    def from_dict(cls, d: Dict):
+    def from_dict(cls, d: Dict[str, Any]) -> "String":
         return String(**d)

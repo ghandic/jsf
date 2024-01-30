@@ -1,15 +1,22 @@
+---
+hide:
+  - navigation
+---
+
+# Getting Started
+
 ## Installation
 
+<!-- termynal -->
 ```bash
-pip install jsf
+$ pip install jsf
+---> 100%
+Installed
 ```
 
 ## Usage
 
-### As a program
-
-* pip install jsf
-* In your code where you need to you will be using jsf you can refer to below script as reference:
+### From your Python program
 
 ```python
 from jsf import JSF
@@ -18,15 +25,28 @@ faker = JSF.from_json("demo-schema.json")
 fake_json = faker.generate()
 ```
 
-### From the commandline
+### From the command line
 
-#### Raw install
+#### System installation
+
+First, you'll need to install `jsf[cli]` as it has the additional dependencies for the command line tools.
+
+<!-- termynal -->
+```bash
+$ pip install jsf[cli]
+---> 100%
+Installed
+```
+
+Now the cli is installed, all you will need to do is supply the JSON schema and the file path you wish to save the output to.
 
 ```bash
 jsf --schema jsf/tests/data/custom.json --instance wow.json
 ```
 
 #### Docker
+
+For convenience, you can also make use of the Docker image that is provided so there is no need to rely on package management.
 
 ```bash
 docker build . -t challisa/jsf

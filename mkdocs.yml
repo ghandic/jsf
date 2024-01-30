@@ -5,45 +5,89 @@ repo_url: "https://github.com/ghandic/jsf"
 repo_name: "ghandic/jsf"
 
 nav:
-  - Getting Started: index.md
+  - JSF: index.md
   - Features: features.md
-  - JSON Schema Intro: intro-to-json-schema.md
-  - Tutorial - User Guide:
-    - Tutorial - User Guide - Intro: user-guide/intro.md
-    - First Steps: user-guide/first-steps.md
-  - Alternatives, Inspiration and Comparisons: alternatives.md
-  - Help jsf - Get Help: help-us.md
-  - Development - Contributing: contributing.md
-  - Code of Conduct: code-of-conduct.md
+  - Learn:
+    - JSON Schema Intro: intro-to-json-schema.md
+    - Tutorial - User Guide: user-guide/first-steps.md
+    - Advanced User Guide: user-guide/advanced.md
+  - About:
+    - About: about/about.md
+    - Alternatives, Inspiration and Comparisons: about/alternatives.md
+    - Code of Conduct: about/code-of-conduct.md
+  - Help:
+    - Help: help/index.md
+    - Get Help: help/get-help.md
+    - Help jsf - Contributing: help/contributing.md
   - Release Notes: release-notes.md
   
 theme:
   name: material
-  custom_dir: docs/overrides
   logo: assets/imgs/index.png
   favicon: assets/imgs/index.png
+  features:
+  - search.suggest
+  - search.highlight
+  - content.tabs.link
+  - navigation.indexes
+  - content.tooltips
+  - navigation.path
+  - content.code.annotate
+  - content.code.copy
+  - content.code.select
+  - navigation.tabs
   palette:
-    scheme: youtube
+
+  # Palette toggle for automatic mode
+  - media: "(prefers-color-scheme)"
+    scheme: slate
+    primary: blue
+    accent: yellow
+    toggle:
+      icon: material/lightbulb
+      name: Switch to light mode
+
+  # Palette toggle for light mode
+  - media: '(prefers-color-scheme: light)'
+    scheme: default
+    primary: blue
+    accent: yellow
+    toggle:
+      icon: material/lightbulb
+      name: Switch to dark mode
+
+  # Palette toggle for dark mode
+  - media: '(prefers-color-scheme: dark)'
+    scheme: slate
+    primary: blue
+    accent: yellow
+    toggle:
+      icon: material/lightbulb-outline
+      name: Switch to system preference
 
 extra_css:
   - assets/css/styles.css
-
-extra_javascript:
-  - assets/js/theme.js
 
 markdown_extensions:
   - admonition
   - codehilite:
       guess_lang: false
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
   - pymdownx.superfences
   - pymdownx.emoji:
-      emoji_index: !!python/name:materialx.emoji.twemoji
-      emoji_generator: !!python/name:materialx.emoji.to_svg
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
   - pymdownx.tabbed
   - toc:
       permalink: "¤"
   - pymdownx.tasklist:
       custom_checkbox: true
+  
 
 plugins:
   - search
@@ -56,6 +100,13 @@ plugins:
             show_if_no_docstring: no
       watch:
         - jsf
+  - termynal:
+      title: "shell"
+      buttons: "macos"
+      prompt_literal_start:
+        - "$"
+        - ">"
+        - ">>>"
 
 extra:
   social:

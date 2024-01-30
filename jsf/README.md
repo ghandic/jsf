@@ -26,8 +26,7 @@ Use **jsf** along with fake data generators to provide consistent and meaningful
 ## Main Features
 
 - Provides out of the box data generation from any JSON schema 📦
-
-* Extendable custom data providers using any lambda functions 🔗
+- Extendable custom data providers using any lambda functions 🔗
 - Multi level state for dependant data (eg multiple objects sharing value, such as children with same surname) 🤓
 - Inbuilt validation of fake JSON produced ✅
 - In memory conversion from JSON Schema to Pydantic Models with generated examples 🤯

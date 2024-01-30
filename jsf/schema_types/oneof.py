@@ -8,7 +8,7 @@ class OneOf(BaseSchema):
     schemas: List[BaseSchema] = None
 
     @classmethod
-    def from_dict(cls, d: Dict):
+    def from_dict(cls, d: Dict[str, Any]) -> "OneOf":
         return OneOf(**d)
 
     def generate(self, context: Dict[str, Any]) -> Optional[List[Any]]:
@@ -17,5 +17,5 @@ class OneOf(BaseSchema):
         except ProviderNotSetException:
             return random.choice(self.schemas).generate(context)
 
-    def model(self, context: Dict[str, Any]):
+    def model(self, context: Dict[str, Any]) -> None:
         pass
