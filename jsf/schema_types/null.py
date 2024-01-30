@@ -1,4 +1,4 @@
-from typing import Any, Dict
+from typing import Any, Dict, Tuple, Type
 
 from jsf.schema_types.base import BaseSchema, ProviderNotSetException
 
@@ -10,9 +10,9 @@ class Null(BaseSchema):
         except ProviderNotSetException:
             return None
 
-    def model(self, context: Dict[str, Any]):
+    def model(self, context: Dict[str, Any]) -> Tuple[Type, Any]:
         return self.to_pydantic(context, type(None))
 
     @classmethod
-    def from_dict(cls, d: Dict):
+    def from_dict(cls, d: Dict[str, Any]) -> "Null":
         return Null(**d)

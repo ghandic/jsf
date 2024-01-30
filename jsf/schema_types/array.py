@@ -1,5 +1,5 @@
 import random
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Tuple, Type, Union
 
 from pydantic import Field
 
@@ -15,7 +15,7 @@ class Array(BaseSchema):
     fixed: Optional[Union[int, str]] = Field(None, alias="$fixed")
 
     @classmethod
-    def from_dict(cls, d: Dict):
+    def from_dict(cls, d: Dict[str, Any]) -> "Array":
         return Array(**d)
 
     def generate(self, context: Dict[str, Any]) -> Optional[List[Any]]:
@@ -43,7 +43,7 @@ class Array(BaseSchema):
                 output = list(output)
             return output
 
-    def model(self, context: Dict[str, Any]):
+    def model(self, context: Dict[str, Any]) -> Tuple[Type, Any]:
         _type = eval(
             f"List[Union[{','.join([self.items.model(context)[0].__name__])}]]",
             context["__internal__"],

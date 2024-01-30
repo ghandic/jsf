@@ -1,6 +1,6 @@
 import logging
 import random
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Tuple, Type, Union
 
 import rstr
 from pydantic import BaseModel, create_model
@@ -29,7 +29,7 @@ class Object(BaseSchema):
     patternProperties: Optional[Dict[str, BaseSchema]] = None
 
     @classmethod
-    def from_dict(cls, d: dict):
+    def from_dict(cls, d: Dict[str, Any]) -> "Object":
         return Object(**d)
 
     def should_keep(self, property_name: str) -> bool:
@@ -52,7 +52,7 @@ class Object(BaseSchema):
                             pattern_props[rstr.xeger(o.name)] = o.generate(context)
             return {**pattern_props, **explicit_properties}
 
-    def model(self, context: Dict[str, Any]):
+    def model(self, context: Dict[str, Any]) -> Tuple[Type, Any]:
         self.generate(context)
         name = self._get_unique_name(context)
         _type = create_model(name, **{o.name: o.model(context) for o in self.properties})

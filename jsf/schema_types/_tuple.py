@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple, Type, Union
 
 from pydantic import Field
 
@@ -16,17 +16,17 @@ class JSFTuple(BaseSchema):
     fixed: Optional[Union[int, str]] = Field(None, alias="$fixed")
 
     @classmethod
-    def from_dict(cls, d: Dict):
+    def from_dict(cls, d: Dict[str, Any]) -> "JSFTuple":
         return JSFTuple(**d)
 
     def generate(self, context: Dict[str, Any]) -> Optional[List[Tuple]]:
-        # TODO:  Random drop out "It’s ok to not provide all of the items"
+        # TODO:  Random drop out "It's ok to not provide all of the items"
         try:
             return super().generate(context)
         except ProviderNotSetException:
             return tuple(item.generate(context) for item in self.items)
 
-    def model(self, context: Dict[str, Any]):
+    def model(self, context: Dict[str, Any]) -> Tuple[Type, Any]:
         _type = eval(
             f"Tuple[{','.join([item.model(context)[0].__name__ for item in self.items])}]",
             context["__internal__"],

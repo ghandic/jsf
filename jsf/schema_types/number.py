@@ -1,6 +1,6 @@
 import math
 import random
-from typing import Any, Dict, Optional, Union
+from typing import Any, Dict, Optional, Tuple, Type, Union
 
 from jsf.schema_types.base import BaseSchema, ProviderNotSetException
 
@@ -37,11 +37,11 @@ class Number(BaseSchema):
                 step * random.randint(math.ceil(float(_min) / step), math.floor(float(_max) / step))
             )
 
-    def model(self, context: Dict[str, Any]):
+    def model(self, context: Dict[str, Any]) -> Tuple[Type, Any]:
         return self.to_pydantic(context, float)
 
     @classmethod
-    def from_dict(cls, d: Dict):
+    def from_dict(cls, d: Dict[str, Any]) -> "Number":
         return Number(**d)
 
 
@@ -50,9 +50,9 @@ class Integer(Number):
         n = super().generate(context)
         return int(n) if n is not None else n
 
-    def model(self, context: Dict[str, Any]):
+    def model(self, context: Dict[str, Any]) -> Tuple[Type, Any]:
         return self.to_pydantic(context, int)
 
     @classmethod
-    def from_dict(cls, d: Dict):
+    def from_dict(cls, d: Dict[str, Any]) -> "Integer":
         return Integer(**d)

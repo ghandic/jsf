@@ -5,11 +5,13 @@ from collections import ChainMap
 from copy import deepcopy
 from datetime import datetime
 from itertools import count
+from pathlib import Path
 from types import MappingProxyType
 from typing import Any, Dict, List, Optional, Tuple, Union
 
 from faker import Faker
 from jsonschema import validate
+from pydantic import confloat
 from smart_open import open as s_open
 
 from jsf.schema_types import (
@@ -30,6 +32,14 @@ faker = Faker()
 
 
 class JSF:
+    """The JSF class generates fake data based on a provided JSON Schema.
+
+    Attributes:
+        root_schema (Dict[str, Any]): The JSON schema based on which the fake data is generated.
+        definitions (Dict): A dictionary to store definitions used in the JSON schema.
+        base_state (Dict[str, Any]): A dictionary that represents the state of the parser. It includes a counter, a list of all JSON paths, and the provided initial state.
+    """
+
     def __init__(
         self,
         schema: Dict[str, Any],
@@ -42,8 +52,17 @@ class JSF:
             }
         ),
         initial_state: Dict[str, Any] = MappingProxyType({}),
-        allow_none_optionals: float = 0.5,
+        allow_none_optionals: confloat(ge=0.0, le=1.0) = 0.5,
     ):
+        """Initializes the JSF generator with the provided schema and
+        configuration options.
+
+        Args:
+            schema (Dict[str, Any]): The JSON schema based on which the fake data is generated.
+            context (Dict[str, Any], optional): A dictionary that provides additional utilities for handling the schema, such as a faker for generating fake data, a random number generator, and datetime utilities. It also includes an internal dictionary for handling List, Union, and Tuple types. Defaults to a dictionary with "faker", "random", "datetime", and "__internal__" keys.
+            initial_state (Dict[str, Any], optional): A dictionary that represents the initial state of the parser. If you wish to extend the state so it can be accesses by your schema you can add any references in here. Defaults to an empty dictionary.
+            allow_none_optionals (confloat, optional): A parameter that determines the probability of optional fields being set to None. Defaults to 0.5.
+        """
         self.root_schema = schema
         self.definitions = {}
         self.base_state = {
@@ -56,6 +75,32 @@ class JSF:
 
         self.root = None
         self._parse(schema)
+
+    @staticmethod
+    def from_json(
+        path: Path,
+        context: Dict[str, Any] = MappingProxyType(
+            {
+                "faker": faker,
+                "random": random,
+                "datetime": datetime,
+                "__internal__": {"List": List, "Union": Union, "Tuple": Tuple},
+            }
+        ),
+        initial_state: Dict[str, Any] = MappingProxyType({}),
+        allow_none_optionals: confloat(ge=0.0, le=1.0) = 0.5,
+    ) -> "JSF":
+        """Initializes the JSF generator with the provided schema at the given
+        path and configuration options.
+
+        Args:
+            path (Path): The path to the JSON schema based on which the fake data is generated.
+            context (Dict[str, Any], optional): A dictionary that provides additional utilities for handling the schema, such as a faker for generating fake data, a random number generator, and datetime utilities. It also includes an internal dictionary for handling List, Union, and Tuple types. Defaults to a dictionary with "faker", "random", "datetime", and "__internal__" keys.
+            initial_state (Dict[str, Any], optional): A dictionary that represents the initial state of the parser. If you wish to extend the state so it can be accesses by your schema you can add any references in here. Defaults to an empty dictionary.
+            allow_none_optionals (confloat, optional): A parameter that determines the probability of optional fields being set to None. Defaults to 0.5.
+        """
+        with open(path) as f:
+            return JSF(json.load(f), context, initial_state, allow_none_optionals)
 
     def __parse_primitive(self, name: str, path: str, schema: Dict[str, Any]) -> PrimitiveTypes:
         item_type, is_nullable = self.__is_field_nullable(schema)
@@ -247,22 +292,29 @@ class JSF:
         return {**self.base_context, "state": deepcopy(self.base_state)}
 
     def generate(self, n: Optional[int] = None) -> Any:
+        """Generates a fake object from the provided schema, and returns the
+        output.
+
+        If n is provided, it returns a list of n objects. If n is 1 then
+        it returns a single object.
+        """
         if n is None or n == 1:
             return self.root.generate(context=self.context)
         return [self.root.generate(context=self.context) for _ in range(n)]
 
     def pydantic(self):
+        """Generates a fake object from the provided schema and provides the
+        output as a Pydantic model."""
         return self.root.model(context=self.context)[0]
 
     def generate_and_validate(self) -> None:
+        """Generates a fake object from the provided schema and performs
+        validation on the result."""
         fake = self.root.generate(context=self.context)
         validate(instance=fake, schema=self.root_schema)
 
-    def to_json(self, path: str) -> None:
+    def to_json(self, path: Path, **kwargs) -> None:
+        """Generates a fake object from the provided schema and saves the
+        output to the given path."""
         with open(path, "w") as f:
-            json.dump(self.generate(), f, indent=2)
-
-    @staticmethod
-    def from_json(path: str) -> "JSF":
-        with open(path) as f:
-            return JSF(json.load(f))
+            json.dump(self.generate(), f, **kwargs)

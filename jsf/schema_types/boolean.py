@@ -1,5 +1,5 @@
 import random
-from typing import Any, Dict, Optional
+from typing import Any, Dict, Optional, Tuple, Type
 
 from jsf.schema_types.base import BaseSchema, ProviderNotSetException
 
@@ -11,9 +11,9 @@ class Boolean(BaseSchema):
         except ProviderNotSetException:
             return random.choice([True, False])
 
-    def model(self, context: Dict[str, Any]):
+    def model(self, context: Dict[str, Any]) -> Tuple[Type, Any]:
         return self.to_pydantic(context, bool)
 
     @classmethod
-    def from_dict(cls, d: Dict):
+    def from_dict(cls, d: Dict[str, Any]) -> "Boolean":
         return Boolean(**d)
