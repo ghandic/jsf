@@ -17,15 +17,6 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r docs/requirements.txt
-      - name: Package
-        run: |
-          make build
-      - name: Validate package
-        run: |
-          ls dist
-          PACKAGE=`ls dist/jsf-*.tar.gz`
-          pip3 install $PACKAGE\[cli\]
-          jsf --help
       - name: Deploy docs
         run: |
           mkdocs gh-deploy --force
