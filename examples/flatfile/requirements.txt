@@ -1,0 +1,5 @@
+jsf
+pandas
+openpyxl
+PyArrow
+jsonlines
