@@ -173,6 +173,18 @@ def test_fake_string_enum(TestData):
     assert all(p.generate() in ["Street", "Avenue", "Boulevard"] for _ in range(100))
 
 
+def test_fake_object_enum(TestData):
+    with open(TestData / "object-enum.json") as file:
+        schema = json.load(file)
+    p = JSF(schema)
+
+    assert isinstance(p.generate(), dict)
+    assert all(
+        p.generate() in [{"code": "1", "value": "CHILD"}, {"code": "2", "value": "ADULT"}]
+        for _ in range(100)
+    )
+
+
 def test_fake_int(TestData):
     with open(TestData / "integer.json") as file:
         schema = json.load(file)

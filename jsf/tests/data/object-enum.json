@@ -1,0 +1,13 @@
+{
+    "type": "object",
+    "enum": [
+        {
+            "code": "1",
+            "value": "CHILD"
+        },
+        {
+            "code": "2",
+            "value": "ADULT"
+        }
+    ]
+}
