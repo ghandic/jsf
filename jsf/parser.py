@@ -224,8 +224,8 @@ class JSF:
             enum_list = schema["enum"]
             assert len(enum_list) > 0, "Enum List is Empty"
             assert all(
-                isinstance(item, (int, float, str, type(None))) for item in enum_list
-            ), "Enum Type is not null, int, float or string"
+                isinstance(item, (int, float, str, dict, type(None))) for item in enum_list
+            ), "Enum Type is not null, int, float, string or dict"
             return JSFEnum.from_dict(
                 {
                     "name": name,
