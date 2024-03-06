@@ -486,3 +486,16 @@ def test_fake_oneof_recursive(TestData):
         assert isinstance(d, list)
         for item in d:
             assert isinstance(item, int) or isinstance(item, list)
+
+
+def test_fake_anyof_recursive(TestData):
+    with open(TestData / "anyof_recursive.json") as file:
+        schema = json.load(file)
+    p = JSF(schema, max_recursive_depth=2)
+
+    fake_data = [p.generate() for _ in range(10)]
+    for d in fake_data:
+        for item in d:
+            assert isinstance(item, str) or isinstance(item, dict)
+            if isinstance(item, dict):
+                assert "value" in item

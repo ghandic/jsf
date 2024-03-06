@@ -181,7 +181,7 @@ class JSF:
         self.root = arr if not self.root else self.root
         arr.items = []
         for i, item in enumerate(schema["items"]):
-            arr.items.append(self.__parse_definition(name, path=f"{name}[{i}]", schema=item))
+            arr.items.append(self.__parse_definition(name, path=f"{path}/{name}[{i}]", schema=item))
         return arr
 
     def __is_field_nullable(self, schema: Dict[str, Any]) -> Tuple[str, bool]:
@@ -230,7 +230,7 @@ class JSF:
                 return self.root
             elif definition := schema.get(def_tag, {}).get(def_name):
                 parsed_definition = self.__parse_definition(
-                    def_name, path=f"#/{def_tag}", schema=definition
+                    def_name, path=f"{path}/#/{def_tag}/{def_name}", schema=definition
                 )
                 self.definitions[f"#/{def_tag}/{def_name}"] = parsed_definition
         return parsed_definition
