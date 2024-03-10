@@ -19,7 +19,7 @@ python_distribution(
     provides=python_artifact(
         name="jsf",
         version="0.11.0",
-        author=ghandic",
+        author="ghandic",
         description="Creates fake JSON files from a JSON schema",
         url="https://github.com/ghandic/jsf",
         long_description_content_type="text/markdown",
