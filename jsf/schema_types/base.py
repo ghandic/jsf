@@ -34,17 +34,25 @@ class BaseSchema(BaseModel):
     provider: Optional[str] = Field(None, alias="$provider")
     set_state: Optional[Dict[str, str]] = Field(None, alias="$state")
     is_nullable: bool = False
+    is_recursive: bool = False
     allow_none_optionals: float = Field(0.5, ge=0.0, le=1.0)
+    max_recursive_depth: int = 10
 
     @classmethod
     def from_dict(cls, d: Dict[str, Any]) -> Self:
         raise NotImplementedError  # pragma: no cover
 
     def generate(self, context: Dict[str, Any]) -> Any:
+        if self.is_recursive:
+            context["state"]["__depth__"] += 1
+
         if self.set_state is not None:
             context["state"][self.path] = {k: eval(v, context)() for k, v in self.set_state.items()}
 
-        if self.is_nullable and random.uniform(0, 1) < self.allow_none_optionals:
+        if self.is_nullable and (
+            random.uniform(0, 1) < self.allow_none_optionals
+            or context["state"]["__depth__"] > self.max_recursive_depth
+        ):
             return None
         if self.provider is not None:
             return eval(self.provider, context)()

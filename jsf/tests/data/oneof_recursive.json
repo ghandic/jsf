@@ -1,0 +1,18 @@
+{
+    "$ref": "#/definitions/tree",
+    "definitions": {
+        "tree": {
+            "type": "array",
+            "items": {
+                "oneOf": [
+                    {
+                        "$ref": "#/definitions/tree"
+                    },
+                    {
+                        "type": "integer"
+                    }
+                ]
+            }
+        }
+    }
+}

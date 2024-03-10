@@ -24,7 +24,12 @@ class JSFTuple(BaseSchema):
         try:
             return super().generate(context)
         except ProviderNotSetException:
-            return tuple(item.generate(context) for item in self.items)
+            depth = context["state"]["__depth__"]
+            output = []
+            for item in self.items:
+                output.append(item.generate(context))
+                context["state"]["__depth__"] = depth
+            return tuple(output)
 
     def model(self, context: Dict[str, Any]) -> Tuple[Type, Any]:
         _type = eval(

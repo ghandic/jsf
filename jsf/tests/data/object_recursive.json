@@ -1,0 +1,34 @@
+{
+    "type": "object",
+    "properties": {
+        "id": {
+            "type": "string"
+        },
+        "tree": {
+            "$ref": "#/definitions/tree"
+        }
+    },
+    "required": [
+        "id"
+    ],
+    "definitions": {
+        "tree": {
+            "type": "object",
+            "properties": {
+                "value": {
+                    "type": "string"
+                },
+                "branches": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/tree"
+                    },
+                    "minItems": 1
+                }
+            },
+            "required": [
+                "value"
+            ]
+        }
+    }
+}
