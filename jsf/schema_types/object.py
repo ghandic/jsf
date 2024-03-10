@@ -32,23 +32,28 @@ class Object(BaseSchema):
     def from_dict(cls, d: Dict[str, Any]) -> "Object":
         return Object(**d)
 
-    def should_keep(self, property_name: str) -> bool:
+    def should_keep(self, property_name: str, context: Dict[str, Any]) -> bool:
         if isinstance(self.required, list) and property_name in self.required:
             return True
-        return random.uniform(0, 1) > self.allow_none_optionals
+        return (
+            random.uniform(0, 1) > self.allow_none_optionals
+            and context["state"]["__depth__"] <= self.max_recursive_depth
+        )
 
     def generate(self, context: Dict[str, Any]) -> Optional[Dict[str, Any]]:
         try:
             return super().generate(context)
         except ProviderNotSetException:
             explicit_properties = {
-                o.name: o.generate(context) for o in self.properties if self.should_keep(o.name)
+                o.name: o.generate(context)
+                for o in self.properties
+                if self.should_keep(o.name, context)
             }
             pattern_props = {}
             if self.patternProperties:
                 for o in self.patternProperties:
                     for _ in range(random.randint(0, 10)):
-                        if self.should_keep(o.name):
+                        if self.should_keep(o.name, context):
                             pattern_props[rstr.xeger(o.name)] = o.generate(context)
             return {**pattern_props, **explicit_properties}
 

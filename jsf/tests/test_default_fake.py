@@ -173,6 +173,18 @@ def test_fake_string_enum(TestData):
     assert all(p.generate() in ["Street", "Avenue", "Boulevard"] for _ in range(100))
 
 
+def test_fake_object_enum(TestData):
+    with open(TestData / "object-enum.json") as file:
+        schema = json.load(file)
+    p = JSF(schema)
+
+    assert isinstance(p.generate(), dict)
+    assert all(
+        p.generate() in [{"code": "1", "value": "CHILD"}, {"code": "2", "value": "ADULT"}]
+        for _ in range(100)
+    )
+
+
 def test_fake_int(TestData):
     with open(TestData / "integer.json") as file:
         schema = json.load(file)
@@ -445,3 +457,44 @@ def test_non_required_are_not_none(TestData):
 
         assert fake_data["name"] is not None
         assert fake_data["credit_card"] is not None
+
+
+def test_fake_object_recursive(TestData):
+    with open(TestData / "object_recursive.json") as file:
+        schema = json.load(file)
+    p = JSF(schema, allow_none_optionals=0.0, max_recursive_depth=2)
+
+    fake_data = [p.generate() for _ in range(5)]
+    for d in fake_data:
+        assert isinstance(d, dict)
+        assert "tree" in d and "id" in d
+        assert "branches" in d["tree"] and "value" in d["tree"]
+        for subtree in d["tree"]["branches"]:
+            assert isinstance(subtree, dict)
+            assert "branches" in subtree and "value" in subtree
+            for leave in subtree["branches"]:
+                assert "branches" not in leave and "value" in leave
+
+
+def test_fake_oneof_recursive(TestData):
+    with open(TestData / "oneof_recursive.json") as file:
+        schema = json.load(file)
+    p = JSF(schema, max_recursive_depth=2)
+
+    fake_data = [p.generate() for _ in range(10)]
+    for d in fake_data:
+        assert isinstance(d, list)
+        for item in d:
+            assert isinstance(item, int) or isinstance(item, list)
+
+
+def test_fake_complex_recursive(TestData):
+    with open(TestData / "complex_recursive.json") as file:
+        schema = json.load(file)
+    p = JSF(schema, max_recursive_depth=2)
+
+    fake_data = [p.generate() for _ in range(10)]
+    for d in fake_data:
+        assert isinstance(d, str) or isinstance(d, dict)
+        if isinstance(d, dict):
+            assert "value" in d

@@ -1,0 +1,45 @@
+{
+    "$ref": "#/definitions/tree",
+    "definitions": {
+        "tree": {
+            "anyOf": [
+                {
+                    "$ref": "#/definitions/node"
+                },
+                {
+                    "type": "string"
+                }
+            ]
+        },
+        "node": {
+            "type": "object",
+            "allOf": [
+                {
+                    "type": "object",
+                    "oneOf": [
+                        {
+                            "type": "object",
+                            "properties": {
+                                "value": {
+                                    "$ref": "#/definitions/tree"
+                                }
+                            },
+                            "required": [
+                                "value"
+                            ]
+                        },
+                        {
+                            "type": "object",
+                            "properties": {
+                                "value": {
+                                    "type": "string"
+                                }
+                            },
+                            "required": ["value"]
+                        }
+                    ]
+                }
+            ]
+        }
+    }
+}

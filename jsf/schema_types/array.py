@@ -27,19 +27,22 @@ class Array(BaseSchema):
             elif isinstance(self.fixed, int):
                 self.minItems = self.maxItems = self.fixed
 
-            output = [
-                self.items.generate(context)
-                for _ in range(random.randint(int(self.minItems), int(self.maxItems)))
-            ]
+            depth = context["state"]["__depth__"]
+            output = []
+            for _ in range(random.randint(int(self.minItems), int(self.maxItems))):
+                output.append(self.items.generate(context))
+                context["state"]["__depth__"] = depth
             if self.uniqueItems and self.items.type == "object":
                 output = [dict(s) for s in {frozenset(d.items()) for d in output}]
                 while len(output) < self.minItems:
                     output.append(self.items.generate(context))
                     output = [dict(s) for s in {frozenset(d.items()) for d in output}]
+                    context["state"]["__depth__"] = depth
             elif self.uniqueItems:
                 output = set(output)
                 while len(output) < self.minItems:
                     output.add(self.items.generate(context))
+                    context["state"]["__depth__"] = depth
                 output = list(output)
             return output
 

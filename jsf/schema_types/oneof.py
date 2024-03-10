@@ -15,7 +15,10 @@ class OneOf(BaseSchema):
         try:
             return super().generate(context)
         except ProviderNotSetException:
-            return random.choice(self.schemas).generate(context)
+            filtered_schemas = []
+            if context["state"]["__depth__"] > self.max_recursive_depth:
+                filtered_schemas = [schema for schema in self.schemas if not schema.is_recursive]
+            return random.choice(filtered_schemas or self.schemas).generate(context)
 
     def model(self, context: Dict[str, Any]) -> None:
         pass
