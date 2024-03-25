@@ -498,3 +498,9 @@ def test_fake_complex_recursive(TestData):
         assert isinstance(d, str) or isinstance(d, dict)
         if isinstance(d, dict):
             assert "value" in d
+
+
+def test_fake_empty(TestData):
+    with open(TestData / "empty.json") as file:
+        schema = json.load(file)
+    [JSF(schema).generate() for _ in range(10)]  # Just validating no errors
