@@ -56,6 +56,13 @@ class BaseSchema(BaseModel):
             return None
         if self.provider is not None:
             return eval(self.provider, context)()
+
+        if context.get("use_defaults", False) and self.default:
+            return self.default
+
+        if context.get("use_examples", False) and self.examples:
+            return random.choice(self.examples)
+
         raise ProviderNotSetException()
 
     def model(self, context: Dict[str, Any]) -> Optional[Tuple[Type, Field]]:

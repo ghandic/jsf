@@ -339,16 +339,21 @@ class JSF:
     def context(self):
         return {**self.base_context, "state": deepcopy(self.base_state)}
 
-    def generate(self, n: Optional[int] = None) -> Any:
+    def generate(
+        self, n: Optional[int] = None, *, use_defaults: bool = False, use_examples: bool = False
+    ) -> Any:
         """Generates a fake object from the provided schema, and returns the
         output.
 
-        If n is provided, it returns a list of n objects. If n is 1 then
-        it returns a single object.
+        Args:
+            n (int, optional): If n is provided, it returns a list of n objects. If n is 1 then it returns a single object.
+            use_defaults (bool, optional): prefer the default value as defined in the schema over a randomly generated object. Defaults to False.
+            use_examples (bool, optional): prefer an example as defined in the schema over a randomly generated object. This parameter is preceded by the `use_defaults` parameter if set. Defaults to False.
         """
+        context = {**self.context, "use_defaults": use_defaults, "use_examples": use_examples}
         if n is None or n == 1:
-            return self.root.generate(context=self.context)
-        return [self.root.generate(context=self.context) for _ in range(n)]
+            return self.root.generate(context=context)
+        return [self.root.generate(context=context) for _ in range(n)]
 
     def pydantic(self):
         """Generates a fake object from the provided schema and provides the
