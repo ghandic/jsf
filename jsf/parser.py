@@ -319,6 +319,8 @@ class JSF:
             return self.__parse_allOf(name, path, schema, root)
         elif "oneOf" in schema:
             return self.__parse_oneOf(name, path, schema, root)
+        elif not any(key in schema for key in ["not", "if", "then", "else"]):
+            return self.__parse_primitive(name, path, {**schema, "type": list(Primitives.keys())})
         else:
             raise ValueError(f"Cannot parse schema {repr(schema)}")  # pragma: no cover
 
