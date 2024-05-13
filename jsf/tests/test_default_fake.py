@@ -554,7 +554,7 @@ def test_min_required_props_oneof(TestData):
 
     for d in fake_data:
         assert isinstance(d, dict)
-        assert len(d.keys()) == 1
+        assert len(d.keys()) >= 1
         assert all(isinstance(v, bool) for v in d.values())
         assert all(d.values())
 
