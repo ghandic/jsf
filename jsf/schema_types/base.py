@@ -1,7 +1,7 @@
-from collections import ChainMap
 import logging
 import random
 import uuid
+from collections import ChainMap
 from typing import Any, Dict, List, Optional, Tuple, Type, Union
 
 from pydantic import BaseModel, Field
@@ -28,7 +28,7 @@ class BaseSchema(BaseModel):
     schema_: Optional[str] = Field(None, alias="$schema")
     # The $comment keyword is strictly intended for adding comments to the JSON schema source. Its value must always be a string. Unlike the annotations title, description and examples, JSON schema implementations aren't allowed to attach any meaning or behavior to it whatsoever, and may even strip them at any time. Therefore, they are useful for leaving notes to future editors of a JSON schema, (which is quite likely your future self), but should not be used to communicate to users of the schema.
     comments: Optional[str] = Field(None, alias="$comments")
-    
+
     oneOf: Optional[List[Dict[str, Any]]] = None
     anyOf: Optional[List[Dict[str, Any]]] = None
     allOf: Optional[List[Dict[str, Any]]] = None
