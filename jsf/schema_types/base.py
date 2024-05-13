@@ -1,3 +1,4 @@
+from collections import ChainMap
 import logging
 import random
 import uuid
@@ -27,6 +28,10 @@ class BaseSchema(BaseModel):
     schema_: Optional[str] = Field(None, alias="$schema")
     # The $comment keyword is strictly intended for adding comments to the JSON schema source. Its value must always be a string. Unlike the annotations title, description and examples, JSON schema implementations aren't allowed to attach any meaning or behavior to it whatsoever, and may even strip them at any time. Therefore, they are useful for leaving notes to future editors of a JSON schema, (which is quite likely your future self), but should not be used to communicate to users of the schema.
     comments: Optional[str] = Field(None, alias="$comments")
+    
+    oneOf: Optional[List[Dict[str, Any]]] = None
+    anyOf: Optional[List[Dict[str, Any]]] = None
+    allOf: Optional[List[Dict[str, Any]]] = None
 
     # JSF Custom fields
     path: Optional[str] = None
@@ -48,6 +53,20 @@ class BaseSchema(BaseModel):
 
         if self.set_state is not None:
             context["state"][self.path] = {k: eval(v, context)() for k, v in self.set_state.items()}
+
+        if self.oneOf is not None and self.__class__.__name__ != "OneOf":
+            additional_validations = random.choice(self.oneOf)
+            for k, v in additional_validations.items():
+                setattr(self, k, v)
+
+        if self.allOf is not None and self.__class__.__name__ != "AllOf":
+            additional_validations = dict(ChainMap(*self.allOf))
+            for k, v in additional_validations.items():
+                setattr(self, k, v)
+        if self.anyOf is not None and self.__class__.__name__ != "AnyOf":
+            additional_validations = dict(ChainMap(*random.choices(self.anyOf, k=len(self.anyOf))))
+            for k, v in additional_validations.items():
+                setattr(self, k, v)
 
         if self.is_nullable and (
             random.uniform(0, 1) < self.allow_none_optionals
