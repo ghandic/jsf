@@ -546,8 +546,8 @@ def test_use_defaults_and_examples(TestData):
         assert breed is None or breed == "Mixed Breed"
 
 
-def test_min_required_props_oneof(TestData):
-    with open(TestData / "min-required-props-oneof.json") as file:
+def test_anyof_true(TestData):
+    with open(TestData / "anyof_true.json") as file:
         schema = json.load(file)
     p = JSF(schema)
     fake_data = [p.generate(use_examples=True) for _ in range(100)]
@@ -556,7 +556,7 @@ def test_min_required_props_oneof(TestData):
         assert isinstance(d, dict)
         assert len(d.keys()) >= 1
         assert all(isinstance(v, bool) for v in d.values())
-        assert all(d.values())
+        assert any(d.values())
 
 
 def test_bool_enum(TestData):
