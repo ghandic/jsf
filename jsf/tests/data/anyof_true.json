@@ -1,0 +1,15 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "new_parent": { "type": "boolean" },
+    "new_subsidiary": { "type": "boolean" },
+    "new_sibling": { "type": "boolean" }
+  },
+  "additionalProperties": false,
+  "anyOf": [
+    { "properties": { "new_parent": { "const": true } } },
+    { "properties": { "new_subsidiary": { "const": true } } },
+    { "properties": { "new_sibling": { "const": true } } }
+  ]
+}
