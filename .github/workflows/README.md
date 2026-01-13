@@ -9,7 +9,7 @@ This directory contains the GitHub Actions workflows for CI/CD automation.
 ### `python-package.yaml`
 **Triggers:** Push to `main`, Pull requests to `main`
 
-Runs tests, linting, and packaging for the Python package across multiple Python versions (3.8, 3.9, 3.10, 3.11).
+Runs tests, linting, and packaging for the Python package across multiple Python versions (3.8, 3.9, 3.10, 3.11, 3.12, 3.13, 3.14).
 
 **Note:** Skips execution if commit message contains `[skip ci]`.
 
