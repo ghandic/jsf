@@ -1,0 +1,177 @@
+name: Automated Release
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: read
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Fetch all history for proper version detection
+          token: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.9"
+      
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install packaging
+      
+      - name: Get current version
+        id: current_version
+        run: |
+          # Extract version from BUILD file
+          CURRENT_VERSION=$(grep -oP 'version="\K[^"]+' jsf/BUILD)
+          echo "current=$CURRENT_VERSION" >> $GITHUB_OUTPUT
+          echo "Current version: $CURRENT_VERSION"
+      
+      - name: Get latest tag
+        id: latest_tag
+        run: |
+          # Get the latest git tag, if any
+          LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "v0.0.0")
+          echo "tag=$LATEST_TAG" >> $GITHUB_OUTPUT
+          echo "Latest tag: $LATEST_TAG"
+      
+      - name: Analyze commits and determine version bump
+        id: version_bump
+        run: |
+          # Get commits since last tag
+          LATEST_TAG="${{ steps.latest_tag.outputs.tag }}"
+          
+          # Get commit messages since last tag
+          if [ "$LATEST_TAG" = "v0.0.0" ]; then
+            COMMITS=$(git log --pretty=format:"%s" origin/main)
+          else
+            COMMITS=$(git log ${LATEST_TAG}..HEAD --pretty=format:"%s")
+          fi
+          
+          echo "Analyzing commits:"
+          echo "$COMMITS"
+          
+          # Determine bump type based on conventional commits
+          BUMP_TYPE="none"
+          
+          # Check for breaking changes
+          if echo "$COMMITS" | grep -qiE "^(feat|fix|chore|docs|style|refactor|perf|test)(\(.+\))?!:|BREAKING CHANGE:"; then
+            BUMP_TYPE="major"
+          # Check for features
+          elif echo "$COMMITS" | grep -qiE "^feat(\(.+\))?:"; then
+            BUMP_TYPE="minor"
+          # Check for fixes
+          elif echo "$COMMITS" | grep -qiE "^fix(\(.+\))?:"; then
+            BUMP_TYPE="patch"
+          # Check for any other conventional commits
+          elif echo "$COMMITS" | grep -qiE "^(chore|docs|style|refactor|perf|test)(\(.+\))?:"; then
+            BUMP_TYPE="patch"
+          fi
+          
+          echo "bump_type=$BUMP_TYPE" >> $GITHUB_OUTPUT
+          echo "Determined bump type: $BUMP_TYPE"
+      
+      - name: Calculate new version
+        id: new_version
+        run: |
+          CURRENT="${{ steps.current_version.outputs.current }}"
+          BUMP_TYPE="${{ steps.version_bump.outputs.bump_type }}"
+          
+          if [ "$BUMP_TYPE" = "none" ]; then
+            echo "No version bump needed"
+            echo "version=$CURRENT" >> $GITHUB_OUTPUT
+            echo "should_release=false" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          
+          # Parse current version
+          IFS='.' read -ra VERSION_PARTS <<< "$CURRENT"
+          MAJOR="${VERSION_PARTS[0]}"
+          MINOR="${VERSION_PARTS[1]}"
+          PATCH="${VERSION_PARTS[2]}"
+          
+          # Bump version based on type
+          if [ "$BUMP_TYPE" = "major" ]; then
+            MAJOR=$((MAJOR + 1))
+            MINOR=0
+            PATCH=0
+          elif [ "$BUMP_TYPE" = "minor" ]; then
+            MINOR=$((MINOR + 1))
+            PATCH=0
+          elif [ "$BUMP_TYPE" = "patch" ]; then
+            PATCH=$((PATCH + 1))
+          fi
+          
+          NEW_VERSION="${MAJOR}.${MINOR}.${PATCH}"
+          echo "version=$NEW_VERSION" >> $GITHUB_OUTPUT
+          echo "should_release=true" >> $GITHUB_OUTPUT
+          echo "New version: $NEW_VERSION"
+      
+      - name: Update BUILD file
+        if: steps.new_version.outputs.should_release == 'true'
+        run: |
+          NEW_VERSION="${{ steps.new_version.outputs.version }}"
+          CURRENT_VERSION="${{ steps.current_version.outputs.current }}"
+          
+          # Update version in BUILD file
+          sed -i "s/version=\"${CURRENT_VERSION}\"/version=\"${NEW_VERSION}\"/" jsf/BUILD
+          
+          echo "Updated BUILD file with version $NEW_VERSION"
+          cat jsf/BUILD | grep version
+      
+      - name: Generate changelog
+        if: steps.new_version.outputs.should_release == 'true'
+        id: changelog
+        run: |
+          LATEST_TAG="${{ steps.latest_tag.outputs.tag }}"
+          NEW_VERSION="${{ steps.new_version.outputs.version }}"
+          
+          # Generate changelog from commits
+          if [ "$LATEST_TAG" = "v0.0.0" ]; then
+            COMMITS=$(git log --pretty=format:"- %s (%h)" origin/main)
+          else
+            COMMITS=$(git log ${LATEST_TAG}..HEAD --pretty=format:"- %s (%h)")
+          fi
+          
+          # Create changelog content
+          CHANGELOG="## What's Changed
+
+$COMMITS
+
+**Full Changelog**: https://github.com/${{ github.repository }}/compare/${LATEST_TAG}...v${NEW_VERSION}"
+          
+          # Save to file for release notes
+          echo "$CHANGELOG" > /tmp/changelog.md
+          echo "Generated changelog"
+      
+      - name: Commit version bump
+        if: steps.new_version.outputs.should_release == 'true'
+        run: |
+          NEW_VERSION="${{ steps.new_version.outputs.version }}"
+          
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add jsf/BUILD
+          git commit -m "chore: bump version to $NEW_VERSION [skip ci]"
+          git push
+      
+      - name: Create GitHub Release
+        if: steps.new_version.outputs.should_release == 'true'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          NEW_VERSION="${{ steps.new_version.outputs.version }}"
+          gh release create "v${NEW_VERSION}" \
+            --title "Release v${NEW_VERSION}" \
+            --notes-file /tmp/changelog.md

@@ -37,7 +37,7 @@ If you are unsure about how to fix or ignore a warning,
 just let the continuous integration fail,
 and we will help you during review.
 
-Don't bother updating the changelog, we will take care of this.
+Don't bother updating the changelog or version number, we will take care of this automatically via our [automated release process](../release-process.md).
 
 ## Commit message convention
 
@@ -56,12 +56,14 @@ Scope and body are optional. Type can be:
 - `chore`: About packaging or repo/files management.
 - `ci`: About Continuous Integration.
 - `docs`: About documentation.
-- `feat`: New feature.
-- `fix`: Bug fix.
+- `feat`: New feature (triggers minor version bump in releases).
+- `fix`: Bug fix (triggers patch version bump in releases).
 - `perf`: About performance.
 - `refactor`: Changes which are not features nor bug fixes.
 - `style`: A change in code style/format.
 - `tests`: About tests.
+
+**Note**: `feat:` and `fix:` commits will automatically trigger version bumps when merged to main. Use `BREAKING CHANGE:` in the footer or append `!` after the type (e.g., `feat!:`) for breaking changes that should trigger a major version bump. See our [automated release process](../release-process.md) for more details.
 
 **Subject (and body) must be valid Markdown.**
 If you write a body, please add issues references at the end:
