@@ -61,21 +61,23 @@ jobs:
           echo "Analyzing commits:"
           echo "$COMMITS"
           
-          # Determine bump type based on conventional commits
-          BUMP_TYPE="none"
-          
-          # Check for breaking changes
-          if echo "$COMMITS" | grep -qiE "^(feat|fix|chore|docs|style|refactor|perf|test)(\(.+\))?!:|BREAKING CHANGE:"; then
-            BUMP_TYPE="major"
-          # Check for features
-          elif echo "$COMMITS" | grep -qiE "^feat(\(.+\))?:"; then
-            BUMP_TYPE="minor"
-          # Check for fixes
-          elif echo "$COMMITS" | grep -qiE "^fix(\(.+\))?:"; then
+          # Check if there are any commits at all
+          if [ -z "$COMMITS" ]; then
+            echo "No new commits found since last release"
+            BUMP_TYPE="none"
+          else
+            # Determine bump type based on conventional commits
+            # Default to patch if no convention matches (new requirement)
             BUMP_TYPE="patch"
-          # Check for any other conventional commits
-          elif echo "$COMMITS" | grep -qiE "^(chore|docs|style|refactor|perf|test)(\(.+\))?:"; then
-            BUMP_TYPE="patch"
+            
+            # Check for breaking changes
+            if echo "$COMMITS" | grep -qiE "^(feat|fix|chore|docs|style|refactor|perf|test)(\(.+\))?!:|BREAKING CHANGE:"; then
+              BUMP_TYPE="major"
+            # Check for features
+            elif echo "$COMMITS" | grep -qiE "^feat(\(.+\))?:"; then
+              BUMP_TYPE="minor"
+            fi
+            # For fix, chore, docs, etc. - BUMP_TYPE remains "patch"
           fi
           
           echo "bump_type=$BUMP_TYPE" >> $GITHUB_OUTPUT
@@ -135,6 +137,7 @@ jobs:
         run: |
           LATEST_TAG="${{ steps.latest_tag.outputs.tag }}"
           NEW_VERSION="${{ steps.new_version.outputs.version }}"
+          REPO="${{ github.repository }}"
           
           # Generate changelog from commits
           if [ "$LATEST_TAG" = "v0.0.0" ]; then
@@ -144,14 +147,14 @@ jobs:
           fi
           
           # Create changelog content
-          CHANGELOG="## What's Changed
-
-$COMMITS
-
-**Full Changelog**: https://github.com/${{ github.repository }}/compare/${LATEST_TAG}...v${NEW_VERSION}"
+          {
+            echo "## What's Changed"
+            echo ""
+            echo "$COMMITS"
+            echo ""
+            echo "**Full Changelog**: https://github.com/${REPO}/compare/${LATEST_TAG}...v${NEW_VERSION}"
+          } > /tmp/changelog.md
           
-          # Save to file for release notes
-          echo "$CHANGELOG" > /tmp/changelog.md
           echo "Generated changelog"
       
       - name: Commit version bump

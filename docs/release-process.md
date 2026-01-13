@@ -11,6 +11,7 @@ This repository uses an automated release process that triggers when code is mer
    - `fix:` or `fix(scope):` → **patch** version bump (e.g., 0.11.2 → 0.11.3)
    - `BREAKING CHANGE:` or `feat!:` → **major** version bump (e.g., 0.11.2 → 1.0.0)
    - Other conventional commits (`chore:`, `docs:`, `style:`, `refactor:`, `perf:`, `test:`) → **patch** version bump
+   - **Any other commits (non-conventional)** → **patch** version bump (default behavior)
 
 3. **Automated Steps**: When merging to `main`:
    - The release workflow analyzes commits since the last tag
@@ -82,10 +83,12 @@ The `[skip ci]` marker prevents the automated release workflow from running agai
 - ✅ Immediate release after merge to main
 - ✅ Clear commit history with conventional commits
 - ✅ Reduced human error in the release process
+- ✅ Default patch version bump ensures every merge creates a release
 
 ## Notes
 
 - The workflow only runs on pushes to the `main` branch
-- If no conventional commit messages are found, no release is created
+- If there are no new commits since the last release, no new release is created
+- **If commits don't follow conventional commit format, a patch version bump is applied by default**
 - The Python package tests workflow skips on `[skip ci]` commits to avoid redundant builds
 - Existing release workflows (PyPI publish, docs deploy) remain unchanged and are triggered by the created GitHub release
