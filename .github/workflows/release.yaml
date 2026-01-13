@@ -22,7 +22,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.9"
+          python-version: "3.11"
       
       - name: Install dependencies
         run: |
@@ -32,8 +32,12 @@ jobs:
       - name: Get current version
         id: current_version
         run: |
-          # Extract version from BUILD file
-          CURRENT_VERSION=$(grep -oP 'version="\K[^"]+' jsf/BUILD)
+          # Extract version from BUILD file (works with both standard grep and BusyBox)
+          CURRENT_VERSION=$(grep -o 'version="[^"]*"' jsf/BUILD | cut -d'"' -f2)
+          if [ -z "$CURRENT_VERSION" ]; then
+            echo "Error: Could not extract version from jsf/BUILD"
+            exit 1
+          fi
           echo "current=$CURRENT_VERSION" >> $GITHUB_OUTPUT
           echo "Current version: $CURRENT_VERSION"
       
@@ -70,11 +74,16 @@ jobs:
             # Default to patch if no convention matches (new requirement)
             BUMP_TYPE="patch"
             
+            # Define patterns for readability
+            BREAKING_PATTERN="^(feat|fix|chore|docs|style|refactor|perf|test)(\(.+\))?!:"
+            BREAKING_FOOTER_PATTERN="BREAKING CHANGE:"
+            FEAT_PATTERN="^feat(\(.+\))?:"
+            
             # Check for breaking changes
-            if echo "$COMMITS" | grep -qiE "^(feat|fix|chore|docs|style|refactor|perf|test)(\(.+\))?!:|BREAKING CHANGE:"; then
+            if echo "$COMMITS" | grep -qE "$BREAKING_PATTERN" || echo "$COMMITS" | grep -qF "$BREAKING_FOOTER_PATTERN"; then
               BUMP_TYPE="major"
             # Check for features
-            elif echo "$COMMITS" | grep -qiE "^feat(\(.+\))?:"; then
+            elif echo "$COMMITS" | grep -qE "$FEAT_PATTERN"; then
               BUMP_TYPE="minor"
             fi
             # For fix, chore, docs, etc. - BUMP_TYPE remains "patch"
@@ -96,11 +105,22 @@ jobs:
             exit 0
           fi
           
-          # Parse current version
+          # Parse current version and validate format
           IFS='.' read -ra VERSION_PARTS <<< "$CURRENT"
+          if [ ${#VERSION_PARTS[@]} -ne 3 ]; then
+            echo "Error: Version format must be X.Y.Z, got: $CURRENT"
+            exit 1
+          fi
+          
           MAJOR="${VERSION_PARTS[0]}"
           MINOR="${VERSION_PARTS[1]}"
           PATCH="${VERSION_PARTS[2]}"
+          
+          # Validate that version parts are numeric
+          if ! [[ "$MAJOR" =~ ^[0-9]+$ ]] || ! [[ "$MINOR" =~ ^[0-9]+$ ]] || ! [[ "$PATCH" =~ ^[0-9]+$ ]]; then
+            echo "Error: Version parts must be numeric, got: $MAJOR.$MINOR.$PATCH"
+            exit 1
+          fi
           
           # Bump version based on type
           if [ "$BUMP_TYPE" = "major" ]; then
@@ -125,11 +145,21 @@ jobs:
           NEW_VERSION="${{ steps.new_version.outputs.version }}"
           CURRENT_VERSION="${{ steps.current_version.outputs.current }}"
           
-          # Update version in BUILD file
-          sed -i "s/version=\"${CURRENT_VERSION}\"/version=\"${NEW_VERSION}\"/" jsf/BUILD
+          # Escape dots in version strings for sed
+          ESCAPED_CURRENT=$(echo "$CURRENT_VERSION" | sed 's/\./\\./g')
+          
+          # Update version in BUILD file using portable sed
+          sed -i.bak "s/version=\"${ESCAPED_CURRENT}\"/version=\"${NEW_VERSION}\"/" jsf/BUILD
+          rm jsf/BUILD.bak
+          
+          # Verify the change was made
+          if ! grep -q "version=\"${NEW_VERSION}\"" jsf/BUILD; then
+            echo "Error: Failed to update version in BUILD file"
+            exit 1
+          fi
           
           echo "Updated BUILD file with version $NEW_VERSION"
-          cat jsf/BUILD | grep version
+          grep version jsf/BUILD
       
       - name: Generate changelog
         if: steps.new_version.outputs.should_release == 'true'
