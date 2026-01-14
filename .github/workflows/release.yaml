@@ -322,9 +322,9 @@ jobs:
           CURRENT_VERSION="${{ steps.current_version.outputs.current }}"
           TAG_NAME="v${CURRENT_VERSION}"
           
-          # Check if tag already exists
-          if git rev-parse "$TAG_NAME" >/dev/null 2>&1; then
-            echo "Tag $TAG_NAME already exists, skipping"
+          # Check if tag already exists on remote
+          if git ls-remote --tags origin | grep -q "refs/tags/${TAG_NAME}$"; then
+            echo "Tag $TAG_NAME already exists on remote, skipping"
             exit 0
           fi
           
