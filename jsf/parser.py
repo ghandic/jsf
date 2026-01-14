@@ -4,7 +4,6 @@ import random
 from collections import ChainMap
 from copy import deepcopy
 from datetime import datetime
-from itertools import count
 from pathlib import Path
 from types import MappingProxyType
 from typing import Any, Dict, List, Optional, Tuple, Union
@@ -68,7 +67,7 @@ class JSF:
         self.root_schema = schema
         self.definitions = {}
         self.base_state = {
-            "__counter__": count(start=1),
+            "__counter__": _PicklableCounter(),
             "__all_json_paths__": [],
             "__depth__": 0,
             **initial_state,
@@ -371,3 +370,15 @@ class JSF:
         output to the given path."""
         with open(path, "w") as f:
             json.dump(self.generate(), f, **kwargs)
+
+
+class _PicklableCounter:
+    def __init__(self):
+        self._counter = 0
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        self._counter += 1
+        return self._counter
