@@ -17,6 +17,9 @@ on:
           - minor
           - patch
         default: auto
+  push:
+    branches:
+      - main
 
 jobs:
   release:
@@ -31,6 +34,23 @@ jobs:
         with:
           fetch-depth: 0  # Fetch all history for proper version detection
           token: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Determine workflow mode
+        id: workflow_mode
+        run: |
+          # Check if this is a push event with a version bump commit
+          if [ "${{ github.event_name }}" = "push" ]; then
+            LAST_COMMIT_MSG=$(git log -1 --pretty=%B)
+            if echo "$LAST_COMMIT_MSG" | grep -q "^chore: bump version to"; then
+              echo "Mode: Release creation (push with version bump)"
+              echo "mode=release" >> $GITHUB_OUTPUT
+              exit 0
+            fi
+          fi
+          
+          # Otherwise, this is a version bump workflow
+          echo "Mode: Version bump"
+          echo "mode=bump" >> $GITHUB_OUTPUT
       
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -63,6 +83,7 @@ jobs:
           echo "Latest tag: $LATEST_TAG"
       
       - name: Analyze commits and determine version bump
+        if: steps.workflow_mode.outputs.mode == 'bump'
         id: version_bump
         run: |
           # Check if manual bump type is specified
@@ -118,6 +139,7 @@ jobs:
           echo "Determined bump type: $BUMP_TYPE"
       
       - name: Calculate new version
+        if: steps.workflow_mode.outputs.mode == 'bump'
         id: new_version
         run: |
           CURRENT="${{ steps.current_version.outputs.current }}"
@@ -195,7 +217,7 @@ jobs:
           echo "New version: $NEW_VERSION"
       
       - name: Update BUILD file
-        if: steps.new_version.outputs.should_release == 'true'
+        if: steps.workflow_mode.outputs.mode == 'bump' && steps.new_version.outputs.should_release == 'true'
         run: |
           NEW_VERSION="${{ steps.new_version.outputs.version }}"
           CURRENT_VERSION="${{ steps.current_version.outputs.current }}"
@@ -217,7 +239,7 @@ jobs:
           grep version jsf/BUILD
       
       - name: Generate changelog
-        if: steps.new_version.outputs.should_release == 'true'
+        if: steps.workflow_mode.outputs.mode == 'bump' && steps.new_version.outputs.should_release == 'true'
         id: changelog
         run: |
           LATEST_TAG="${{ steps.latest_tag.outputs.tag }}"
@@ -243,7 +265,7 @@ jobs:
           echo "Generated changelog"
       
       - name: Create release branch and commit version bump
-        if: steps.new_version.outputs.should_release == 'true'
+        if: steps.workflow_mode.outputs.mode == 'bump' && steps.new_version.outputs.should_release == 'true'
         id: create_branch
         run: |
           NEW_VERSION="${{ steps.new_version.outputs.version }}"
@@ -266,7 +288,7 @@ jobs:
           echo "branch=$BRANCH" >> $GITHUB_OUTPUT
       
       - name: Create pull request
-        if: steps.new_version.outputs.should_release == 'true'
+        if: steps.workflow_mode.outputs.mode == 'bump' && steps.new_version.outputs.should_release == 'true'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -291,26 +313,12 @@ jobs:
             --body-file /tmp/pr_body.md
       
       - name: Check if on main branch with version bump commit
+        if: steps.workflow_mode.outputs.mode == 'release'
         id: check_main_release
         run: |
-          # Check if we're on main branch using GitHub context
-          if [ "${{ github.ref }}" != "refs/heads/main" ]; then
-            echo "Not on main branch (ref: ${{ github.ref }}), skipping release creation"
-            echo "should_create_release=false" >> $GITHUB_OUTPUT
-            exit 0
-          fi
-          
-          # Get the last commit message
-          LAST_COMMIT_MSG=$(git log -1 --pretty=%B)
-          
-          # Check if the last commit is a version bump
-          if echo "$LAST_COMMIT_MSG" | grep -q "^chore: bump version to"; then
-            echo "Version bump commit detected on main branch"
-            echo "should_create_release=true" >> $GITHUB_OUTPUT
-          else
-            echo "No version bump commit detected"
-            echo "should_create_release=false" >> $GITHUB_OUTPUT
-          fi
+          # We're already in release mode, which means we're on main with a version bump commit
+          echo "Version bump commit detected on main branch"
+          echo "should_create_release=true" >> $GITHUB_OUTPUT
       
       - name: Create GitHub Release
         if: steps.check_main_release.outputs.should_create_release == 'true'
