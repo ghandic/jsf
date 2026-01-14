@@ -1,9 +1,6 @@
 name: Automated Release
 
 on:
-  push:
-    branches:
-      - main
   workflow_dispatch:
     inputs:
       version:
@@ -26,7 +23,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
-      pull-requests: read
+      pull-requests: write
     
     steps:
       - name: Checkout code
@@ -245,24 +242,110 @@ jobs:
           
           echo "Generated changelog"
       
-      - name: Commit version bump
+      - name: Create release branch and commit version bump
         if: steps.new_version.outputs.should_release == 'true'
+        id: create_branch
         run: |
           NEW_VERSION="${{ steps.new_version.outputs.version }}"
+          BRANCH="release/version-bump-${NEW_VERSION}"
           
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          # Create and checkout release branch
+          git checkout -b "$BRANCH"
+          
+          # Commit the version bump
           git add jsf/BUILD
           git commit -m "chore: bump version to $NEW_VERSION [skip ci]"
-          git push
+          
+          # Push the branch
+          git push origin "$BRANCH"
+          
+          # Export branch name for next step
+          echo "branch=$BRANCH" >> $GITHUB_OUTPUT
       
-      - name: Create GitHub Release
+      - name: Create pull request
         if: steps.new_version.outputs.should_release == 'true'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           NEW_VERSION="${{ steps.new_version.outputs.version }}"
-          gh release create "v${NEW_VERSION}" \
-            --title "Release v${NEW_VERSION}" \
-            --notes-file /tmp/changelog.md
+          BRANCH="${{ steps.create_branch.outputs.branch }}"
+          
+          # Create PR body with changelog
+          {
+            echo "Automated version bump to v${NEW_VERSION}."
+            echo ""
+            cat /tmp/changelog.md
+            echo ""
+            echo "This PR was automatically created by the release workflow. Once merged, a GitHub release will be created automatically."
+          } > /tmp/pr_body.md
+          
+          # Create pull request
+          gh pr create \
+            --base main \
+            --head "$BRANCH" \
+            --title "chore: bump version to $NEW_VERSION" \
+            --body-file /tmp/pr_body.md
+      
+      - name: Check if on main branch with version bump commit
+        id: check_main_release
+        run: |
+          # Check if we're on main branch using GitHub context
+          if [ "${{ github.ref }}" != "refs/heads/main" ]; then
+            echo "Not on main branch (ref: ${{ github.ref }}), skipping release creation"
+            echo "should_create_release=false" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          
+          # Get the last commit message
+          LAST_COMMIT_MSG=$(git log -1 --pretty=%B)
+          
+          # Check if the last commit is a version bump
+          if echo "$LAST_COMMIT_MSG" | grep -q "^chore: bump version to"; then
+            echo "Version bump commit detected on main branch"
+            echo "should_create_release=true" >> $GITHUB_OUTPUT
+          else
+            echo "No version bump commit detected"
+            echo "should_create_release=false" >> $GITHUB_OUTPUT
+          fi
+      
+      - name: Create GitHub Release
+        if: steps.check_main_release.outputs.should_create_release == 'true'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          CURRENT_VERSION="${{ steps.current_version.outputs.current }}"
+          
+          # Check if release already exists
+          if gh release view "v${CURRENT_VERSION}" >/dev/null 2>&1; then
+            echo "Release v${CURRENT_VERSION} already exists, skipping"
+            exit 0
+          fi
+          
+          # Generate changelog for the release
+          LATEST_TAG="${{ steps.latest_tag.outputs.tag }}"
+          REPO="${{ github.repository }}"
+          
+          if [ "$LATEST_TAG" = "v0.0.0" ]; then
+            COMMITS=$(git log --pretty=format:"- %s (%h)" origin/main)
+          else
+            COMMITS=$(git log ${LATEST_TAG}..HEAD --pretty=format:"- %s (%h)")
+          fi
+          
+          # Create changelog content
+          {
+            echo "## What's Changed"
+            echo ""
+            echo "$COMMITS"
+            echo ""
+            echo "**Full Changelog**: https://github.com/${REPO}/compare/${LATEST_TAG}...v${CURRENT_VERSION}"
+          } > /tmp/release_changelog.md
+          
+          # Create the release
+          gh release create "v${CURRENT_VERSION}" \
+            --title "Release v${CURRENT_VERSION}" \
+            --notes-file /tmp/release_changelog.md
