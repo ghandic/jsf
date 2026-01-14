@@ -1,0 +1,268 @@
+name: Automated Release
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to release (e.g., 1.2.3). Leave empty for automatic versioning based on commits.'
+        required: false
+        type: string
+      bump_type:
+        description: 'Version bump type (only used if version is not specified)'
+        required: false
+        type: choice
+        options:
+          - auto
+          - major
+          - minor
+          - patch
+        default: auto
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: read
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Fetch all history for proper version detection
+          token: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install packaging
+      
+      - name: Get current version
+        id: current_version
+        run: |
+          # Extract version from BUILD file (works with both standard grep and BusyBox)
+          CURRENT_VERSION=$(grep -o 'version="[^"]*"' jsf/BUILD | cut -d'"' -f2)
+          if [ -z "$CURRENT_VERSION" ]; then
+            echo "Error: Could not extract version from jsf/BUILD"
+            exit 1
+          fi
+          echo "current=$CURRENT_VERSION" >> $GITHUB_OUTPUT
+          echo "Current version: $CURRENT_VERSION"
+      
+      - name: Get latest tag
+        id: latest_tag
+        run: |
+          # Get the latest git tag, if any
+          LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "v0.0.0")
+          echo "tag=$LATEST_TAG" >> $GITHUB_OUTPUT
+          echo "Latest tag: $LATEST_TAG"
+      
+      - name: Analyze commits and determine version bump
+        id: version_bump
+        run: |
+          # Check if manual bump type is specified
+          MANUAL_BUMP="${{ github.event.inputs.bump_type }}"
+          
+          # If manual bump type is specified and not 'auto', use it
+          if [ -n "$MANUAL_BUMP" ] && [ "$MANUAL_BUMP" != "auto" ]; then
+            echo "Using manual bump type: $MANUAL_BUMP"
+            echo "bump_type=$MANUAL_BUMP" >> $GITHUB_OUTPUT
+            echo "Determined bump type: $MANUAL_BUMP (manual)"
+            exit 0
+          fi
+          
+          # Otherwise, analyze commits automatically
+          # Get commits since last tag
+          LATEST_TAG="${{ steps.latest_tag.outputs.tag }}"
+          
+          # Get commit messages since last tag
+          if [ "$LATEST_TAG" = "v0.0.0" ]; then
+            COMMITS=$(git log --pretty=format:"%s" origin/main)
+          else
+            COMMITS=$(git log ${LATEST_TAG}..HEAD --pretty=format:"%s")
+          fi
+          
+          echo "Analyzing commits:"
+          echo "$COMMITS"
+          
+          # Check if there are any commits at all
+          if [ -z "$COMMITS" ]; then
+            echo "No new commits found since last release"
+            BUMP_TYPE="none"
+          else
+            # Determine bump type based on conventional commits
+            # Default to patch if no convention matches (new requirement)
+            BUMP_TYPE="patch"
+            
+            # Define patterns for readability
+            BREAKING_PATTERN="^(feat|fix|chore|docs|style|refactor|perf|test)(\(.+\))?!:"
+            BREAKING_FOOTER_PATTERN="BREAKING CHANGE:"
+            FEAT_PATTERN="^feat(\(.+\))?:"
+            
+            # Check for breaking changes
+            if echo "$COMMITS" | grep -qE "$BREAKING_PATTERN" || echo "$COMMITS" | grep -qF "$BREAKING_FOOTER_PATTERN"; then
+              BUMP_TYPE="major"
+            # Check for features
+            elif echo "$COMMITS" | grep -qE "$FEAT_PATTERN"; then
+              BUMP_TYPE="minor"
+            fi
+            # For fix, chore, docs, etc. - BUMP_TYPE remains "patch"
+          fi
+          
+          echo "bump_type=$BUMP_TYPE" >> $GITHUB_OUTPUT
+          echo "Determined bump type: $BUMP_TYPE"
+      
+      - name: Calculate new version
+        id: new_version
+        run: |
+          CURRENT="${{ steps.current_version.outputs.current }}"
+          BUMP_TYPE="${{ steps.version_bump.outputs.bump_type }}"
+          MANUAL_VERSION="${{ github.event.inputs.version }}"
+          
+          # If manual version is specified, use it
+          if [ -n "$MANUAL_VERSION" ]; then
+            # Validate manual version format
+            if ! [[ "$MANUAL_VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+              echo "Error: Manual version must be in X.Y.Z format, got: $MANUAL_VERSION"
+              exit 1
+            fi
+            
+            # Parse versions for comparison
+            IFS='.' read -ra MANUAL_PARTS <<< "$MANUAL_VERSION"
+            IFS='.' read -ra CURRENT_PARTS <<< "$CURRENT"
+            
+            MANUAL_NUM=$((${MANUAL_PARTS[0]} * 10000 + ${MANUAL_PARTS[1]} * 100 + ${MANUAL_PARTS[2]}))
+            CURRENT_NUM=$((${CURRENT_PARTS[0]} * 10000 + ${CURRENT_PARTS[1]} * 100 + ${CURRENT_PARTS[2]}))
+            
+            # Warn if manual version is not greater than current (but allow it for hotfixes)
+            if [ $MANUAL_NUM -le $CURRENT_NUM ]; then
+              echo "Warning: Manual version $MANUAL_VERSION is not greater than current version $CURRENT"
+              echo "This may be intentional for hotfixes or corrections"
+            fi
+            
+            echo "Using manual version: $MANUAL_VERSION"
+            echo "version=$MANUAL_VERSION" >> $GITHUB_OUTPUT
+            echo "should_release=true" >> $GITHUB_OUTPUT
+            echo "New version: $MANUAL_VERSION (manual)"
+            exit 0
+          fi
+          
+          # Otherwise, calculate version from bump type
+          if [ "$BUMP_TYPE" = "none" ]; then
+            echo "No version bump needed"
+            echo "version=$CURRENT" >> $GITHUB_OUTPUT
+            echo "should_release=false" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          
+          # Parse current version and validate format
+          IFS='.' read -ra VERSION_PARTS <<< "$CURRENT"
+          if [ ${#VERSION_PARTS[@]} -ne 3 ]; then
+            echo "Error: Version format must be X.Y.Z, got: $CURRENT"
+            exit 1
+          fi
+          
+          MAJOR="${VERSION_PARTS[0]}"
+          MINOR="${VERSION_PARTS[1]}"
+          PATCH="${VERSION_PARTS[2]}"
+          
+          # Validate that version parts are numeric
+          if ! [[ "$MAJOR" =~ ^[0-9]+$ ]] || ! [[ "$MINOR" =~ ^[0-9]+$ ]] || ! [[ "$PATCH" =~ ^[0-9]+$ ]]; then
+            echo "Error: Version parts must be numeric, got: $MAJOR.$MINOR.$PATCH"
+            exit 1
+          fi
+          
+          # Bump version based on type
+          if [ "$BUMP_TYPE" = "major" ]; then
+            MAJOR=$((MAJOR + 1))
+            MINOR=0
+            PATCH=0
+          elif [ "$BUMP_TYPE" = "minor" ]; then
+            MINOR=$((MINOR + 1))
+            PATCH=0
+          elif [ "$BUMP_TYPE" = "patch" ]; then
+            PATCH=$((PATCH + 1))
+          fi
+          
+          NEW_VERSION="${MAJOR}.${MINOR}.${PATCH}"
+          echo "version=$NEW_VERSION" >> $GITHUB_OUTPUT
+          echo "should_release=true" >> $GITHUB_OUTPUT
+          echo "New version: $NEW_VERSION"
+      
+      - name: Update BUILD file
+        if: steps.new_version.outputs.should_release == 'true'
+        run: |
+          NEW_VERSION="${{ steps.new_version.outputs.version }}"
+          CURRENT_VERSION="${{ steps.current_version.outputs.current }}"
+          
+          # Escape dots in version strings for sed
+          ESCAPED_CURRENT=$(echo "$CURRENT_VERSION" | sed 's/\./\\./g')
+          
+          # Update version in BUILD file using portable sed
+          sed -i.bak "s/version=\"${ESCAPED_CURRENT}\"/version=\"${NEW_VERSION}\"/" jsf/BUILD
+          rm jsf/BUILD.bak
+          
+          # Verify the change was made
+          if ! grep -q "version=\"${NEW_VERSION}\"" jsf/BUILD; then
+            echo "Error: Failed to update version in BUILD file"
+            exit 1
+          fi
+          
+          echo "Updated BUILD file with version $NEW_VERSION"
+          grep version jsf/BUILD
+      
+      - name: Generate changelog
+        if: steps.new_version.outputs.should_release == 'true'
+        id: changelog
+        run: |
+          LATEST_TAG="${{ steps.latest_tag.outputs.tag }}"
+          NEW_VERSION="${{ steps.new_version.outputs.version }}"
+          REPO="${{ github.repository }}"
+          
+          # Generate changelog from commits
+          if [ "$LATEST_TAG" = "v0.0.0" ]; then
+            COMMITS=$(git log --pretty=format:"- %s (%h)" origin/main)
+          else
+            COMMITS=$(git log ${LATEST_TAG}..HEAD --pretty=format:"- %s (%h)")
+          fi
+          
+          # Create changelog content
+          {
+            echo "## What's Changed"
+            echo ""
+            echo "$COMMITS"
+            echo ""
+            echo "**Full Changelog**: https://github.com/${REPO}/compare/${LATEST_TAG}...v${NEW_VERSION}"
+          } > /tmp/changelog.md
+          
+          echo "Generated changelog"
+      
+      - name: Commit version bump
+        if: steps.new_version.outputs.should_release == 'true'
+        run: |
+          NEW_VERSION="${{ steps.new_version.outputs.version }}"
+          
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add jsf/BUILD
+          git commit -m "chore: bump version to $NEW_VERSION [skip ci]"
+          git push
+      
+      - name: Create GitHub Release
+        if: steps.new_version.outputs.should_release == 'true'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          NEW_VERSION="${{ steps.new_version.outputs.version }}"
+          gh release create "v${NEW_VERSION}" \
+            --title "Release v${NEW_VERSION}" \
+            --notes-file /tmp/changelog.md
