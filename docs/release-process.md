@@ -1,8 +1,12 @@
 # Automated Release Process
 
-This repository uses an automated release process that triggers when code is merged to the `main` branch.
+This repository supports both automated and manual release processes.
 
-## How It Works
+## Automated Releases
+
+The automation triggers automatically when code is merged to the `main` branch.
+
+### How It Works
 
 1. **Conventional Commits**: The automation analyzes commit messages since the last release to determine the next version number.
 
@@ -22,6 +26,36 @@ This repository uses an automated release process that triggers when code is mer
    - The GitHub release triggers existing workflows to:
      - Publish to PyPI
      - Deploy documentation to GitHub Pages
+
+## Manual Releases
+
+You can manually trigger a release and specify the exact version number.
+
+### How to Trigger a Manual Release
+
+1. **On GitHub Web/Mobile**:
+   - Go to the "Actions" tab
+   - Select "Automated Release" workflow
+   - Click "Run workflow"
+   - Choose options:
+     - **Version**: Enter a specific version (e.g., `1.2.3`) to release that exact version, or leave empty for automatic versioning
+     - **Bump type**: If version is empty, choose `major`, `minor`, `patch`, or `auto` (analyzes commits)
+   - Click "Run workflow"
+
+2. **Using GitHub CLI**:
+   ```bash
+   # Release a specific version
+   gh workflow run release.yaml -f version=1.2.3
+   
+   # Or specify bump type for automatic calculation
+   gh workflow run release.yaml -f bump_type=minor
+   ```
+
+### When to Use Manual Releases
+
+- **After merging a PR on mobile**: Accept the PR, then manually trigger the release with your chosen version
+- **Hotfix releases**: Quickly release a specific version without analyzing commits
+- **Version alignment**: Set a specific version to align with project milestones
 
 ## Commit Message Format
 

@@ -4,6 +4,22 @@ on:
   push:
     branches:
       - main
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to release (e.g., 1.2.3). Leave empty for automatic versioning based on commits.'
+        required: false
+        type: string
+      bump_type:
+        description: 'Version bump type (only used if version is not specified)'
+        required: false
+        type: choice
+        options:
+          - auto
+          - major
+          - minor
+          - patch
+        default: auto
 
 jobs:
   release:
@@ -52,6 +68,18 @@ jobs:
       - name: Analyze commits and determine version bump
         id: version_bump
         run: |
+          # Check if manual bump type is specified
+          MANUAL_BUMP="${{ github.event.inputs.bump_type }}"
+          
+          # If manual bump type is specified and not 'auto', use it
+          if [ -n "$MANUAL_BUMP" ] && [ "$MANUAL_BUMP" != "auto" ]; then
+            echo "Using manual bump type: $MANUAL_BUMP"
+            echo "bump_type=$MANUAL_BUMP" >> $GITHUB_OUTPUT
+            echo "Determined bump type: $MANUAL_BUMP (manual)"
+            exit 0
+          fi
+          
+          # Otherwise, analyze commits automatically
           # Get commits since last tag
           LATEST_TAG="${{ steps.latest_tag.outputs.tag }}"
           
@@ -97,7 +125,24 @@ jobs:
         run: |
           CURRENT="${{ steps.current_version.outputs.current }}"
           BUMP_TYPE="${{ steps.version_bump.outputs.bump_type }}"
+          MANUAL_VERSION="${{ github.event.inputs.version }}"
           
+          # If manual version is specified, use it
+          if [ -n "$MANUAL_VERSION" ]; then
+            # Validate manual version format
+            if ! [[ "$MANUAL_VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+              echo "Error: Manual version must be in X.Y.Z format, got: $MANUAL_VERSION"
+              exit 1
+            fi
+            
+            echo "Using manual version: $MANUAL_VERSION"
+            echo "version=$MANUAL_VERSION" >> $GITHUB_OUTPUT
+            echo "should_release=true" >> $GITHUB_OUTPUT
+            echo "New version: $MANUAL_VERSION (manual)"
+            exit 0
+          fi
+          
+          # Otherwise, calculate version from bump type
           if [ "$BUMP_TYPE" = "none" ]; then
             echo "No version bump needed"
             echo "version=$CURRENT" >> $GITHUB_OUTPUT
