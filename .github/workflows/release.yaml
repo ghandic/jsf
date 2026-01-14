@@ -135,6 +135,19 @@ jobs:
               exit 1
             fi
             
+            # Parse versions for comparison
+            IFS='.' read -ra MANUAL_PARTS <<< "$MANUAL_VERSION"
+            IFS='.' read -ra CURRENT_PARTS <<< "$CURRENT"
+            
+            MANUAL_NUM=$((${MANUAL_PARTS[0]} * 10000 + ${MANUAL_PARTS[1]} * 100 + ${MANUAL_PARTS[2]}))
+            CURRENT_NUM=$((${CURRENT_PARTS[0]} * 10000 + ${CURRENT_PARTS[1]} * 100 + ${CURRENT_PARTS[2]}))
+            
+            # Warn if manual version is not greater than current (but allow it for hotfixes)
+            if [ $MANUAL_NUM -le $CURRENT_NUM ]; then
+              echo "Warning: Manual version $MANUAL_VERSION is not greater than current version $CURRENT"
+              echo "This may be intentional for hotfixes or corrections"
+            fi
+            
             echo "Using manual version: $MANUAL_VERSION"
             echo "version=$MANUAL_VERSION" >> $GITHUB_OUTPUT
             echo "should_release=true" >> $GITHUB_OUTPUT

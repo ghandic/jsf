@@ -45,10 +45,13 @@ You can manually trigger a release and specify the exact version number.
 2. **Using GitHub CLI**:
    ```bash
    # Release a specific version
-   gh workflow run release.yaml -f version=1.2.3
+   gh workflow run .github/workflows/release.yaml -f version=1.2.3
    
    # Or specify bump type for automatic calculation
-   gh workflow run release.yaml -f bump_type=minor
+   gh workflow run .github/workflows/release.yaml -f bump_type=minor
+   
+   # Or use the workflow name
+   gh workflow run "Automated Release" -f version=1.2.3
    ```
 
 ### When to Use Manual Releases
