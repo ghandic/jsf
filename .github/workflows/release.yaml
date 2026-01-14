@@ -1,9 +1,6 @@
 name: Automated Release
 
 on:
-  push:
-    branches:
-      - main
   workflow_dispatch:
     inputs:
       version:
