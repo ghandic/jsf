@@ -17,9 +17,6 @@ on:
           - minor
           - patch
         default: auto
-  push:
-    branches:
-      - main
 
 jobs:
   release:
@@ -38,19 +35,16 @@ jobs:
       - name: Determine workflow mode
         id: workflow_mode
         run: |
-          # Check if this is a push event with a version bump commit
-          if [ "${{ github.event_name }}" = "push" ]; then
-            LAST_COMMIT_MSG=$(git log -1 --pretty=%B)
-            if echo "$LAST_COMMIT_MSG" | grep -q "^chore: bump version to"; then
-              echo "Mode: Release creation (push with version bump)"
-              echo "mode=release" >> $GITHUB_OUTPUT
-              exit 0
-            fi
-          fi
+          # Check if the last commit on main is a version bump commit
+          LAST_COMMIT_MSG=$(git log -1 --pretty=%B)
           
-          # Otherwise, this is a version bump workflow
-          echo "Mode: Version bump"
-          echo "mode=bump" >> $GITHUB_OUTPUT
+          if echo "$LAST_COMMIT_MSG" | grep -q "^chore: bump version to"; then
+            echo "Mode: Release creation (version bump commit detected)"
+            echo "mode=release" >> $GITHUB_OUTPUT
+          else
+            echo "Mode: Version bump"
+            echo "mode=bump" >> $GITHUB_OUTPUT
+          fi
       
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -318,42 +312,28 @@ jobs:
         run: |
           # We're already in release mode, which means we're on main with a version bump commit
           echo "Version bump commit detected on main branch"
-          echo "should_create_release=true" >> $GITHUB_OUTPUT
+          echo "should_create_tag=true" >> $GITHUB_OUTPUT
       
-      - name: Create GitHub Release
-        if: steps.check_main_release.outputs.should_create_release == 'true'
+      - name: Create Git Tag
+        if: steps.check_main_release.outputs.should_create_tag == 'true'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           CURRENT_VERSION="${{ steps.current_version.outputs.current }}"
+          TAG_NAME="v${CURRENT_VERSION}"
           
-          # Check if release already exists
-          if gh release view "v${CURRENT_VERSION}" >/dev/null 2>&1; then
-            echo "Release v${CURRENT_VERSION} already exists, skipping"
+          # Check if tag already exists
+          if git rev-parse "$TAG_NAME" >/dev/null 2>&1; then
+            echo "Tag $TAG_NAME already exists, skipping"
             exit 0
           fi
           
-          # Generate changelog for the release
-          LATEST_TAG="${{ steps.latest_tag.outputs.tag }}"
-          REPO="${{ github.repository }}"
+          # Configure git
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
           
-          if [ "$LATEST_TAG" = "v0.0.0" ]; then
-            COMMITS=$(git log --pretty=format:"- %s (%h)" origin/main)
-          else
-            COMMITS=$(git log ${LATEST_TAG}..HEAD --pretty=format:"- %s (%h)")
-          fi
+          # Create and push the tag
+          git tag -a "$TAG_NAME" -m "Release version ${CURRENT_VERSION}"
+          git push origin "$TAG_NAME"
           
-          # Create changelog content
-          {
-            echo "## What's Changed"
-            echo ""
-            echo "$COMMITS"
-            echo ""
-            echo "**Full Changelog**: https://github.com/${REPO}/compare/${LATEST_TAG}...v${CURRENT_VERSION}"
-          } > /tmp/release_changelog.md
-          
-          # Create the release
-          gh release create "v${CURRENT_VERSION}" \
-            --title "Release v${CURRENT_VERSION}" \
-            --notes-file /tmp/release_changelog.md
+          echo "Created and pushed tag: $TAG_NAME"
