@@ -544,3 +544,27 @@ def test_use_defaults_and_examples(TestData):
         assert d["name"] in ["Chop", "Luna", "Thanos"]
         breed = d.get("breed")
         assert breed is None or breed == "Mixed Breed"
+
+
+def test_min_required_props_oneof(TestData):
+    with open(TestData / "min-required-props-oneof.json") as file:
+        schema = json.load(file)
+    p = JSF(schema)
+    fake_data = [p.generate(use_examples=True) for _ in range(100)]
+
+    for d in fake_data:
+        assert isinstance(d, dict)
+        assert len(d.keys()) >= 1
+        assert all(isinstance(v, bool) for v in d.values())
+        assert all(d.values())
+
+
+def test_bool_enum(TestData):
+    with open(TestData / "bool-enum.json") as file:
+        schema = json.load(file)
+    p = JSF(schema)
+    fake_data = [p.generate() for _ in range(100)]
+
+    for d in fake_data:
+        assert isinstance(d, bool)
+        assert d
