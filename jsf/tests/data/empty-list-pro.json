@@ -1,0 +1,31 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "properties": {
+    "content": {
+      "type": "object",
+      "properties": {
+        "list": {
+          "type": "array"
+        },
+        "non-empty-sub-list": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "items": {
+                "type": "string"
+            }
+          }
+        },
+        "sub-list": {
+          "type": "array",
+          "items": {
+            "type": "array"
+          }
+        }
+      },
+      "required": ["list", "sub-list"]
+    }
+  },
+  "required": ["content"]
+}

@@ -127,6 +127,11 @@ class JSF:
         self, name: str, path: str, schema: Dict[str, Any], root: Optional[AllTypes] = None
     ) -> Object:
         _, is_nullable = self.__is_field_nullable(schema)
+        schema_without_props = {
+            k: v
+            for k, v in schema.items()
+            if k not in ("properties", "patternProperties", "dependencies")
+        }
         model = Object.from_dict(
             {
                 "name": name,
@@ -134,7 +139,7 @@ class JSF:
                 "is_nullable": is_nullable,
                 "allow_none_optionals": self.allow_none_optionals,
                 "max_recursive_depth": self.max_recursive_depth,
-                **schema,
+                **schema_without_props,
             }
         )
         root = model if root is None else root
@@ -291,6 +296,18 @@ class JSF:
                     isinstance(x, dict) for x in schema.get("items", [])
                 ):
                     return self.__parse_tuple(name, path, schema, root)
+                # arrays without an "items" definition should still be valid and
+                # simply produce empty lists
+                return Array.from_dict(
+                    {
+                        "name": name,
+                        "path": path,
+                        "is_nullable": is_nullable,
+                        "allow_none_optionals": self.allow_none_optionals,
+                        "max_recursive_depth": self.max_recursive_depth,
+                        **schema,
+                    }
+                )
             else:
                 return self.__parse_primitive(name, path, schema)
         elif "$ref" in schema:

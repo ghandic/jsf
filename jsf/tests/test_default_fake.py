@@ -544,3 +544,43 @@ def test_use_defaults_and_examples(TestData):
         assert d["name"] in ["Chop", "Luna", "Thanos"]
         breed = d.get("breed")
         assert breed is None or breed == "Mixed Breed"
+
+def test_gen_empty_list(TestData):
+    with open(TestData / "empty-list.json") as file:
+        schema = json.load(file)
+    p = JSF(schema, allow_none_optionals=0.0)
+
+    fake_data = [p.generate(use_defaults=True, use_examples=True) for _ in range(10)]
+    for d in fake_data:
+        assert isinstance(d, dict)
+        assert "items" in d
+        assert isinstance(d["items"], list)
+        assert len(d["items"]) == 0
+
+def test_gen_empty_list_pro(TestData):
+    with open(TestData / "empty-list-pro.json") as file:
+        schema = json.load(file)
+    p = JSF(schema, allow_none_optionals=0.0)
+
+    fake_data = [p.generate(use_defaults=True, use_examples=True) for _ in range(10)]
+    for d in fake_data:
+        assert isinstance(d, dict)
+        assert "content" in d
+
+        assert isinstance(d["content"], dict)
+        assert "list" in d["content"]
+        
+        assert isinstance(d["content"]["list"], list)
+        assert len(d["content"]["list"]) == 0
+        
+        assert "non-empty-sub-list" in d["content"]
+        assert isinstance(d["content"]["non-empty-sub-list"], list)
+        assert len(d["content"]["non-empty-sub-list"]) >= 1
+        assert isinstance(d["content"]["non-empty-sub-list"][0], list)
+        assert any(len(sublist) >= 1 and all(isinstance(item, str) for item in sublist) for sublist in d["content"]["non-empty-sub-list"])
+
+        assert "sub-list" in d["content"]
+        assert isinstance(d["content"]["sub-list"], list)
+        assert len(d["content"]["sub-list"]) >= 1
+        assert isinstance(d["content"]["sub-list"][0], list)
+        assert len(d["content"]["sub-list"][0]) == 0

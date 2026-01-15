@@ -19,14 +19,14 @@ SchemaDependency = Dict[str, "Object"]
 
 
 class Object(BaseSchema):
-    properties: Dict[str, BaseSchema] = {}
+    properties: List[BaseSchema] = []
     additionalProperties: Optional[Union[bool, BaseSchema]] = None
     required: Optional[List[str]] = None
     propertyNames: Optional[PropertyNames] = None
     minProperties: Optional[int] = None
     maxProperties: Optional[int] = None
     dependencies: Optional[Union[PropertyDependency, SchemaDependency]] = None
-    patternProperties: Optional[Dict[str, BaseSchema]] = None
+    patternProperties: Optional[List[BaseSchema]] = None
 
     @classmethod
     def from_dict(cls, d: Dict[str, Any]) -> "Object":
